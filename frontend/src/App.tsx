@@ -5,7 +5,6 @@ import { Hero } from './components/Hero';
 import { ProblemSection } from './components/ProblemSection';
 import { HowItWorks } from './components/HowItWorks';
 import { ProductIntelligence } from './components/ProductIntelligence';
-import { CodebaseMap } from './components/CodebaseMap';
 import { AskCodebase } from './components/AskCodebase';
 import { ComplexSystems } from './components/ComplexSystems';
 import { TechnicalFoundation } from './components/TechnicalFoundation';
@@ -41,10 +40,6 @@ function App() {
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
         <ProductIntelligence />
-
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
-
-        <CodebaseMap />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
