@@ -41,7 +41,7 @@ export const Hero: React.FC = () => {
   });
 
   return (
-    <section className="relative min-h-[92vh] flex items-center justify-center pt-24 pb-12 overflow-hidden px-6">
+    <section className="relative min-h-[92vh] flex items-center justify-center pt-28 pb-12 overflow-hidden px-6 content-layer">
       
       {/* Central Content */}
       <motion.div
@@ -111,7 +111,7 @@ export const Hero: React.FC = () => {
         variants={cardVariants(-30, -20)}
         initial="initial"
         animate="animate"
-        className="absolute top-[12%] left-[4%] xl:left-[8%] z-30 hidden lg:block w-56"
+        className="absolute top-[12%] left-[2%] xl:left-[4%] 2xl:left-[8%] z-30 hidden xl:block w-56"
       >
         <FloatingInsightCard depth={12} tiltMax={6}>
           <div className="flex items-center justify-between border-b border-black/[0.04] pb-2 mb-2.5">
@@ -151,7 +151,7 @@ export const Hero: React.FC = () => {
         variants={cardVariants(30, -20)}
         initial="initial"
         animate="animate"
-        className="absolute top-[10%] right-[3%] xl:right-[7%] z-30 hidden lg:block w-60"
+        className="absolute top-[10%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-60"
       >
         <FloatingInsightCard depth={18} tiltMax={8}>
           <div className="flex items-center justify-between border-b border-black/[0.04] pb-2 mb-3">
@@ -194,7 +194,7 @@ export const Hero: React.FC = () => {
         variants={cardVariants(-30, 20)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[10%] left-[3%] xl:left-[6%] z-30 hidden lg:block w-64"
+        className="absolute bottom-[10%] left-[2%] xl:left-[3%] 2xl:left-[6%] z-30 hidden 2xl:block w-64"
       >
         <FloatingInsightCard depth={14} tiltMax={7}>
           <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2.5">
@@ -225,7 +225,7 @@ export const Hero: React.FC = () => {
         variants={cardVariants(30, 20)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[14%] right-[4%] xl:right-[8%] z-30 hidden lg:block w-60"
+        className="absolute bottom-[14%] right-[2%] xl:right-[3%] 2xl:right-[8%] z-30 hidden 2xl:block w-60"
       >
         <FloatingInsightCard depth={10} tiltMax={5}>
           <div className="flex items-center gap-2 mb-2">
