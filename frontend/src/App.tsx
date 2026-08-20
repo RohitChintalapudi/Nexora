@@ -76,7 +76,7 @@ function App() {
           
           <div className="md:col-span-5 flex flex-col items-start">
             <div className="flex items-center gap-2 mb-4 font-semibold text-neutral-900 text-sm select-none">
-              <img src="/favicon.png" alt="NEXORA Logo" className="w-5 h-5 object-contain" />
+              <img src="/favicon.png" alt="NEXORA Logo" className="w-5 h-5 object-contain rounded-full border border-black/[0.04]" />
               <span>NEXORA</span>
             </div>
             <p className="text-neutral-400 max-w-xs leading-relaxed">
