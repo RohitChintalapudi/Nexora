@@ -17,7 +17,6 @@ interface MiniEdge {
 export const ProductIntelligence: React.FC = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
-  // SVG Coordinates for Section 2 Interactive Graph
   const viewWidth = 400;
   const viewHeight = 180;
 
@@ -57,7 +56,6 @@ export const ProductIntelligence: React.FC = () => {
            (to === hoveredNode && miniConnections[hoveredNode]?.includes(from));
   };
 
-  // Entrance variants
   const textVariants = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } }
@@ -71,12 +69,9 @@ export const ProductIntelligence: React.FC = () => {
   return (
     <div id="product" className="relative bg-[#F7F7F5] content-layer">
       
-      {/* ──────────────────────────────────────────────────────── */}
-      {/* SECTION 01 — UNDERSTAND (Text Left, Card Right) */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Left Text Column */}
           <motion.div
             variants={textVariants}
             initial="initial"
@@ -94,7 +89,6 @@ export const ProductIntelligence: React.FC = () => {
               Ask questions about your project and get answers grounded in your actual code. NEXORA understands files, functions, services, APIs, and their relationships across your repository.
             </p>
             
-            {/* Capability Points */}
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-neutral-600">
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30" />
@@ -111,7 +105,6 @@ export const ProductIntelligence: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Right Card Column */}
           <motion.div
             variants={cardVariants}
             initial="initial"
@@ -120,14 +113,12 @@ export const ProductIntelligence: React.FC = () => {
             className="lg:col-span-7"
           >
             <div className="code-panel p-6 sm:p-8 rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)]">
-              {/* Question */}
               <div className="flex items-start gap-3 mb-5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 font-sans mt-1">USER:</span>
                 <div className="text-xs sm:text-sm font-sans font-medium text-neutral-800 bg-neutral-50 border border-neutral-100/50 rounded-xl py-2.5 px-4 shadow-[0_1px_2px_rgba(0,0,0,0.005)]">
                   Where is authentication handled?
                 </div>
               </div>
-              {/* Response */}
               <div className="flex items-start gap-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-blue-600 font-sans mt-1">NEXORA:</span>
                 <div className="flex-1 text-xs sm:text-sm font-sans text-neutral-600 bg-white border border-neutral-100 rounded-xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
@@ -165,15 +156,11 @@ export const ProductIntelligence: React.FC = () => {
         </div>
       </section>
 
-      {/* Spacing Separator Line */}
       <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-      {/* ──────────────────────────────────────────────────────── */}
-      {/* SECTION 02 — VISUALIZE (Card Left, Text Right) */}
       <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Left Card Column (First on desktop, Second on mobile) */}
           <motion.div
             variants={cardVariants}
             initial="initial"
@@ -183,7 +170,6 @@ export const ProductIntelligence: React.FC = () => {
           >
             <div className="code-panel p-6 sm:p-8 rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] flex flex-col items-center justify-center min-h-[260px] relative overflow-hidden">
               <svg className="w-full max-w-[340px] h-[190px] overflow-visible" viewBox={`0 0 ${viewWidth} ${viewHeight}`}>
-                {/* Edge mappings */}
                 {miniEdges.map((edge, idx) => {
                   const fromNode = miniNodes.find(n => n.id === edge.from);
                   const toNode = miniNodes.find(n => n.id === edge.to);
@@ -205,7 +191,6 @@ export const ProductIntelligence: React.FC = () => {
                   );
                 })}
 
-                {/* Node mappings */}
                 {miniNodes.map((node) => {
                   const highlighted = isHighlighted(node.id);
                   const isHovered = hoveredNode === node.id;
@@ -217,7 +202,6 @@ export const ProductIntelligence: React.FC = () => {
                       onMouseEnter={() => setHoveredNode(node.id)}
                       onMouseLeave={() => setHoveredNode(null)}
                     >
-                      {/* Glow backing */}
                       {highlighted && (
                         <circle
                           cx={node.x}
@@ -228,7 +212,6 @@ export const ProductIntelligence: React.FC = () => {
                         />
                       )}
                       
-                      {/* Core circle */}
                       <circle
                         cx={node.x}
                         cy={node.y}
@@ -239,7 +222,6 @@ export const ProductIntelligence: React.FC = () => {
                         className="transition-all duration-300"
                       />
 
-                      {/* Text details label */}
                       <text
                         x={node.x}
                         y={node.y - 12}
@@ -268,7 +250,6 @@ export const ProductIntelligence: React.FC = () => {
             </div>
           </motion.div>
 
-          {/* Right Text Column (Second on desktop, First on mobile) */}
           <motion.div
             variants={textVariants}
             initial="initial"
@@ -286,7 +267,6 @@ export const ProductIntelligence: React.FC = () => {
               Explore relationships between components, APIs, services, databases, functions, and dependencies through interactive architecture maps.
             </p>
             
-            {/* Capability Points */}
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-neutral-600">
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30" />
@@ -306,15 +286,11 @@ export const ProductIntelligence: React.FC = () => {
         </div>
       </section>
 
-      {/* Spacing Separator Line */}
       <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-      {/* ──────────────────────────────────────────────────────── */}
-      {/* SECTION 03 — PREDICT (Text Left, Card Right) */}
       <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Left Text Column */}
           <motion.div
             variants={textVariants}
             initial="initial"
@@ -332,7 +308,6 @@ export const ProductIntelligence: React.FC = () => {
               NEXORA traces dependency paths to help you understand what could be affected before making changes to critical parts of your software.
             </p>
             
-            {/* Capability Points */}
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-neutral-600">
               <li className="flex items-center gap-2.5">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-sm shadow-blue-500/30" />
@@ -349,7 +324,6 @@ export const ProductIntelligence: React.FC = () => {
             </ul>
           </motion.div>
 
-          {/* Right Card Column */}
           <motion.div
             variants={cardVariants}
             initial="initial"
@@ -358,7 +332,6 @@ export const ProductIntelligence: React.FC = () => {
             className="lg:col-span-7"
           >
             <div className="code-panel p-6 sm:p-8 rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)]">
-              {/* Header Box */}
               <div className="flex items-center justify-between border-b border-black/[0.035] pb-3.5 mb-4">
                 <span className="text-[10px] font-mono text-neutral-400 font-bold uppercase tracking-wider">Impact Sandbox</span>
                 <span className="text-[9px] font-sans font-bold px-2 py-0.5 rounded bg-red-50 border border-red-100 text-red-600 tracking-wide select-none">
@@ -366,7 +339,6 @@ export const ProductIntelligence: React.FC = () => {
                 </span>
               </div>
 
-              {/* Target File details */}
               <div className="text-xs sm:text-sm font-sans mb-4 flex items-center justify-between">
                 <div>
                   <span className="text-neutral-400">Target modified file: </span>
@@ -374,7 +346,6 @@ export const ProductIntelligence: React.FC = () => {
                 </div>
               </div>
 
-              {/* Grid Metrics */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center mb-6 font-sans">
                 <div className="p-2.5 rounded-xl bg-neutral-50/50 border border-neutral-100/30">
                   <div className="text-red-600 font-bold text-sm sm:text-base">12</div>
@@ -394,7 +365,6 @@ export const ProductIntelligence: React.FC = () => {
                 </div>
               </div>
 
-              {/* Affected Chain */}
               <div className="bg-neutral-50/50 border border-neutral-100/30 rounded-xl p-4">
                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-neutral-400 block mb-3 select-none">
                   Propagation Path

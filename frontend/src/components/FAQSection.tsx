@@ -40,7 +40,6 @@ export const FAQSection: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="faq">
       <div className="max-w-4xl mx-auto px-6">
         
-        {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             FAQ
@@ -50,7 +49,6 @@ export const FAQSection: React.FC = () => {
           </h2>
         </div>
 
-        {/* FAQ Accordion List */}
         <div className="space-y-4 max-w-2xl mx-auto">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
@@ -63,7 +61,6 @@ export const FAQSection: React.FC = () => {
                 transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.05 }}
                 className="bg-white border border-black/[0.045] rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.005)]"
               >
-                {/* Header Toggle Trigger */}
                 <button
                   onClick={() => toggleFAQ(idx)}
                   className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none"
@@ -74,7 +71,6 @@ export const FAQSection: React.FC = () => {
                   </span>
                 </button>
 
-                {/* Answer Content Panel */}
                 <div
                   className={`accordion-content border-t border-black/[0.02] px-5 bg-neutral-50/30 ${
                     isOpen ? 'open py-5' : ''

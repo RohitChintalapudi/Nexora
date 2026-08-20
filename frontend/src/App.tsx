@@ -19,84 +19,66 @@ function App() {
   return (
     <div className="relative min-h-screen bg-[#F7F7F5] overflow-hidden">
       
-      {/* Background Interactive Layer (z-0) */}
       <div className="bg-layer">
         <ParticleNetwork />
         <ArchitectureGraph />
       </div>
 
-      {/* Global Navbar Header */}
       <Navbar />
 
-      {/* Main Product Layout (z-20) */}
       <div className="relative z-20">
         
-        {/* Hero Landing */}
         <Hero />
 
-        {/* Spacing adjustments: Section lines/grids separate major flows */}
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Problem */}
         <ProblemSection />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Workflow */}
         <HowItWorks />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Three Core Features */}
         <ProductIntelligence />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Sophisticated Architecture Map Centerpiece */}
         <CodebaseMap />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* AI grounding workspace */}
         <AskCodebase />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Compatibility Grid */}
         <ComplexSystems />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Engineering foundations flow */}
         <TechnicalFoundation />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Collaboration preview */}
         <CollaborationSection />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Pricing */}
         <PricingSection />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* FAQ */}
         <FAQSection />
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
 
-        {/* Concluding CTA Banner */}
         <FinalCTA />
 
       </div>
 
-      {/* Premium Footer */}
       <footer className="relative z-20 py-16 border-t border-black/[0.035] bg-[#F7F7F5] font-sans text-xs">
         <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-10 md:gap-6 mb-12">
           
-          {/* Logo & Tagline */}
           <div className="md:col-span-5 flex flex-col items-start">
             <div className="flex items-center gap-2 mb-4 font-semibold text-neutral-900 text-sm select-none">
               <div className="w-6 h-6 rounded bg-neutral-900 flex items-center justify-center text-[10px] text-white font-bold">N</div>
@@ -107,10 +89,8 @@ function App() {
             </p>
           </div>
 
-          {/* Links Columns */}
           <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
             
-            {/* Product */}
             <div className="flex flex-col gap-3">
               <span className="font-semibold text-neutral-800 uppercase tracking-wider text-[10px]">Product</span>
               <a href="#product" className="text-neutral-400 hover:text-neutral-700 transition-colors">Intelligence</a>
@@ -119,7 +99,6 @@ function App() {
               <a href="#collaboration" className="text-neutral-400 hover:text-neutral-700 transition-colors">Collaboration</a>
             </div>
 
-            {/* Resources */}
             <div className="flex flex-col gap-3">
               <span className="font-semibold text-neutral-800 uppercase tracking-wider text-[10px]">Resources</span>
               <a href="#docs" className="text-neutral-400 hover:text-neutral-700 transition-colors">Documentation</a>
@@ -128,7 +107,6 @@ function App() {
               <a href="#changelog" className="text-neutral-400 hover:text-neutral-700 transition-colors">Changelog</a>
             </div>
 
-            {/* Company */}
             <div className="flex flex-col gap-3 col-span-2 sm:col-span-1">
               <span className="font-semibold text-neutral-800 uppercase tracking-wider text-[10px]">Company</span>
               <a href="#about" className="text-neutral-400 hover:text-neutral-700 transition-colors">About</a>
@@ -141,7 +119,6 @@ function App() {
 
         </div>
 
-        {/* Copyright */}
         <div className="max-w-7xl mx-auto px-6 border-t border-black/[0.03] pt-6 flex items-center justify-between text-neutral-400 font-mono text-[10px]">
           <span>© 2026 NEXORA. All rights reserved.</span>
           <span>v1.0.0-beta</span>

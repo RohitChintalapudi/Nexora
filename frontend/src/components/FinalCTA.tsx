@@ -37,7 +37,6 @@ export const FinalCTA: React.FC = () => {
       particles = [];
       const count = 35;
       for (let i = 0; i < count; i++) {
-        // Generate coordinates along the outer perimeter
         const angle = Math.random() * Math.PI * 2;
         const radius = Math.max(width, height) * (0.4 + Math.random() * 0.3);
         const x = width / 2 + Math.cos(angle) * radius;
@@ -77,7 +76,6 @@ export const FinalCTA: React.FC = () => {
         const dy = centerY - p.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        // If particle reached center threshold, reset to outer bounds
         if (dist < 25) {
           const angle = Math.random() * Math.PI * 2;
           const spawnRadius = Math.max(width, height) * 0.6;
@@ -85,12 +83,10 @@ export const FinalCTA: React.FC = () => {
           p.y = centerY + Math.sin(angle) * spawnRadius;
           p.alpha = Math.random() * 0.4 + 0.1;
         } else {
-          // Travel towards center slowly
           const speed = (0.2 + (dist / width) * 0.6) * speedMultiplier;
           p.x += (dx / dist) * speed;
           p.y += (dy / dist) * speed;
           
-          // Gradually fade in as it approaches, then fade out extremely close to center
           if (dist < 70) {
             p.alpha = Math.max(p.alpha - 0.02, 0);
           } else if (p.alpha < 0.45) {
@@ -98,13 +94,11 @@ export const FinalCTA: React.FC = () => {
           }
         }
 
-        // Draw particle
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = `rgba(37, 99, 235, ${p.alpha})`;
         ctx.fill();
 
-        // Trace a faint line to the center node if close
         if (dist < 180 && dist > 40) {
           const lineAlpha = (1 - dist / 180) * 0.14;
           ctx.beginPath();
@@ -116,7 +110,6 @@ export const FinalCTA: React.FC = () => {
         }
       });
 
-      // Draw center central node target circle
       ctx.beginPath();
       ctx.arc(centerX, centerY, 4, 0, Math.PI * 2);
       ctx.fillStyle = 'rgba(37, 99, 235, 0.45)';
@@ -143,19 +136,15 @@ export const FinalCTA: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
       <div className="max-w-5xl mx-auto px-6">
         
-        {/* Converging Banner Frame */}
         <div className="relative bg-white border border-black/[0.045] rounded-3xl p-8 sm:p-16 text-center shadow-[0_8px_36px_rgba(0,0,0,0.015)] overflow-hidden">
           
-          {/* Background Canvas Converging Network */}
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full pointer-events-none z-0"
           />
 
-          {/* Banner Contents */}
           <div className="relative z-10 max-w-xl mx-auto flex flex-col items-center">
             
-            {/* Minimal SVG Logo Icon */}
             <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center mb-6 select-none">
               <span className="text-blue-600 font-bold text-xs">N</span>
             </div>
@@ -169,7 +158,6 @@ export const FinalCTA: React.FC = () => {
               Start exploring your software with NEXORA. Connect your repositories and understand your system structure in minutes.
             </p>
 
-            {/* Buttons */}
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
               <motion.a
                 href="#getstarted"
