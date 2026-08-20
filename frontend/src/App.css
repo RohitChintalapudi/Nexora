@@ -1,1 +1,106 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-blue-600: #2563EB;
+  --color-blue-700: #1D4ED8;
+}
+
+/* Global resets for NEXORA */
+html, body {
+  background-color: #F7F7F5;
+  color: #111111;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* High-quality selection style */
+::selection {
+  background-color: rgba(37, 99, 235, 0.08);
+  color: #2563EB;
+}
+
+/* Customized scrollbar for premium aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F7F7F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.08);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 17, 0.16);
+}
+
+/* Base layering utilities to prevent background elements from blocking clicks */
+.bg-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.content-layer {
+  position: relative;
+  z-index: 20;
+}
+
+/* Code block & terminal styles for premium SaaS UI previews */
+.code-panel {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(0, 0, 0, 0.045);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.015);
+  backdrop-filter: blur(4px);
+}
+
+.code-panel-dark {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  background-color: #0F0F11;
+  border: 1px solid rgba(255, 255, 255, 0.045);
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  color: #E4E4E7;
+}
+
+/* Accordion expand/collapse transition classes */
+.accordion-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+  opacity: 0;
+}
+
+.accordion-content.open {
+  max-height: 200px;
+  opacity: 1;
+}
+
+/* Soft pulse animation */
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.05);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 4.5s infinite ease-in-out;
+}
