@@ -1,1 +1,59 @@
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --color-blue-600: #2563EB;
+  --color-blue-700: #1D4ED8;
+}
+
+/* Global resets for NEXORA */
+html, body {
+  background-color: #F7F7F5;
+  color: #111111;
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* High-quality selection style */
+::selection {
+  background-color: rgba(37, 99, 235, 0.08);
+  color: #2563EB;
+}
+
+/* Customized scrollbar for premium aesthetic */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F7F7F5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(17, 17, 17, 0.08);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(17, 17, 17, 0.16);
+}
+
+/* Subtle pulse glow utilities */
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(1.05);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 4s infinite ease-in-out;
+}
