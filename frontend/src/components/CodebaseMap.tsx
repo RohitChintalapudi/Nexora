@@ -131,7 +131,7 @@ export const CodebaseMap: React.FC = () => {
   }, [mousePos, floatOffsets]);
 
   return (
-    <section className="relative py-24 md:py-32 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="architecture">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="architecture">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}

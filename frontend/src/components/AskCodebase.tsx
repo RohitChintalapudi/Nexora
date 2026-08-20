@@ -121,7 +121,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   const activeData = mockData[selectedQuestion];
 
   return (
-    <section className="relative py-24 md:py-32 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="intelligence">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="intelligence">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}

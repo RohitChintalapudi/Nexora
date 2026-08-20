@@ -140,7 +140,7 @@ export const FinalCTA: React.FC = () => {
   }, [isReducedMotion]);
 
   return (
-    <section className="relative py-24 md:py-32 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
       <div className="max-w-5xl mx-auto px-6">
         
         {/* Converging Banner Frame */}

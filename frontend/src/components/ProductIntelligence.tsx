@@ -73,7 +73,7 @@ export const ProductIntelligence: React.FC = () => {
       
       {/* ──────────────────────────────────────────────────────── */}
       {/* SECTION 01 — UNDERSTAND (Text Left, Card Right) */}
-      <section className="relative py-20 md:py-28 max-w-7xl mx-auto px-6">
+      <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Text Column */}
@@ -170,7 +170,7 @@ export const ProductIntelligence: React.FC = () => {
 
       {/* ──────────────────────────────────────────────────────── */}
       {/* SECTION 02 — VISUALIZE (Card Left, Text Right) */}
-      <section className="relative py-20 md:py-28 max-w-7xl mx-auto px-6">
+      <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Card Column (First on desktop, Second on mobile) */}
@@ -311,7 +311,7 @@ export const ProductIntelligence: React.FC = () => {
 
       {/* ──────────────────────────────────────────────────────── */}
       {/* SECTION 03 — PREDICT (Text Left, Card Right) */}
-      <section className="relative py-20 md:py-28 max-w-7xl mx-auto px-6">
+      <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
           {/* Left Text Column */}

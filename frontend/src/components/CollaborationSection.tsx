@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export const CollaborationSection: React.FC = () => {
   return (
-    <section className="relative py-24 md:py-32 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="collaboration">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="collaboration">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
         
         {/* Left Column: Context */}

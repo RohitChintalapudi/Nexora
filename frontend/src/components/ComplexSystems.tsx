@@ -42,7 +42,7 @@ export const ComplexSystems: React.FC = () => {
   ];
 
   return (
-    <section className="relative py-24 md:py-32 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="systems">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="systems">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
