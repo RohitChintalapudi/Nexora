@@ -76,16 +76,16 @@ export const HowItWorks: React.FC = () => {
 
         <div className="relative max-w-5xl mx-auto">
           
-          <div className="absolute top-[24px] sm:top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-neutral-200/80 hidden md:block z-0 overflow-hidden">
+          <div className="absolute top-[28px] left-[12.5%] right-[12.5%] h-[2px] bg-neutral-300/70 hidden md:block z-0 overflow-hidden">
             <motion.div 
-              className="absolute top-0 bottom-0 w-12 bg-blue-500/40 rounded-full blur-[1.5px]"
+              className="absolute top-0 bottom-0 bg-blue-500"
+              style={{ width: '85px' }}
               animate={{ 
-                left: ['-10%', '110%'],
-                opacity: [0, 1, 1, 0]
+                left: ['-85px', '100%']
               }}
               transition={{ 
                 repeat: Infinity, 
-                duration: 4.5, 
+                duration: 3.8, 
                 ease: "linear" 
               }}
             />
