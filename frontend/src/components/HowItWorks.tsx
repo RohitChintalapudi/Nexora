@@ -65,14 +65,6 @@ export const HowItWorks: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="howitworks">
       <div className="max-w-7xl mx-auto px-6">
         
-        <style dangerouslySetInnerHTML={{ __html: `
-          .grid-col-track {
-            grid-column: 1 / span 3;
-            left: 28px;
-            right: -28px;
-          }
-        `}} />
-
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             How It Works
@@ -84,23 +76,29 @@ export const HowItWorks: React.FC = () => {
 
         <div className="relative max-w-5xl mx-auto">
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
-            
-            <div className="absolute top-[28px] grid-col-track h-[2px] bg-neutral-300/70 hidden md:block z-0 overflow-hidden">
-              <motion.div 
-                className="absolute top-0 bottom-0 bg-blue-500"
-                style={{ width: '85px' }}
-                animate={{ 
-                  left: ['-85px', '100%']
-                }}
-                transition={{ 
-                  repeat: Infinity, 
-                  duration: 3.8, 
-                  ease: "linear" 
-                }}
-              />
-            </div>
+          <div 
+            className="absolute top-[28px] h-[2px] bg-neutral-300/70 hidden md:block z-0 overflow-hidden"
+            style={{
+              left: '28px',
+              right: 'calc(25% - 46px)'
+            }}
+          >
+            <motion.div 
+              className="absolute top-0 bottom-0 left-0 bg-blue-500 origin-left"
+              animate={{ 
+                width: ['0%', '100%', '100%'],
+                opacity: [1, 1, 0]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 5.5, 
+                ease: "easeInOut",
+                times: [0, 0.9, 1]
+              }}
+            />
+          </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
             {steps.map((step, idx) => (
               <motion.div
                 key={step.num}
