@@ -32,18 +32,66 @@ export const ProblemSection: React.FC = () => {
   };
 
   const paths = [
-    { d: "M 180 120 Q 300 200 400 250", speed: 3.5 },
-    { d: "M 130 250 Q 250 250 400 250", speed: 2.8 },
-    { d: "M 180 380 Q 300 300 400 250", speed: 4.2 },
-    { d: "M 620 120 Q 500 200 400 250", speed: 3.2 },
-    { d: "M 670 250 Q 550 250 400 250", speed: 2.5 },
-    { d: "M 620 380 Q 500 300 400 250", speed: 3.8 }
+    { d: "M 180 120 Q 300 200 400 250", speed: 3.8 },
+    { d: "M 130 250 Q 250 250 400 250", speed: 3.2 },
+    { d: "M 180 380 Q 300 300 400 250", speed: 4.5 },
+    { d: "M 620 120 Q 500 200 400 250", speed: 3.5 },
+    { d: "M 670 250 Q 550 250 400 250", speed: 3.0 },
+    { d: "M 620 380 Q 500 300 400 250", speed: 4.0 }
+  ];
+
+  const connectionPoints = [
+    { cx: 336, cy: 218 },
+    { cx: 328, cy: 250 },
+    { cx: 336, cy: 282 },
+    { cx: 464, cy: 218 },
+    { cx: 472, cy: 250 },
+    { cx: 464, cy: 282 }
   ];
 
   return (
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="problem">
       <div className="max-w-7xl mx-auto px-6">
         
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes flow-inward {
+            0% {
+              offset-distance: 0%;
+              opacity: 0;
+            }
+            8% {
+              opacity: 0.9;
+            }
+            92% {
+              opacity: 0.9;
+            }
+            100% {
+              offset-distance: 100%;
+              opacity: 0;
+            }
+          }
+          @keyframes flow-outward {
+            0% {
+              offset-distance: 100%;
+              opacity: 0;
+            }
+            8% {
+              opacity: 0.9;
+            }
+            92% {
+              opacity: 0.9;
+            }
+            100% {
+              offset-distance: 0%;
+              opacity: 0;
+            }
+          }
+          .particle-dot {
+            transform-box: fill-box;
+            transform-origin: center;
+          }
+        `}} />
+
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             The Problem
@@ -69,37 +117,39 @@ export const ProblemSection: React.FC = () => {
               const isPathHovered = hoveredIdx === idx;
               const isAnyHovered = hoveredIdx !== null;
               
-              let strokeOpacity = 0.08;
-              let glowOpacity = 0.28;
+              let baseOpacity = 0.095;
+              let glowOpacity = 0.35;
               let lineSpeed = p.speed;
 
               if (isAnyHovered) {
                 if (isPathHovered) {
-                  strokeOpacity = 0.25;
+                  baseOpacity = 0.28;
                   glowOpacity = 1.0;
-                  lineSpeed = p.speed * 0.5;
+                  lineSpeed = p.speed * 0.55;
                 } else {
-                  strokeOpacity = 0.015;
-                  glowOpacity = 0.03;
+                  baseOpacity = 0.02;
+                  glowOpacity = 0.04;
                 }
               }
+
+              const isOutward = idx === 1 || idx === 4;
 
               return (
                 <g key={idx}>
                   <motion.path
                     d={p.d}
-                    stroke="rgba(17, 17, 17, 0.08)"
-                    strokeWidth="1.5"
-                    strokeDasharray="5,5"
+                    stroke="rgba(37, 99, 235, 0.45)"
+                    strokeWidth="1.2"
+                    strokeDasharray="4, 4"
                     fill="none"
-                    animate={{ opacity: strokeOpacity }}
-                    transition={{ duration: 0.3 }}
+                    animate={{ opacity: baseOpacity }}
+                    transition={{ duration: 0.35 }}
                   />
                   <motion.path
                     d={p.d}
-                    stroke={isPathHovered ? '#2563EB' : 'rgba(37, 99, 235, 0.4)'}
-                    strokeWidth={isPathHovered ? 2.5 : 1.5}
-                    strokeDasharray={isPathHovered ? '8, 40' : '8, 25'}
+                    stroke="#2563EB"
+                    strokeWidth={isPathHovered ? 2.5 : 1.6}
+                    strokeDasharray="8, 25"
                     strokeDashoffset="0"
                     fill="none"
                     animate={{ 
@@ -107,20 +157,52 @@ export const ProblemSection: React.FC = () => {
                       opacity: glowOpacity
                     }}
                     transition={{ 
-                      strokeDashoffset: { repeat: Infinity, duration: isPathHovered ? 1.0 : lineSpeed, ease: "linear" },
+                      strokeDashoffset: { repeat: Infinity, duration: isPathHovered ? 1.2 : lineSpeed, ease: "linear" },
                       opacity: { duration: 0.3 }
                     }}
+                  />
+
+                  <circle
+                    className="particle-dot"
+                    r="2.2"
+                    fill="#2563EB"
+                    style={{
+                      offsetPath: `path("${p.d}")`,
+                      animation: `${isOutward ? 'flow-outward' : 'flow-inward'} ${isPathHovered ? lineSpeed * 0.55 : lineSpeed}s linear infinite`,
+                      animationDelay: `${idx * 0.45}s`
+                    } as React.CSSProperties}
+                  />
+
+                  <circle
+                    className="particle-dot"
+                    r="2.2"
+                    fill="#2563EB"
+                    style={{
+                      offsetPath: `path("${p.d}")`,
+                      animation: `${isOutward ? 'flow-outward' : 'flow-inward'} ${isPathHovered ? lineSpeed * 0.55 : lineSpeed}s linear infinite`,
+                      animationDelay: `${idx * 0.45 + (isPathHovered ? lineSpeed * 0.275 : lineSpeed * 0.5)}s`
+                    } as React.CSSProperties}
                   />
                 </g>
               );
             })}
 
-            <circle cx="380" cy="235" r="2.5" fill="#2563EB" opacity="0.35" />
-            <circle cx="360" cy="250" r="2.5" fill="#2563EB" opacity="0.35" />
-            <circle cx="380" cy="265" r="2.5" fill="#2563EB" opacity="0.35" />
-            <circle cx="420" cy="235" r="2.5" fill="#2563EB" opacity="0.35" />
-            <circle cx="440" cy="250" r="2.5" fill="#2563EB" opacity="0.35" />
-            <circle cx="420" cy="265" r="2.5" fill="#2563EB" opacity="0.35" />
+            {connectionPoints.map((pt, idx) => {
+              const isPointHovered = hoveredIdx === idx;
+              return (
+                <motion.circle
+                  key={idx}
+                  cx={pt.cx}
+                  cy={pt.cy}
+                  animate={{
+                    r: isPointHovered ? 4.5 : 2.5,
+                    fill: isPointHovered ? '#2563EB' : '#A3A3A3',
+                    opacity: isPointHovered ? 0.95 : 0.35
+                  }}
+                  transition={{ type: 'spring', stiffness: 350, damping: 18 }}
+                />
+              );
+            })}
           </svg>
 
           <motion.div 

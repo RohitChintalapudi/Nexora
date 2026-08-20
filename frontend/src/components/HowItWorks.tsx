@@ -75,13 +75,19 @@ export const HowItWorks: React.FC = () => {
         </div>
 
         <div className="relative max-w-5xl mx-auto">
-          <div className="absolute top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-neutral-200 hidden md:block z-0">
+          
+          <div className="absolute top-[24px] sm:top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-neutral-200/80 hidden md:block z-0 overflow-hidden">
             <motion.div 
-              className="h-full bg-blue-500 origin-left"
-              initial={{ scaleX: 0 }}
-              whileInView={{ scaleX: 1 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 1.5, ease: "easeInOut" }}
+              className="absolute top-0 bottom-0 w-12 bg-blue-500/40 rounded-full blur-[1.5px]"
+              animate={{ 
+                left: ['-10%', '110%'],
+                opacity: [0, 1, 1, 0]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 4.5, 
+                ease: "linear" 
+              }}
             />
           </div>
 
@@ -95,7 +101,7 @@ export const HowItWorks: React.FC = () => {
                 transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.12 }}
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-black/[0.04] shadow-sm flex items-center justify-center font-sans font-medium text-sm sm:text-base text-neutral-800 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none">
+                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-black/[0.04] shadow-sm flex items-center justify-center font-sans font-medium text-sm sm:text-base text-neutral-800 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
                   {step.num}
                   <span className="absolute -inset-1 rounded-full border border-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-105" />
                 </div>
@@ -121,7 +127,7 @@ export const HowItWorks: React.FC = () => {
                   <motion.div 
                     animate={{ 
                       scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
-                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#D4D4D4'
+                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#E5E5E5'
                     }}
                     transition={{ duration: 0.8 }}
                     className="w-1.5 h-1.5 rounded-full"
@@ -129,12 +135,12 @@ export const HowItWorks: React.FC = () => {
                   <motion.div 
                     animate={{ 
                       scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
-                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#D4D4D4'
+                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#E5E5E5'
                     }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
+                    transition={{ duration: 0.8, delay: 0.25 }}
                     className="w-1.5 h-1.5 rounded-full"
                   />
-                  <span className={`text-[10px] transition-colors duration-500 ${activeDotIdx === idx ? 'text-blue-500' : 'text-neutral-300'}`}>↓</span>
+                  <span className={`text-[10px] font-sans transition-colors duration-500 ${activeDotIdx === idx ? 'text-blue-500' : 'text-neutral-300'}`}>↓</span>
                 </div>
 
               </motion.div>
