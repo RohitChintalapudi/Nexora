@@ -90,58 +90,94 @@ export const ProblemSection: React.FC = () => {
 
           {/* Fragmented Tools Outer Shell */}
           {/* Card 1: Top Left */}
-          <div className="absolute top-[8%] left-[2%] sm:left-[10%] xl:left-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: -35, y: -25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+            className="absolute top-[8%] left-[2%] sm:left-[10%] xl:left-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[0].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[0].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[0].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 2: Left */}
-          <div className="absolute top-[45%] left-[0%] sm:left-[4%] xl:left-[8%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: -45 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+            className="absolute top-[45%] left-[0%] sm:left-[4%] xl:left-[8%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[1].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[1].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[1].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 3: Bottom Left */}
-          <div className="absolute bottom-[8%] left-[2%] sm:left-[10%] xl:left-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: -35, y: 25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.3 }}
+            className="absolute bottom-[8%] left-[2%] sm:left-[10%] xl:left-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[2].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[2].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[2].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 4: Top Right */}
-          <div className="absolute top-[8%] right-[2%] sm:right-[10%] xl:right-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: 35, y: -25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
+            className="absolute top-[8%] right-[2%] sm:right-[10%] xl:right-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[3].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[3].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[3].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 5: Right */}
-          <div className="absolute top-[45%] right-[0%] sm:right-[4%] xl:right-[8%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: 45 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.5 }}
+            className="absolute top-[45%] right-[0%] sm:right-[4%] xl:right-[8%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[4].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[4].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[4].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Card 6: Bottom Right */}
-          <div className="absolute bottom-[8%] right-[2%] sm:right-[10%] xl:right-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5">
+          <motion.div
+            initial={{ opacity: 0, x: 35, y: 25 }}
+            whileInView={{ opacity: 1, x: 0, y: 0 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.6 }}
+            className="absolute bottom-[8%] right-[2%] sm:right-[10%] xl:right-[15%] w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border border-black/[0.045] shadow-[0_2px_8px_rgba(0,0,0,0.015)] flex items-center gap-2.5"
+          >
             <span className="text-xl sm:text-2xl">{tools[5].icon}</span>
             <div>
               <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[5].name}</div>
               <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[5].desc}</div>
             </div>
-          </div>
+          </motion.div>
 
         </div>
 

@@ -46,10 +46,10 @@ export const PricingSection: React.FC = () => {
           
           {/* Basic Plan Card */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
             className="flex flex-col rounded-3xl bg-white border border-black/[0.045] p-8 shadow-[0_2px_12px_rgba(0,0,0,0.01)]"
           >
             <div className="mb-6">
@@ -85,10 +85,10 @@ export const PricingSection: React.FC = () => {
 
           {/* Premium Plan Card (Standing Out) */}
           <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true, margin: '-50px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.1 }}
             className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative"
           >
             {/* Tag Badge */}

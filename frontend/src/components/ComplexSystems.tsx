@@ -65,8 +65,8 @@ export const ComplexSystems: React.FC = () => {
               key={card.title}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: idx * 0.08 }}
+              viewport={{ once: true, margin: '-50px' }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.06 }}
               className="bg-white border border-black/[0.045] hover:border-black/[0.07] rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.025)] transition-all duration-300"
             >
               <div className="flex items-center gap-3 mb-4">
