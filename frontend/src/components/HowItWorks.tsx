@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface StepItem {
@@ -9,6 +9,15 @@ interface StepItem {
 }
 
 export const HowItWorks: React.FC = () => {
+  const [activeDotIdx, setActiveDotIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveDotIdx((prev) => (prev + 1) % 4);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
   const steps: StepItem[] = [
     {
       num: '01',
@@ -65,8 +74,8 @@ export const HowItWorks: React.FC = () => {
           </h2>
         </div>
 
-        <div className="relative">
-          <div className="absolute top-7 left-[12%] right-[12%] h-[1px] bg-neutral-200 hidden md:block z-0">
+        <div className="relative max-w-5xl mx-auto">
+          <div className="absolute top-[28px] left-[12.5%] right-[12.5%] h-[1px] bg-neutral-200 hidden md:block z-0">
             <motion.div 
               className="h-full bg-blue-500 origin-left"
               initial={{ scaleX: 0 }}
@@ -107,6 +116,27 @@ export const HowItWorks: React.FC = () => {
                     </li>
                   ))}
                 </ul>
+
+                <div className="flex flex-col items-center gap-1.5 mt-8 w-full select-none">
+                  <motion.div 
+                    animate={{ 
+                      scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
+                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#D4D4D4'
+                    }}
+                    transition={{ duration: 0.8 }}
+                    className="w-1.5 h-1.5 rounded-full"
+                  />
+                  <motion.div 
+                    animate={{ 
+                      scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
+                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#D4D4D4'
+                    }}
+                    transition={{ duration: 0.8, delay: 0.2 }}
+                    className="w-1.5 h-1.5 rounded-full"
+                  />
+                  <span className={`text-[10px] transition-colors duration-500 ${activeDotIdx === idx ? 'text-blue-500' : 'text-neutral-300'}`}>↓</span>
+                </div>
+
               </motion.div>
             ))}
           </div>

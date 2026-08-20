@@ -7,12 +7,12 @@ export const ProblemSection: React.FC = () => {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
 
   const tools = [
-    { name: 'Code', icon: '💻', desc: 'Repositories' },
-    { name: 'Documentation', icon: '📄', desc: 'Wikis & Readmes' },
-    { name: 'Architecture', icon: '📐', desc: 'Static Diagrams' },
-    { name: 'Issues', icon: '🎫', desc: 'Tickets & Tasks' },
-    { name: 'AI', icon: '🤖', desc: 'Generic Chatbots' },
-    { name: 'Logs', icon: '📝', desc: 'Trace Outputs' },
+    { name: 'CODE', icon: '💻', desc: 'Repositories', meta: '142 files indexed' },
+    { name: 'DOCUMENTATION', icon: '📄', desc: 'Wiki & Readmes', meta: '18 sources connected' },
+    { name: 'ARCHITECTURE', icon: '📐', desc: 'System Maps', meta: '12 services detected' },
+    { name: 'ISSUES', icon: '🎫', desc: 'Tickets & Tasks', meta: '24 active issues' },
+    { name: 'AI', icon: '🤖', desc: 'Contextual Intelligence', meta: 'Repository-aware answers' },
+    { name: 'LOGS', icon: '📝', desc: 'Trace Outputs', meta: '3 environments monitored' }
   ];
 
   const handleMouseMove = (e: React.MouseEvent) => {
@@ -98,34 +98,48 @@ export const ProblemSection: React.FC = () => {
                   <motion.path
                     d={p.d}
                     stroke={isPathHovered ? '#2563EB' : 'rgba(37, 99, 235, 0.4)'}
-                    strokeWidth={isPathHovered ? 2 : 1.5}
-                    strokeDasharray="8, 25"
+                    strokeWidth={isPathHovered ? 2.5 : 1.5}
+                    strokeDasharray={isPathHovered ? '8, 40' : '8, 25'}
                     strokeDashoffset="0"
                     fill="none"
                     animate={{ 
-                      strokeDashoffset: [-100, 100],
+                      strokeDashoffset: isPathHovered ? [0, -96] : [-100, 100],
                       opacity: glowOpacity
                     }}
                     transition={{ 
-                      strokeDashoffset: { repeat: Infinity, duration: lineSpeed, ease: "linear" },
+                      strokeDashoffset: { repeat: Infinity, duration: isPathHovered ? 1.0 : lineSpeed, ease: "linear" },
                       opacity: { duration: 0.3 }
                     }}
                   />
                 </g>
               );
             })}
+
+            <circle cx="380" cy="235" r="2.5" fill="#2563EB" opacity="0.35" />
+            <circle cx="360" cy="250" r="2.5" fill="#2563EB" opacity="0.35" />
+            <circle cx="380" cy="265" r="2.5" fill="#2563EB" opacity="0.35" />
+            <circle cx="420" cy="235" r="2.5" fill="#2563EB" opacity="0.35" />
+            <circle cx="440" cy="250" r="2.5" fill="#2563EB" opacity="0.35" />
+            <circle cx="420" cy="265" r="2.5" fill="#2563EB" opacity="0.35" />
           </svg>
 
           <motion.div 
-            animate={{ x: mouseOffset.x * 0.4, y: mouseOffset.y * 0.4 }}
+            animate={{ 
+              x: mouseOffset.x * 0.4, 
+              y: mouseOffset.y * 0.4,
+              scale: hoveredIdx !== null ? 1.025 : 1,
+              boxShadow: hoveredIdx !== null 
+                ? '0 12px 48px rgba(37, 99, 235, 0.12), 0 0 20px rgba(37, 99, 235, 0.08)' 
+                : '0 8px 40px rgba(37,99,235,0.06)'
+            }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="absolute z-10 w-36 h-36 rounded-full bg-white flex flex-col items-center justify-center border border-blue-500/20 shadow-[0_8px_40px_rgba(37,99,235,0.06),_0_0_20px_rgba(37,99,235,0.03)] text-center p-3 select-none"
+            className="absolute z-10 w-36 h-36 rounded-full bg-white flex flex-col items-center justify-center border border-blue-500/20 text-center p-3 select-none"
           >
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-blue-600 mb-0.5">
+            <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-blue-600 mb-0.5">
               NEXORA
             </span>
-            <span className="text-[9px] font-medium text-neutral-400 font-sans leading-tight">
-              One Connected Understanding
+            <span className="text-[8.5px] font-semibold text-neutral-400 font-sans leading-tight">
+              One context. Every signal.
             </span>
             <div className="absolute inset-0 rounded-full border border-blue-500/25 animate-ping opacity-25" style={{ animationDuration: '3s' }} />
           </motion.div>
@@ -140,20 +154,23 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8,
+                y: mouseOffset.y * 0.8 + (hoveredIdx === 0 ? -4 : 0),
                 scale: hoveredIdx === 0 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 0 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 0 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 0 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(0)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
-              <span className="text-xl sm:text-2xl">{tools[0].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[0].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[0].desc}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl select-none">{tools[0].icon}</span>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[0].name}</div>
+              </div>
+              <div className="w-full">
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[0].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[0].meta}</div>
               </div>
             </motion.div>
           </motion.div>
@@ -168,20 +185,23 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.9, 
-                y: mouseOffset.y * 0.9,
+                y: mouseOffset.y * 0.9 + (hoveredIdx === 1 ? -4 : 0),
                 scale: hoveredIdx === 1 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 1 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 1 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 1 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(1)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
-              <span className="text-xl sm:text-2xl">{tools[1].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[1].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[1].desc}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl select-none">{tools[1].icon}</span>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[1].name}</div>
+              </div>
+              <div className="w-full">
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[1].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[1].meta}</div>
               </div>
             </motion.div>
           </motion.div>
@@ -196,20 +216,23 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8,
+                y: mouseOffset.y * 0.8 + (hoveredIdx === 2 ? -4 : 0),
                 scale: hoveredIdx === 2 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 2 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 2 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 2 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(2)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
-              <span className="text-xl sm:text-2xl">{tools[2].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[2].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[2].desc}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl select-none">{tools[2].icon}</span>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[2].name}</div>
+              </div>
+              <div className="w-full">
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[2].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[2].meta}</div>
               </div>
             </motion.div>
           </motion.div>
@@ -224,20 +247,23 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8,
+                y: mouseOffset.y * 0.8 + (hoveredIdx === 3 ? -4 : 0),
                 scale: hoveredIdx === 3 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 3 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 3 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 3 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(3)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
-              <span className="text-xl sm:text-2xl">{tools[3].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[3].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[3].desc}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl select-none">{tools[3].icon}</span>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[3].name}</div>
+              </div>
+              <div className="w-full">
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[3].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[3].meta}</div>
               </div>
             </motion.div>
           </motion.div>
@@ -252,20 +278,23 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.9, 
-                y: mouseOffset.y * 0.9,
+                y: mouseOffset.y * 0.9 + (hoveredIdx === 4 ? -4 : 0),
                 scale: hoveredIdx === 4 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 4 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 4 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 4 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(4)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
-              <span className="text-xl sm:text-2xl">{tools[4].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[4].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[4].desc}</div>
+              <div className="flex items-center gap-2">
+                <span className="text-lg sm:text-xl select-none">{tools[4].icon}</span>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[4].name}</div>
+              </div>
+              <div className="w-full">
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[4].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[4].meta}</div>
               </div>
             </motion.div>
           </motion.div>
@@ -280,20 +309,21 @@ export const ProblemSection: React.FC = () => {
             <motion.div
               animate={{ 
                 x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8,
+                y: mouseOffset.y * 0.8 + (hoveredIdx === 5 ? -4 : 0),
                 scale: hoveredIdx === 5 ? 1.03 : 1,
                 boxShadow: hoveredIdx === 5 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 5 ? 'rgba(37,99,235,0.18)' : 'rgba(0,0,0,0.045)'
+                borderColor: hoveredIdx === 5 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
               }}
               transition={{ type: 'spring', damping: 20, stiffness: 150 }}
               onMouseEnter={() => setHoveredIdx(5)}
               onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-40 p-3 sm:p-4 rounded-xl bg-white border cursor-pointer flex items-center gap-2.5 transition-colors duration-300"
+              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
             >
               <span className="text-xl sm:text-2xl">{tools[5].icon}</span>
               <div>
-                <div className="text-neutral-800 font-medium text-xs sm:text-sm font-sans leading-tight">{tools[5].name}</div>
-                <div className="text-neutral-400 text-[10px] font-sans mt-0.5">{tools[5].desc}</div>
+                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[5].name}</div>
+                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[5].desc}</div>
+                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[5].meta}</div>
               </div>
             </motion.div>
           </motion.div>

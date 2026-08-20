@@ -3,7 +3,6 @@ import { motion } from 'framer-motion';
 import { FloatingInsightCard } from './FloatingInsightCard';
 
 export const Hero: React.FC = () => {
-  // Framer motion variants for stagger entries
   const containerVariants = {
     initial: {},
     animate: {
@@ -20,7 +19,7 @@ export const Hero: React.FC = () => {
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1] as const, // premium cubic-bezier easeOut
+        ease: [0.16, 1, 0.3, 1] as const,
       },
     },
   };
@@ -43,14 +42,12 @@ export const Hero: React.FC = () => {
   return (
     <section className="relative min-h-[92vh] flex items-center justify-center pt-28 pb-12 overflow-hidden px-6 content-layer">
       
-      {/* Central Content */}
       <motion.div
         variants={containerVariants}
         initial="initial"
         animate="animate"
         className="relative z-20 max-w-3xl text-center flex flex-col items-center"
       >
-        {/* Eyebrow / Tagline */}
         <motion.div
           variants={itemVariants}
           className="mb-5 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/[0.035] border border-black/[0.04] backdrop-blur-[2px]"
@@ -61,7 +58,6 @@ export const Hero: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* Headline */}
         <motion.h1
           variants={itemVariants}
           className="text-4xl sm:text-5xl md:text-6xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.08] mb-6 max-w-2xl"
@@ -72,7 +68,6 @@ export const Hero: React.FC = () => {
           Build the future.
         </motion.h1>
 
-        {/* Subtitle */}
         <motion.p
           variants={itemVariants}
           className="text-neutral-500 text-base sm:text-lg font-sans max-w-xl mb-10 leading-relaxed"
@@ -80,7 +75,6 @@ export const Hero: React.FC = () => {
           NEXORA maps your software, understands its architecture, and helps you explore every connection with AI.
         </motion.p>
 
-        {/* CTA Buttons */}
         <motion.div
           variants={itemVariants}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
@@ -104,14 +98,11 @@ export const Hero: React.FC = () => {
         </motion.div>
       </motion.div>
 
-      {/* Floating UI Elements (Parallax & Tilt) */}
-      
-      {/* 1. Top Left: Repository Structure */}
       <motion.div
         variants={cardVariants(-30, -20)}
         initial="initial"
         animate="animate"
-        className="absolute top-[12%] left-[2%] xl:left-[4%] 2xl:left-[8%] z-30 hidden xl:block w-56"
+        className="absolute top-[24%] left-[2%] xl:left-[4%] 2xl:left-[8%] z-30 hidden xl:block w-56"
       >
         <FloatingInsightCard depth={12} tiltMax={6}>
           <div className="flex items-center justify-between border-b border-black/[0.04] pb-2 mb-2.5">
@@ -146,12 +137,11 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
-      {/* 2. Top Right: Architecture Insight */}
       <motion.div
         variants={cardVariants(30, -20)}
         initial="initial"
         animate="animate"
-        className="absolute top-[10%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-60"
+        className="absolute top-[22%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-60"
       >
         <FloatingInsightCard depth={18} tiltMax={8}>
           <div className="flex items-center justify-between border-b border-black/[0.04] pb-2 mb-3">
@@ -178,7 +168,6 @@ export const Hero: React.FC = () => {
             </div>
           </div>
           
-          {/* Micro graphic representing a microservice map */}
           <div className="flex items-center justify-center gap-3 py-1.5 bg-neutral-50/50 rounded-lg border border-neutral-100/50">
             <span className="w-2 h-2 rounded bg-neutral-300" />
             <span className="w-4 border-t border-dashed border-neutral-300" />
@@ -189,7 +178,6 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
-      {/* 3. Bottom Left: Dependency Flow */}
       <motion.div
         variants={cardVariants(-30, 20)}
         initial="initial"
@@ -220,7 +208,6 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
-      {/* 4. Bottom Right: AI Insight */}
       <motion.div
         variants={cardVariants(30, 20)}
         initial="initial"
@@ -240,7 +227,6 @@ export const Hero: React.FC = () => {
           <div className="text-[10px] font-sans text-neutral-400 leading-normal mb-3">
             Identified 12 related files across API Gateway and PostgreSQL connectors.
           </div>
-          {/* Pulsing visual AI bar */}
           <div className="w-full h-1 bg-neutral-100 rounded-full overflow-hidden">
             <motion.div
               className="h-full bg-blue-600"
