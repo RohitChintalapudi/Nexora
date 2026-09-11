@@ -29,43 +29,43 @@ function App() {
         
         <Hero />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <ProblemSection />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <HowItWorks />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <ProductIntelligence />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <AskCodebase />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <ComplexSystems />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <TechnicalFoundation />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <CollaborationSection />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <PricingSection />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <FAQSection />
 
-        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.035]" />
+        <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
 
         <FinalCTA />
 

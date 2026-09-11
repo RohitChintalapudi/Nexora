@@ -87,7 +87,7 @@ export const Hero: React.FC = () => {
           variants={itemVariants}
           style={{ 
             fontFamily: '"Times New Roman", Times, Georgia, serif',
-            textShadow: '0 2px 12px rgba(0, 0, 0, 0.45)'
+            textShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
           }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-tight text-white leading-[1.12] mb-6 max-w-3xl"
         >

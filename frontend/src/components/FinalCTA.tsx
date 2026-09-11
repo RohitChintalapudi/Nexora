@@ -6,7 +6,7 @@ export const FinalCTA: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
 
   return (
-    <section className="relative py-12 md:py-20 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
+    <section className="relative py-12 md:py-20 bg-[#F7F7F5] content-layer" id="getstarted">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         <div className="relative w-full bg-[#07080d] border border-white/[0.09] rounded-3xl py-12 sm:py-16 md:py-20 px-6 sm:px-12 md:px-16 text-center shadow-[0_20px_60px_rgba(0,0,0,0.18)] overflow-hidden">
