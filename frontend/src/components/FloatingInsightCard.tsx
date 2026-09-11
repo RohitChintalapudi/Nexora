@@ -49,7 +49,7 @@ export const FloatingInsightCard: React.FC<FloatingInsightProps> = ({
         damping: 25,
         mass: 0.5,
       }}
-      className={`bg-white border border-black/[0.045] rounded-xl p-4.5 shadow-[0_4px_24px_rgba(0,0,0,0.02),_0_1px_2px_rgba(0,0,0,0.015)] hover:shadow-[0_12px_36px_rgba(0,0,0,0.05),_0_2px_6px_rgba(0,0,0,0.02)] hover:border-black/[0.07] transition-shadow duration-500 select-none ${className}`}
+      className={`bg-[#111218]/85 border border-white/[0.09] rounded-xl p-4.5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] backdrop-blur-xl hover:shadow-[0_12px_40px_rgba(0,0,0,0.6)] hover:border-white/[0.16] transition-all duration-500 select-none ${className}`}
     >
       {/* 3D Inner Content Shift */}
       <div 
@@ -58,7 +58,7 @@ export const FloatingInsightCard: React.FC<FloatingInsightProps> = ({
           backfaceVisibility: 'hidden',
           WebkitBackfaceVisibility: 'hidden',
         }} 
-        className="w-full h-full text-neutral-900 font-sans antialiased"
+        className="w-full h-full text-white font-sans antialiased"
       >
         {children}
       </div>

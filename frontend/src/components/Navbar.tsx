@@ -26,13 +26,13 @@ export const Navbar: React.FC = () => {
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         scrolled
-          ? 'bg-[#F7F7F5]/80 backdrop-blur-md border-black/[0.06] shadow-sm py-3.5'
+          ? 'bg-[#090909]/80 backdrop-blur-xl border-white/[0.08] shadow-lg shadow-black/20 py-3.5'
           : 'bg-transparent border-transparent py-5'
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Left Section: Logo */}
-        <Logo />
+        <Logo theme="dark" />
 
         {/* Center Section: Navigation Links */}
         <nav className="hidden md:flex items-center gap-8">
@@ -40,10 +40,10 @@ export const Navbar: React.FC = () => {
             <a
               key={item}
               href={`#${item.toLowerCase()}`}
-              className="text-neutral-500 hover:text-neutral-900 font-medium text-sm font-sans tracking-wide transition-colors relative py-1 group"
+              className="text-neutral-300 hover:text-white font-medium text-sm font-sans tracking-wide transition-colors relative py-1 group"
             >
               {item}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-neutral-900 transition-all duration-300 group-hover:w-full" />
+              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-blue-500 transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
         </nav>
@@ -52,7 +52,7 @@ export const Navbar: React.FC = () => {
         <div className="flex items-center gap-6">
           <a
             href="#signin"
-            className="text-neutral-500 hover:text-neutral-900 font-medium text-sm font-sans transition-colors"
+            className="text-neutral-300 hover:text-white font-medium text-sm font-sans transition-colors"
           >
             Sign in
           </a>
@@ -60,7 +60,7 @@ export const Navbar: React.FC = () => {
             href="#getstarted"
             whileHover={{ scale: 1.02, y: -1 }}
             whileTap={{ scale: 0.98 }}
-            className="px-4.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm font-sans tracking-wide transition-colors shadow-sm shadow-blue-500/10 hover:shadow-blue-500/20"
+            className="px-4.5 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm font-sans tracking-wide transition-colors shadow-sm shadow-blue-500/20 hover:shadow-blue-500/40"
           >
             Get started
           </motion.a>
