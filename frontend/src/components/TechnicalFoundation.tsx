@@ -54,17 +54,11 @@ export const TechnicalFoundation: React.FC = () => {
             {steps.map((step, idx) => (
               <React.Fragment key={step}>
                 {/* Step Node */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                  whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.06 }}
-                  className="flex flex-col items-center"
-                >
+                <div className="flex flex-col items-center">
                   <div className="px-3.5 py-2 rounded-lg bg-white border border-black/[0.04] text-[10px] sm:text-xs font-mono text-neutral-700 shadow-sm shadow-black/[0.005]">
                     {step}
                   </div>
-                </motion.div>
+                </div>
                 {/* Arrow Connector */}
                 {idx < steps.length - 1 && (
                   <svg className="w-10 h-2" viewBox="0 0 40 8" fill="none">
@@ -82,13 +76,9 @@ export const TechnicalFoundation: React.FC = () => {
 
         {/* Details Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {details.map((item, idx) => (
-            <motion.div
+          {details.map((item) => (
+            <div
               key={item.label}
-              initial={{ opacity: 0, y: 15 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.06 }}
               className="p-5.5 rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.008)] hover:border-black/[0.07] transition-all duration-300"
             >
               <h3 className="font-sans font-semibold text-neutral-800 text-sm mb-2.5">
@@ -97,7 +87,7 @@ export const TechnicalFoundation: React.FC = () => {
               <p className="text-neutral-400 hover:text-neutral-500 text-xs leading-relaxed transition-colors duration-300">
                 {item.desc}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
 

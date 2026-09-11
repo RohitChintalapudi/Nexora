@@ -16,7 +16,7 @@ import './App.css';
 
 function App() {
   return (
-    <div className="relative min-h-screen bg-[#F7F7F5] overflow-hidden">
+    <div className="relative min-h-screen bg-[#F7F7F5] overflow-x-hidden">
       
       <div className="bg-layer">
         <ParticleNetwork />

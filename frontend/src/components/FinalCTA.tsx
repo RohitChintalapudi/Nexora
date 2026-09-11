@@ -6,10 +6,10 @@ export const FinalCTA: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
 
   return (
-    <section className="relative py-16 md:py-24 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="relative py-12 md:py-20 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="getstarted">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
-        <div className="relative bg-[#07080d] border border-white/[0.08] rounded-3xl p-8 sm:p-16 md:p-20 text-center shadow-[0_20px_60px_rgba(0,0,0,0.18)] overflow-hidden">
+        <div className="relative w-full bg-[#07080d] border border-white/[0.09] rounded-3xl py-12 sm:py-16 md:py-20 px-6 sm:px-12 md:px-16 text-center shadow-[0_20px_60px_rgba(0,0,0,0.18)] overflow-hidden">
           
           {/* WebGPU Shader Background */}
           {!gpuFailed && (
@@ -28,24 +28,24 @@ export const FinalCTA: React.FC = () => {
           {/* Fallback glow if WebGPU is unavailable */}
           {gpuFailed && (
             <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[300px] bg-blue-600/20 blur-[100px] rounded-full" />
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[200px] bg-indigo-500/20 blur-[80px] rounded-full" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-blue-600/20 blur-[100px] rounded-full" />
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[350px] h-[200px] bg-indigo-500/20 blur-[80px] rounded-full" />
             </div>
           )}
 
           {/* Foreground Content */}
-          <div className="relative z-10 max-w-xl mx-auto flex flex-col items-center">
+          <div className="relative z-10 max-w-2xl mx-auto flex flex-col items-center">
             
             <div className="w-11 h-11 rounded-full bg-white/[0.06] border border-white/[0.12] backdrop-blur-md flex items-center justify-center mb-6 shadow-inner select-none">
               <span className="text-blue-400 font-bold text-sm tracking-wider">N</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-white leading-[1.14] mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-normal tracking-tight text-white leading-[1.12] mb-6">
               Your codebase is more than files.<br />
-              <span className="text-neutral-400 font-light">Understand how it all connects.</span>
+              <span className="text-white font-normal">Understand how it all connects.</span>
             </h2>
 
-            <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-10 max-w-lg">
+            <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-10 max-w-xl font-light">
               Start exploring your software with NEXORA. Connect your repositories and understand your system structure in minutes.
             </p>
 

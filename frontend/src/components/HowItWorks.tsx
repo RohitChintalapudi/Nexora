@@ -100,12 +100,8 @@ export const HowItWorks: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
             {steps.map((step, idx) => (
-              <motion.div
+              <div
                 key={step.num}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-100px' }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.12 }}
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
                 <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-black/[0.04] shadow-sm flex items-center justify-center font-sans font-medium text-sm sm:text-base text-neutral-800 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
@@ -150,7 +146,7 @@ export const HowItWorks: React.FC = () => {
                   <span className={`text-[10px] font-sans transition-colors duration-500 ${activeDotIdx === idx ? 'text-blue-500' : 'text-neutral-300'}`}>↓</span>
                 </div>
 
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

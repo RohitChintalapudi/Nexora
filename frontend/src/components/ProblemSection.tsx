@@ -227,10 +227,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: -35, y: -25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.1 }}
             className="absolute top-[8%] left-[2%] sm:left-[10%] xl:left-[15%] flex items-center justify-center"
           >
             <motion.div
@@ -258,10 +254,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: -45 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
             className="absolute top-[45%] left-[0%] sm:left-[4%] xl:left-[8%] flex items-center justify-center"
           >
             <motion.div
@@ -289,10 +281,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: -35, y: 25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.3 }}
             className="absolute bottom-[8%] left-[2%] sm:left-[10%] xl:left-[15%] flex items-center justify-center"
           >
             <motion.div
@@ -320,10 +308,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 35, y: -25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.4 }}
             className="absolute top-[8%] right-[2%] sm:right-[10%] xl:right-[15%] flex items-center justify-center"
           >
             <motion.div
@@ -351,10 +335,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 45 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.5 }}
             className="absolute top-[45%] right-[0%] sm:right-[4%] xl:right-[8%] flex items-center justify-center"
           >
             <motion.div
@@ -382,10 +362,6 @@ export const ProblemSection: React.FC = () => {
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, x: 35, y: 25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.6 }}
             className="absolute bottom-[8%] right-[2%] sm:right-[10%] xl:right-[15%] flex items-center justify-center"
           >
             <motion.div

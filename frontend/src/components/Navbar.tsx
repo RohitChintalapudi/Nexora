@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Logo } from './Logo';
+import { InteractiveHoverButton } from '@/components/ui/interactive-hover-button';
 
 export const Navbar: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -21,6 +22,15 @@ export const Navbar: React.FC = () => {
     { name: 'Collaboration', href: '#collaboration' },
     { name: 'Architecture', href: '#architecture' },
   ];
+
+  const handleGetStarted = () => {
+    const el = document.getElementById('getstarted');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      window.location.hash = '#getstarted';
+    }
+  };
 
   return (
     <motion.header
@@ -95,18 +105,11 @@ export const Navbar: React.FC = () => {
             <span className="relative z-10">Sign in</span>
           </a>
 
-          <motion.a
-            href="#getstarted"
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className="relative inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-blue-600 hover:bg-blue-500 text-white font-medium text-xs sm:text-sm tracking-wide transition-all shadow-[0_0_24px_rgba(37,99,235,0.55),_inset_0_1px_2px_rgba(255,255,255,0.35)] border border-blue-400/40 select-none overflow-hidden group"
-          >
-            <span className="relative z-10 flex items-center gap-1.5">
-              Get started
-              <span className="text-xs transition-transform duration-200 group-hover:translate-x-0.5">→</span>
-            </span>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
-          </motion.a>
+          <InteractiveHoverButton
+            text="Get started"
+            onClick={handleGetStarted}
+            className="w-32 sm:w-36 py-1.5 px-3 text-xs sm:text-sm font-medium border-white/20 bg-white/10 text-white hover:bg-blue-600 hover:border-blue-600 shadow-sm"
+          />
 
           {/* Mobile menu toggle */}
           <button
@@ -147,6 +150,16 @@ export const Navbar: React.FC = () => {
             >
               Sign in
             </a>
+            <div className="pt-2 flex justify-center">
+              <InteractiveHoverButton
+                text="Get started"
+                className="w-full py-2.5 text-sm font-medium border-white/20 bg-white/10 text-white hover:bg-blue-600 hover:border-blue-600"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  handleGetStarted();
+                }}
+              />
+            </div>
           </motion.div>
         )}
       </AnimatePresence>

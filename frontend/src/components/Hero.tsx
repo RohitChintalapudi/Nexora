@@ -85,7 +85,11 @@ export const Hero: React.FC = () => {
 
         <motion.h1
           variants={itemVariants}
-          className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-sans font-normal tracking-tight text-white leading-[1.08] mb-6 max-w-3xl drop-shadow-sm"
+          style={{ 
+            fontFamily: '"Times New Roman", Times, Georgia, serif',
+            textShadow: '0 2px 12px rgba(0, 0, 0, 0.45)'
+          }}
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-tight text-white leading-[1.12] mb-6 max-w-3xl"
         >
           Understand your entire software.<br />
           Build the future.
