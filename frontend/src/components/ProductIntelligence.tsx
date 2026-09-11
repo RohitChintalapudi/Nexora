@@ -187,14 +187,16 @@ export const ProductIntelligence: React.FC = () => {
             className="lg:col-span-7 order-last lg:order-first"
           >
             <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs relative flex flex-col min-h-[300px]">
-              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50 select-none">
+              <div className="h-11 flex items-center justify-between border-b border-black/[0.035] px-6 bg-neutral-50/50 select-none">
                 <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">ARCHITECTURE MAP</span>
                 {hoveredNode ? (
                   <span className="text-[9px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded px-2 py-0.5 max-w-[200px] truncate">
                     {nodes.find(n => n.id === hoveredNode)?.info}
                   </span>
                 ) : (
-                  <span className="text-[9px] text-neutral-400">Hover nodes to explore connections</span>
+                  <span className="text-[9px] text-neutral-400 border border-transparent py-0.5 px-2">
+                    Hover nodes to explore connections
+                  </span>
                 )}
               </div>
 

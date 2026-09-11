@@ -25,12 +25,11 @@ export const Hero: React.FC = () => {
   };
 
   const cardVariants = (startX: number, startY: number) => ({
-    initial: { x: startX, y: startY, opacity: 0, scale: 0.95 },
+    initial: { x: startX, y: startY, opacity: 0 },
     animate: {
       x: 0,
       y: 0,
       opacity: 1,
-      scale: 1,
       transition: {
         duration: 1.1,
         ease: [0.16, 1, 0.3, 1] as const,
@@ -141,39 +140,49 @@ export const Hero: React.FC = () => {
         variants={cardVariants(30, -20)}
         initial="initial"
         animate="animate"
-        className="absolute top-[22%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-60"
+        className="absolute top-[22%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-64"
       >
         <FloatingInsightCard depth={18} tiltMax={8}>
           <div className="flex items-center justify-between border-b border-black/[0.04] pb-2 mb-3">
             <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400">
-              System Overview
+              Impact Sandbox
             </span>
-            <span className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-500">
-              v1.4.0
+            <span className="text-[9px] font-sans font-semibold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-500 border border-neutral-200/40">
+              PREDICT
             </span>
           </div>
-          
-          <div className="grid grid-cols-3 gap-2 mb-3 text-center">
-            <div className="p-1.5 rounded-lg bg-neutral-50 border border-neutral-100/50">
-              <div className="text-neutral-900 font-semibold text-xs font-sans">12</div>
-              <div className="text-[9px] text-neutral-400">Services</div>
-            </div>
-            <div className="p-1.5 rounded-lg bg-neutral-50 border border-neutral-100/50">
-              <div className="text-neutral-900 font-semibold text-xs font-sans">48</div>
-              <div className="text-[9px] text-neutral-400">Comps</div>
-            </div>
-            <div className="p-1.5 rounded-lg bg-blue-50/20 border border-blue-500/10 text-blue-600">
-              <div className="font-semibold text-xs font-sans">127</div>
-              <div className="text-[9px] opacity-80">Deps</div>
+
+          <div className="mb-3">
+            <div className="text-[9px] text-neutral-400 font-sans uppercase tracking-wider mb-1">Target Change</div>
+            <div className="flex items-center gap-1.5 py-1 px-2 rounded bg-neutral-50 border border-black/[0.03] text-neutral-700 font-mono text-[10px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+              <span>services/auth.ts</span>
+              <span className="text-[9px] ml-auto text-neutral-400 font-sans">Modified</span>
             </div>
           </div>
-          
-          <div className="flex items-center justify-center gap-3 py-1.5 bg-neutral-50/50 rounded-lg border border-neutral-100/50">
-            <span className="w-2 h-2 rounded bg-neutral-300" />
-            <span className="w-4 border-t border-dashed border-neutral-300" />
-            <span className="w-2.5 h-2.5 rounded bg-blue-500 shadow-sm shadow-blue-500/20 animate-pulse" />
-            <span className="w-4 border-t border-dashed border-neutral-300" />
-            <span className="w-2 h-2 rounded bg-neutral-300" />
+
+          <div>
+            <div className="text-[9px] text-neutral-400 font-sans uppercase tracking-wider mb-1.5">Downstream Risks</div>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between py-1 px-2 rounded bg-neutral-50 border border-black/[0.03]">
+                <span className="text-[10px] font-mono text-neutral-600">gateway/router.ts</span>
+                <span className="text-[9px] font-sans font-bold px-1.5 py-0.5 bg-neutral-900 text-white rounded">
+                  High Risk
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-1 px-2 rounded bg-neutral-50 border border-black/[0.03]">
+                <span className="text-[10px] font-mono text-neutral-600">services/user.ts</span>
+                <span className="text-[9px] font-sans font-medium px-1.5 py-0.5 bg-neutral-100 text-neutral-600 border border-neutral-200/50 rounded">
+                  Med Risk
+                </span>
+              </div>
+              <div className="flex items-center justify-between py-1 px-2 rounded bg-neutral-50 border border-black/[0.03]">
+                <span className="text-[10px] font-mono text-neutral-400">tests/auth.test.ts</span>
+                <span className="text-[9px] font-sans text-neutral-400 px-1 py-0.5">
+                  Safe
+                </span>
+              </div>
+            </div>
           </div>
         </FloatingInsightCard>
       </motion.div>
