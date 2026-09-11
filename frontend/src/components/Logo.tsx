@@ -74,7 +74,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = '
         {/* Bottom Right Node */}
         <motion.circle cx="30" cy="30" r="3.5" variants={nodeVariants} />
       </svg>
-      <span className="font-semibold text-neutral-950 font-sans tracking-tight text-xl">
+      <span className={`font-semibold ${isDark ? 'text-white' : 'text-neutral-950'} font-sans tracking-tight text-xl`}>
         NEXORA
       </span>
     </motion.div>

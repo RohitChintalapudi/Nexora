@@ -37,13 +37,9 @@ export const Navbar: React.FC = () => {
           scrolled ? 'scale-[0.98] shadow-[0_16px_50px_rgba(0,0,0,0.85)]' : ''
         }`}
       >
-        {/* Left: Brand Logo & Status Pill */}
-        <a href="#" className="flex items-center gap-2 group pl-1">
+        {/* Left: Brand Logo */}
+        <a href="#" className="flex items-center group pl-1">
           <Logo theme="dark" size={24} />
-          <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-white/[0.07] border border-white/[0.1] text-[10px] font-mono text-neutral-400 font-medium select-none ml-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse shadow-[0_0_6px_rgba(96,165,250,0.9)]" />
-            AI Map
-          </span>
         </a>
 
         {/* Center: Navigation Links with Glass-Like Oval Design in Blue on Hover */}
