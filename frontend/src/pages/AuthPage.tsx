@@ -35,7 +35,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { login, register, isLoading, navigateTo } = useAuth();
+  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, navigateTo } = useAuth();
 
   useEffect(() => {
     setMode(initialMode);
@@ -100,7 +100,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     }
   };
 
-  return (
   return (
     <div className="auth-page h-screen w-full bg-[#F7F7F5] text-neutral-900 flex flex-col justify-between relative overflow-hidden font-serif selection:bg-black/10 selection:text-black">
       
@@ -233,7 +232,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div className="grid grid-cols-2 gap-2.5 mb-3.5">
                 <button
                   type="button"
-                  onClick={() => alert('Google authentication integration is ready in production.')}
+                  onClick={() => triggerGoogleSignIn()}
                   className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -259,7 +258,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => alert('GitHub authentication integration is ready in production.')}
+                  onClick={() => triggerGithubSignIn()}
                   className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98"
                 >
                   <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">

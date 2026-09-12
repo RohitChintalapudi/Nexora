@@ -96,23 +96,23 @@ export const HowItWorks: React.FC = () => {
                 key={step.num}
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white border border-black/[0.04] shadow-sm flex items-center justify-center font-sans font-medium text-sm sm:text-base text-neutral-800 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-black/[0.06] shadow-sm flex items-center justify-center font-serif font-bold text-base sm:text-lg text-neutral-900 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
                   {step.num}
-                  <span className="absolute -inset-1 rounded-full border border-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-105" />
+                  <span className="absolute -inset-1 rounded-full border border-blue-500/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-105" />
                 </div>
 
-                <h3 className="text-lg font-sans font-semibold text-neutral-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl font-serif font-semibold text-neutral-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
                   {step.title}
                 </h3>
                 
-                <p className="text-neutral-500 text-sm leading-relaxed max-w-[280px] md:max-w-none mb-4">
+                <p className="text-neutral-600 text-sm sm:text-base font-serif leading-relaxed max-w-[280px] md:max-w-none mb-4">
                   {step.desc}
                 </p>
 
-                <ul className="space-y-2 text-xs font-sans text-neutral-500 text-left w-full max-w-[280px] md:max-w-none flex flex-col items-center md:items-start">
+                <ul className="space-y-2.5 text-xs sm:text-sm font-serif text-neutral-600 text-left w-full max-w-[280px] md:max-w-none flex flex-col items-center md:items-start">
                   {step.points.map((p) => (
-                    <li key={p} className="flex items-center gap-2">
-                      <span className="w-1 h-1 rounded-full bg-blue-500" />
+                    <li key={p} className="flex items-center gap-2.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                       <span>{p}</span>
                     </li>
                   ))}

@@ -1,9 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 export interface User {
   id: number | string;
   name: string;
   email: string;
+  avatarUrl?: string;
   createdAt?: string;
 }
 
@@ -20,8 +21,20 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  loginWithGoogle: (payload: { credential?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
+  triggerGoogleSignIn: () => void;
+  loginWithGithub: (payload: { code?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
+  triggerGithubSignIn: () => void;
   logout: () => void;
 }
+
+export const GOOGLE_CLIENT_ID =
+  import.meta.env.VITE_GOOGLE_CLIENT_ID ||
+  '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com';
+
+export const GITHUB_CLIENT_ID =
+  import.meta.env.VITE_GITHUB_CLIENT_ID ||
+  'Ov23liM5dNvXngFXio8t';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -45,14 +58,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const [currentPage, setCurrentPage] = useState<'home' | 'signin' | 'signup' | 'dashboard'>(getInitialPage);
 
-  const navigateTo = (page: 'home' | 'signin' | 'signup' | 'dashboard') => {
+  const navigateTo = useCallback((page: 'home' | 'signin' | 'signup' | 'dashboard') => {
     setCurrentPage(page);
     const targetUrl = page === 'home' ? '/' : `/${page}`;
     if (window.location.pathname !== targetUrl) {
       window.history.pushState(null, '', targetUrl);
     }
     window.scrollTo(0, 0);
-  };
+  }, []);
 
   useEffect(() => {
     const handlePopState = () => {
@@ -75,8 +88,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthModalOpen(false);
   };
 
-  // Verify token on mount
+  // Verify token on mount or process incoming OAuth token
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get('token');
+    const code = params.get('code');
+
+    if (tokenFromUrl) {
+      localStorage.setItem('nexora_token', tokenFromUrl);
+      setToken(tokenFromUrl);
+      const cleanUrl = window.location.pathname === '/dashboard' ? '/dashboard' : '/dashboard';
+      window.history.replaceState({}, document.title, cleanUrl);
+      setCurrentPage('dashboard');
+
+      fetch(`${API_BASE_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${tokenFromUrl}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.user) {
+            setUser(data.user);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+      return;
+    }
+
+    if (code) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      loginWithGithub({ code });
+      return;
+    }
+
     const fetchCurrentUser = async () => {
       const storedToken = localStorage.getItem('nexora_token');
       if (!storedToken) {
@@ -166,6 +211,118 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const loginWithGoogle = async (payload: { credential?: string; accessToken?: string }) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setIsLoading(false);
+        return { success: false, message: data.message || 'Google authentication failed' };
+      }
+
+      localStorage.setItem('nexora_token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      setIsLoading(false);
+      closeAuthModal();
+      navigateTo('dashboard');
+      return { success: true };
+    } catch (err: any) {
+      setIsLoading(false);
+      return { success: false, message: err.message || 'Network error connecting to Google auth server' };
+    }
+  };
+
+  const triggerGoogleSignIn = () => {
+    if (typeof window === 'undefined') return;
+
+    const googleObj = (window as any).google;
+
+    // First preference: OAuth2 token client popup
+    if (googleObj?.accounts?.oauth2) {
+      try {
+        const tokenClient = googleObj.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: 'openid email profile',
+          callback: async (tokenResponse: any) => {
+            if (tokenResponse?.error) {
+              console.error('Google OAuth token error:', tokenResponse);
+              return;
+            }
+            if (tokenResponse?.access_token) {
+              await loginWithGoogle({ accessToken: tokenResponse.access_token });
+            }
+          },
+          error_callback: (err: any) => {
+            console.error('Google OAuth error:', err);
+          },
+        });
+        tokenClient.requestAccessToken({ prompt: 'select_account' });
+        return;
+      } catch (e) {
+        console.warn('OAuth2 client init failed, falling back to OneTap ID client:', e);
+      }
+    }
+
+    // Second preference: Google Identity Services ID token prompt
+    if (googleObj?.accounts?.id) {
+      googleObj.accounts.id.initialize({
+        client_id: GOOGLE_CLIENT_ID,
+        callback: async (response: any) => {
+          if (response?.credential) {
+            await loginWithGoogle({ credential: response.credential });
+          }
+        },
+      });
+      googleObj.accounts.id.prompt();
+      return;
+    }
+
+    // Fallback: Redirect to server-side Google OAuth endpoint
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent('http://localhost:5000/api/auth/google/callback')}&response_type=code&scope=openid%20email%20profile`;
+  };
+
+  const loginWithGithub = async (payload: { code?: string; accessToken?: string }) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setIsLoading(false);
+        return { success: false, message: data.message || 'GitHub authentication failed' };
+      }
+
+      localStorage.setItem('nexora_token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      setIsLoading(false);
+      closeAuthModal();
+      navigateTo('dashboard');
+      return { success: true };
+    } catch (err: any) {
+      setIsLoading(false);
+      return { success: false, message: err.message || 'Network error connecting to GitHub auth server' };
+    }
+  };
+
+  const triggerGithubSignIn = () => {
+    if (typeof window === 'undefined') return;
+    const redirectUri = 'http://localhost:5000/api/auth/github/callback';
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = githubAuthUrl;
+  };
+
   const logout = () => {
     localStorage.removeItem('nexora_token');
     setToken(null);
@@ -188,6 +345,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeAuthModal,
         login,
         register,
+        loginWithGoogle,
+        triggerGoogleSignIn,
+        loginWithGithub,
+        triggerGithubSignIn,
         logout,
       }}
     >

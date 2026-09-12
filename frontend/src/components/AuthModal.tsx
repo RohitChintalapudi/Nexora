@@ -5,7 +5,7 @@ import { Logo } from './Logo';
 import { Eye, EyeOff, Lock, Mail, User as UserIcon, X, Loader2, ArrowRight } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, authModalTab, closeAuthModal, openAuthModal, login, register, isLoading } = useAuth();
+  const { isAuthModalOpen, authModalTab, closeAuthModal, openAuthModal, login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -94,7 +94,7 @@ export const AuthModal: React.FC = () => {
             </button>
 
             {/* Header */}
-            <div className="flex flex-col items-center text-center mb-6">
+            <div className="flex flex-col items-center text-center mb-5">
               <div className="mb-3">
                 <Logo theme="dark" size={32} />
               </div>
@@ -108,15 +108,65 @@ export const AuthModal: React.FC = () => {
               </p>
             </div>
 
+            {/* Social OAuth Buttons */}
+            <div className="mb-4">
+              <div className="grid grid-cols-2 gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => triggerGoogleSignIn()}
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 text-xs sm:text-sm font-medium text-neutral-900 transition-all cursor-pointer shadow-sm active:scale-98"
+                >
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path
+                      fill="#EA4335"
+                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
+                    />
+                  </svg>
+                  <span>Google</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => triggerGithubSignIn()}
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/[0.1] text-xs sm:text-sm font-medium text-white transition-all cursor-pointer shadow-sm active:scale-98"
+                >
+                  <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  </svg>
+                  <span>GitHub</span>
+                </button>
+              </div>
+
+              <div className="relative flex items-center justify-center my-3.5 w-full">
+                <div className="border-t border-white/[0.1] flex-1" />
+                <span className="px-2.5 text-[11px] font-sans text-neutral-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0 select-none">
+                  or continue with email
+                </span>
+                <div className="border-t border-white/[0.1] flex-1" />
+              </div>
+            </div>
+
             {/* Tab Switcher */}
-            <div className="flex p-1 bg-white/[0.06] border border-white/[0.08] rounded-xl mb-6">
+            <div className="flex p-1 bg-white/[0.06] border border-white/[0.08] rounded-xl mb-4">
               <button
                 type="button"
                 onClick={() => {
                   setErrorMessage(null);
                   openAuthModal('login');
                 }}
-                className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
                   authModalTab === 'login'
                     ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.4)]'
                     : 'text-neutral-400 hover:text-white'
@@ -130,7 +180,7 @@ export const AuthModal: React.FC = () => {
                   setErrorMessage(null);
                   openAuthModal('register');
                 }}
-                className={`flex-1 py-2 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
                   authModalTab === 'register'
                     ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.4)]'
                     : 'text-neutral-400 hover:text-white'
@@ -152,7 +202,7 @@ export const AuthModal: React.FC = () => {
             )}
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3.5">
               {authModalTab === 'register' && (
                 <div>
                   <label className="block text-xs font-medium text-neutral-300 mb-1.5 font-sans">
@@ -240,7 +290,7 @@ export const AuthModal: React.FC = () => {
             </form>
 
             {/* Footer switcher note */}
-            <div className="mt-5 text-center text-xs text-neutral-400 font-sans">
+            <div className="mt-4 text-center text-xs text-neutral-400 font-sans">
               {authModalTab === 'register' ? (
                 <span>
                   Already have an account?{' '}

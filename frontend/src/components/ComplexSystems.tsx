@@ -62,20 +62,22 @@ export const ComplexSystems: React.FC = () => {
           {cards.map((card) => (
             <div
               key={card.title}
-              className="bg-white border border-black/[0.045] hover:border-black/[0.07] rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.025)] transition-all duration-300"
+              className="bg-white border border-black/[0.045] hover:border-black/[0.07] rounded-2xl p-6 sm:p-7 shadow-[0_2px_8px_rgba(0,0,0,0.01)] hover:shadow-[0_12px_24px_rgba(0,0,0,0.025)] transition-all duration-300 flex flex-col justify-between"
             >
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-2xl select-none">{card.icon}</span>
-                <h3 className="font-sans font-semibold text-neutral-900 text-base">
-                  {card.title}
-                </h3>
+              <div>
+                <div className="flex items-center gap-3 mb-4">
+                  <span className="text-3xl select-none">{card.icon}</span>
+                  <h3 className="font-serif font-semibold text-neutral-900 text-lg sm:text-xl">
+                    {card.title}
+                  </h3>
+                </div>
+                <div className="text-xs sm:text-sm font-serif font-medium text-blue-600 bg-blue-50/60 border border-blue-100/50 rounded-md px-3 py-1.5 mb-4 inline-block leading-snug">
+                  {card.technologies}
+                </div>
+                <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-serif">
+                  {card.description}
+                </p>
               </div>
-              <div className="text-[11px] font-sans font-medium text-blue-600 bg-blue-50/50 border border-blue-100/40 rounded px-2.5 py-1 mb-3.5 inline-block">
-                {card.technologies}
-              </div>
-              <p className="text-neutral-500 text-xs leading-relaxed font-sans">
-                {card.description}
-              </p>
             </div>
           ))}
         </div>

@@ -79,12 +79,12 @@ export const TechnicalFoundation: React.FC = () => {
           {details.map((item) => (
             <div
               key={item.label}
-              className="p-5.5 rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.008)] hover:border-black/[0.07] transition-all duration-300"
+              className="p-6 rounded-2xl bg-white border border-black/[0.04] shadow-[0_1px_3px_rgba(0,0,0,0.008)] hover:border-black/[0.07] transition-all duration-300"
             >
-              <h3 className="font-sans font-semibold text-neutral-800 text-sm mb-2.5">
+              <h3 className="font-serif font-semibold text-neutral-900 text-base sm:text-lg mb-2.5">
                 {item.label}
               </h3>
-              <p className="text-neutral-400 hover:text-neutral-500 text-xs leading-relaxed transition-colors duration-300">
+              <p className="text-neutral-600 hover:text-neutral-700 text-sm sm:text-base leading-relaxed font-serif transition-colors duration-300">
                 {item.desc}
               </p>
             </div>

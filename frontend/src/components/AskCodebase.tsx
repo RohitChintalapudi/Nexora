@@ -142,17 +142,17 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           
           {/* Left Panel: Selectable Questions */}
           <div className="lg:col-span-4 flex flex-col gap-3 justify-center">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400 block px-1.5">
+            <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-400 block px-1.5 mb-1">
               Select an Inquiry
             </span>
             {questions.map((q) => (
               <button
                 key={q}
                 onClick={() => setSelectedQuestion(q)}
-                className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm font-sans font-medium transition-all duration-300 cursor-pointer ${
+                className={`w-full text-left p-4 rounded-xl border text-sm sm:text-base font-serif font-medium transition-all duration-300 cursor-pointer ${
                   selectedQuestion === q
                     ? 'bg-white border-blue-500/20 text-blue-600 shadow-[0_2px_12px_rgba(37,99,235,0.03)]'
-                    : 'bg-white/40 border-black/[0.03] text-neutral-500 hover:text-neutral-800 hover:bg-white/80'
+                    : 'bg-white/40 border-black/[0.03] text-neutral-600 hover:text-neutral-900 hover:bg-white/80'
                 }`}
               >
                 {q}
@@ -162,7 +162,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
 
           {/* Right Panel: Code Workspace Response */}
           <div className="lg:col-span-8">
-            <div className="code-panel-dark p-4 sm:p-6 rounded-2xl flex flex-col min-h-[380px] shadow-lg">
+            <div className="code-panel-dark p-5 sm:p-7 rounded-2xl flex flex-col min-h-[380px] shadow-lg">
               
               {/* Question Label Header */}
               <div className="flex items-center justify-between border-b border-white/[0.06] pb-3 mb-4 select-none">
@@ -171,11 +171,11 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
                   <span className="w-2.5 h-2.5 rounded-full bg-yellow-500/80" />
                   <span className="w-2.5 h-2.5 rounded-full bg-green-500/80" />
                 </div>
-                <span className="text-[10px] font-mono text-white/40">workspace: nexora-ai-session</span>
+                <span className="text-xs font-mono text-white/50">workspace: nexora-ai-session</span>
               </div>
 
               {/* Console Logs */}
-              <div className="font-mono text-[9px] text-emerald-500/80 space-y-1 bg-white/[0.02] border border-white/[0.04] p-3 rounded-lg mb-4 select-none">
+              <div className="font-mono text-xs text-emerald-400/90 space-y-1.5 bg-white/[0.02] border border-white/[0.04] p-3.5 rounded-xl mb-4 select-none">
                 {activeData.logs.map((log, index) => (
                   <div key={index} className="flex gap-2">
                     <span className="text-white/30">&gt;</span>
@@ -185,20 +185,20 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               </div>
 
               {/* Explanatory Content */}
-              <div className="text-xs sm:text-sm font-sans text-neutral-300 leading-relaxed mb-4">
+              <div className="text-sm sm:text-base font-serif text-neutral-200 leading-relaxed mb-5">
                 {activeData.explanation}
               </div>
 
               {/* Grounded Files List */}
-              <div className="mb-4">
-                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-white/30 block mb-2 select-none">
+              <div className="mb-5">
+                <span className="text-xs font-mono font-bold uppercase tracking-wider text-white/40 block mb-2.5 select-none">
                   Grounded Context Files
                 </span>
-                <div className="flex flex-wrap gap-2 font-mono text-[10px]">
+                <div className="flex flex-wrap gap-2.5 font-mono text-xs sm:text-sm">
                   {activeData.files.map((file) => (
                     <span
                       key={file}
-                      className="px-2.5 py-1 rounded bg-white/[0.04] border border-white/[0.06] text-blue-400 hover:text-blue-300 transition-colors"
+                      className="px-3 py-1.5 rounded-lg bg-white/[0.05] border border-white/[0.08] text-blue-400 hover:text-blue-300 transition-colors font-medium"
                     >
                       📄 {file.split('/').pop()}
                     </span>
@@ -207,8 +207,8 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               </div>
 
               {/* Code Snippet Box */}
-              <div className="flex-1 overflow-x-auto rounded-lg border border-white/[0.06] bg-black/40 p-4">
-                <pre className="font-mono text-[10px] sm:text-xs text-neutral-300 leading-normal">
+              <div className="flex-1 overflow-x-auto rounded-xl border border-white/[0.06] bg-black/50 p-4 sm:p-5">
+                <pre className="font-mono text-xs sm:text-sm text-neutral-200 leading-normal">
                   <code>{activeData.code}</code>
                 </pre>
               </div>

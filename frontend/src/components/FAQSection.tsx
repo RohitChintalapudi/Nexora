@@ -58,20 +58,20 @@ export const FAQSection: React.FC = () => {
               >
                 <button
                   onClick={() => toggleFAQ(idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none cursor-pointer"
+                  className="w-full flex items-center justify-between p-5 sm:p-6 text-left font-serif font-semibold text-base sm:text-lg text-neutral-900 hover:text-neutral-950 transition-colors select-none cursor-pointer"
                 >
                   <span>{faq.question}</span>
-                  <span className={`text-xs text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>
+                  <span className={`text-sm text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>
                     ▼
                   </span>
                 </button>
 
                 <div
-                  className={`accordion-content border-t border-black/[0.02] px-5 bg-neutral-50/30 ${
+                  className={`accordion-content border-t border-black/[0.02] px-5 sm:px-6 bg-neutral-50/30 ${
                     isOpen ? 'open py-5' : ''
                   }`}
                 >
-                  <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed font-sans">
+                  <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-serif">
                     {faq.answer}
                   </p>
                 </div>

@@ -246,20 +246,20 @@ export const ProblemSection: React.FC = () => {
                   transition={{ type: 'spring', damping: 22, stiffness: 220 }}
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
-                  className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-200"
+                  className="w-40 sm:w-48 p-4 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-2 transition-colors duration-200"
                 >
-                  <div className="flex items-center gap-2">
-                    <span className="text-lg sm:text-xl select-none">{tool.icon}</span>
-                    <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-xl sm:text-2xl select-none">{tool.icon}</span>
+                    <div className="text-neutral-900 font-bold text-xs sm:text-sm tracking-wider font-serif leading-none">
                       {tool.name}
                     </div>
                   </div>
 
                   <div className="w-full">
-                    <div className="text-neutral-500 text-[10px] font-sans font-medium">
+                    <div className="text-neutral-700 text-xs sm:text-sm font-serif font-medium">
                       {tool.desc}
                     </div>
-                    <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">
+                    <div className="text-neutral-400 text-[10px] sm:text-xs font-mono mt-1">
                       {tool.meta}
                     </div>
                   </div>
@@ -276,21 +276,21 @@ export const ProblemSection: React.FC = () => {
         <div className="md:hidden flex flex-col gap-4 max-w-sm mx-auto select-none">
           
           {/* Top 3 Cards */}
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {tools.slice(0, 3).map((tool) => (
               <div
                 key={tool.id}
-                className="p-3.5 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
+                className="p-4 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg select-none">{tool.icon}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl select-none">{tool.icon}</span>
                   <div>
-                    <div className="font-sans font-bold text-xs text-neutral-900">{tool.name}</div>
-                    <div className="text-[10px] text-neutral-500 font-medium">{tool.desc}</div>
-                    <div className="text-[8.5px] text-neutral-300 font-mono">{tool.meta}</div>
+                    <div className="font-serif font-bold text-sm text-neutral-900">{tool.name}</div>
+                    <div className="text-xs text-neutral-600 font-medium">{tool.desc}</div>
+                    <div className="text-[10px] text-neutral-400 font-mono mt-0.5">{tool.meta}</div>
                   </div>
                 </div>
-                <span className="text-[9px] font-mono text-blue-600 bg-blue-50/70 px-2 py-0.5 rounded">
+                <span className="text-xs font-mono text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md font-semibold">
                   Active
                 </span>
               </div>
@@ -298,37 +298,37 @@ export const ProblemSection: React.FC = () => {
           </div>
 
           {/* Central NEXORA Connector */}
-          <div className="flex flex-col items-center justify-center my-1">
-            <div className="h-5 w-[2px] bg-gradient-to-b from-blue-200 to-blue-500" />
+          <div className="flex flex-col items-center justify-center my-1.5">
+            <div className="h-6 w-[2px] bg-gradient-to-b from-blue-200 to-blue-500" />
             
-            <div className="w-full p-3.5 rounded-xl bg-white border border-blue-500/25 text-center shadow-sm relative overflow-hidden">
-              <span className="text-xs font-sans font-bold uppercase tracking-wider text-blue-600 block mb-0.5">
+            <div className="w-full p-4 rounded-xl bg-white border border-blue-500/25 text-center shadow-sm relative overflow-hidden">
+              <span className="text-sm font-serif font-bold uppercase tracking-wider text-blue-600 block mb-1">
                 NEXORA
               </span>
-              <span className="text-[9px] font-semibold text-neutral-400 font-sans leading-tight block">
+              <span className="text-xs font-medium text-neutral-500 font-serif leading-tight block">
                 One context. Every signal.
               </span>
             </div>
 
-            <div className="h-5 w-[2px] bg-gradient-to-b from-blue-500 to-blue-200" />
+            <div className="h-6 w-[2px] bg-gradient-to-b from-blue-500 to-blue-200" />
           </div>
 
           {/* Bottom 3 Cards */}
-          <div className="space-y-2.5">
+          <div className="space-y-3">
             {tools.slice(3, 6).map((tool) => (
               <div
                 key={tool.id}
-                className="p-3.5 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
+                className="p-4 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
               >
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg select-none">{tool.icon}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl select-none">{tool.icon}</span>
                   <div>
-                    <div className="font-sans font-bold text-xs text-neutral-900">{tool.name}</div>
-                    <div className="text-[10px] text-neutral-500 font-medium">{tool.desc}</div>
-                    <div className="text-[8.5px] text-neutral-300 font-mono">{tool.meta}</div>
+                    <div className="font-serif font-bold text-sm text-neutral-900">{tool.name}</div>
+                    <div className="text-xs text-neutral-600 font-medium">{tool.desc}</div>
+                    <div className="text-[10px] text-neutral-400 font-mono mt-0.5">{tool.meta}</div>
                   </div>
                 </div>
-                <span className="text-[9px] font-mono text-blue-600 bg-blue-50/70 px-2 py-0.5 rounded">
+                <span className="text-xs font-mono text-blue-600 bg-blue-50/80 px-2.5 py-1 rounded-md font-semibold">
                   Active
                 </span>
               </div>
