@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 interface StepItem {
@@ -9,14 +9,6 @@ interface StepItem {
 }
 
 export const HowItWorks: React.FC = () => {
-  const [activeDotIdx, setActiveDotIdx] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveDotIdx((prev) => (prev + 1) % 4);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, []);
 
   const steps: StepItem[] = [
     {
@@ -129,21 +121,27 @@ export const HowItWorks: React.FC = () => {
                 <div className="flex flex-col items-center gap-1.5 mt-8 w-full select-none">
                   <motion.div 
                     animate={{ 
-                      scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
-                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#E5E5E5'
+                      scale: [1, 1.35, 1],
+                      backgroundColor: ['#E5E5E5', '#2563EB', '#E5E5E5']
                     }}
-                    transition={{ duration: 0.8 }}
+                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0, ease: "easeInOut" }}
                     className="w-1.5 h-1.5 rounded-full"
                   />
                   <motion.div 
                     animate={{ 
-                      scale: activeDotIdx === idx ? [1, 1.25, 1] : 1,
-                      backgroundColor: activeDotIdx === idx ? '#2563EB' : '#E5E5E5'
+                      scale: [1, 1.35, 1],
+                      backgroundColor: ['#E5E5E5', '#2563EB', '#E5E5E5']
                     }}
-                    transition={{ duration: 0.8, delay: 0.25 }}
+                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0 + 0.2, ease: "easeInOut" }}
                     className="w-1.5 h-1.5 rounded-full"
                   />
-                  <span className={`text-[10px] font-sans transition-colors duration-500 ${activeDotIdx === idx ? 'text-blue-500' : 'text-neutral-300'}`}>↓</span>
+                  <motion.span 
+                    animate={{ color: ['#D4D4D4', '#2563EB', '#D4D4D4'] }}
+                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0 + 0.35, ease: "easeInOut" }}
+                    className="text-[10px] font-sans"
+                  >
+                    ↓
+                  </motion.span>
                 </div>
 
               </div>

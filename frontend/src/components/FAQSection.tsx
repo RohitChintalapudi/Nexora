@@ -58,7 +58,7 @@ export const FAQSection: React.FC = () => {
               >
                 <button
                   onClick={() => toggleFAQ(idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none"
+                  className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none cursor-pointer"
                 >
                   <span>{faq.question}</span>
                   <span className={`text-xs text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>

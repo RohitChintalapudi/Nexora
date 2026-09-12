@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 interface ToolItem {
@@ -12,11 +12,8 @@ interface ToolItem {
 }
 
 export const ProblemSection: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const [isCoreHovered, setIsCoreHovered] = useState(false);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [activeCycleIdx, setActiveCycleIdx] = useState(0);
 
   // Exact 6 original tools, emojis & metadata from before
   const tools: ToolItem[] = [
@@ -76,29 +73,7 @@ export const ProblemSection: React.FC = () => {
     }
   ];
 
-  // Gentle autonomous stream pulse when idle
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (hoveredIdx === null && !isCoreHovered) {
-        setActiveCycleIdx((prev) => (prev + 1) % tools.length);
-      }
-    }, 2800);
-    return () => clearInterval(interval);
-  }, [hoveredIdx, isCoreHovered, tools.length]);
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    setMouseOffset({ x: x * 0.03, y: y * 0.03 });
-  };
-
   const handleMouseLeave = () => {
-    setMouseOffset({ x: 0, y: 0 });
     setHoveredIdx(null);
     setIsCoreHovered(false);
   };
@@ -125,70 +100,59 @@ export const ProblemSection: React.FC = () => {
         {/* DESKTOP & TABLET: Living Intelligence Graph */}
         {/* ========================================================= */}
         <div
-          ref={containerRef}
-          onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
           className="hidden md:flex relative max-w-5xl mx-auto h-[520px] items-center justify-center select-none"
         >
           {/* SVG Living Data Streams Canvas */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 800 500">
-            <defs>
-              <linearGradient id="streamActiveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#93C5FD" stopOpacity="0.3" />
-                <stop offset="50%" stopColor="#2563EB" stopOpacity="0.85" />
-                <stop offset="100%" stopColor="#1D4ED8" stopOpacity="1" />
-              </linearGradient>
-            </defs>
-
             {/* Concentric Intelligence Orbit Rings around NEXORA Core */}
-            <circle cx="400" cy="250" r="70" fill="none" stroke="rgba(37,99,235,0.12)" strokeWidth="1" strokeDasharray="3, 3" />
-            <circle cx="400" cy="250" r="115" fill="none" stroke="rgba(17,17,17,0.04)" strokeWidth="1" strokeDasharray="4, 4" />
-            <circle cx="400" cy="250" r="165" fill="none" stroke="rgba(17,17,17,0.03)" strokeWidth="1" strokeDasharray="5, 5" />
+            <circle cx="400" cy="250" r="70" fill="none" stroke="rgba(37,99,235,0.15)" strokeWidth="1.2" strokeDasharray="3, 3" />
+            <circle cx="400" cy="250" r="115" fill="none" stroke="rgba(37,99,235,0.08)" strokeWidth="1" strokeDasharray="4, 4" />
+            <circle cx="400" cy="250" r="165" fill="none" stroke="rgba(37,99,235,0.05)" strokeWidth="1" strokeDasharray="5, 5" />
 
-            {/* Flowing Paths and Particles */}
+            {/* Clean Solid Blue Flowing Streams for ALL 6 Links */}
             {tools.map((tool, idx) => {
               const isDirectHovered = hoveredIdx === idx;
-              const isAutoActive = hoveredIdx === null && !isCoreHovered && activeCycleIdx === idx;
-              const isActive = isDirectHovered || isAutoActive || isCoreHovered;
-
-              const particleDuration = isActive ? tool.speed * 0.6 : tool.speed;
+              const isHoveredState = isDirectHovered || isCoreHovered;
+              const particleDuration = isHoveredState ? tool.speed * 0.6 : tool.speed;
 
               return (
                 <g key={tool.id}>
-                  {/* Base Track Line */}
+                  {/* Crisp Base Track Line */}
                   <path
                     d={tool.pathD}
-                    stroke={isActive ? 'rgba(37,99,235,0.3)' : 'rgba(17,17,17,0.06)'}
-                    strokeWidth={isActive ? '1.8' : '1.2'}
-                    strokeDasharray={isActive ? '4, 4' : '3, 4'}
+                    stroke={isHoveredState ? 'rgba(37,99,235,0.35)' : 'rgba(37,99,235,0.2)'}
+                    strokeWidth={isHoveredState ? '2' : '1.5'}
+                    strokeDasharray="4, 4"
                     fill="none"
-                    className="transition-colors duration-300"
+                    className="transition-all duration-200"
                   />
 
-                  {/* Dynamic Stream Overlay when active */}
-                  {isActive && (
-                    <motion.path
-                      d={tool.pathD}
-                      stroke="url(#streamActiveGrad)"
-                      strokeWidth={isDirectHovered ? '2.4' : '1.8'}
-                      strokeDasharray="14, 20"
-                      fill="none"
-                      animate={{ strokeDashoffset: [0, -68] }}
-                      transition={{ repeat: Infinity, duration: 1.4, ease: 'linear' }}
-                    />
-                  )}
+                  {/* Clean Solid Blue Flowing Stream */}
+                  <motion.path
+                    d={tool.pathD}
+                    stroke="#2563EB"
+                    strokeWidth={isHoveredState ? '2.8' : '2.2'}
+                    strokeDasharray="12, 16"
+                    strokeLinecap="round"
+                    fill="none"
+                    animate={{ strokeDashoffset: [0, -56] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
+                  />
 
-                  {/* Leading Particle Dot 1 */}
+                  {/* Leading Solid Blue Particle Dot 1 */}
                   <motion.circle
-                    r={isActive ? '3' : '2'}
+                    r={isHoveredState ? '4' : '3.5'}
                     fill="#2563EB"
-                    className="transition-all duration-300"
+                    stroke="#FFFFFF"
+                    strokeWidth="1"
+                    className="transition-all duration-200"
                     style={{
                       offsetPath: `path("${tool.pathD}")`,
                     }}
                     animate={{
                       offsetDistance: ['0%', '100%'],
-                      opacity: isActive ? [0, 1, 1, 0] : [0, 0.5, 0.5, 0]
+                      opacity: [0, 1, 1, 0]
                     }}
                     transition={{
                       repeat: Infinity,
@@ -197,22 +161,22 @@ export const ProblemSection: React.FC = () => {
                     }}
                   />
 
-                  {/* Trailing Particle Dot 2 */}
+                  {/* Trailing Solid Blue Particle Dot 2 */}
                   <motion.circle
-                    r={isActive ? '2.5' : '1.8'}
+                    r={isHoveredState ? '3' : '2.5'}
                     fill="#3B82F6"
-                    className="transition-all duration-300"
+                    className="transition-all duration-200"
                     style={{
                       offsetPath: `path("${tool.pathD}")`,
                     }}
                     animate={{
                       offsetDistance: ['0%', '100%'],
-                      opacity: isActive ? [0, 0.85, 0.85, 0] : [0, 0.35, 0.35, 0]
+                      opacity: [0, 0.9, 0.9, 0]
                     }}
                     transition={{
                       repeat: Infinity,
                       duration: particleDuration,
-                      delay: particleDuration * 0.45,
+                      delay: particleDuration * 0.4,
                       ease: 'easeInOut'
                     }}
                   />
@@ -226,8 +190,6 @@ export const ProblemSection: React.FC = () => {
           {/* ========================================================= */}
           <motion.div
             animate={{
-              x: mouseOffset.x * 0.3,
-              y: mouseOffset.y * 0.3,
               scale: isCoreHovered ? 1.05 : hoveredIdx !== null ? 1.02 : [1, 1.015, 1],
               boxShadow: (isCoreHovered || hoveredIdx !== null)
                 ? '0 16px 44px rgba(37, 99, 235, 0.14), 0 0 24px rgba(37, 99, 235, 0.1)'
@@ -257,8 +219,7 @@ export const ProblemSection: React.FC = () => {
           {/* ========================================================= */}
           {tools.map((tool, idx) => {
             const isHovered = hoveredIdx === idx;
-            const isAutoActive = hoveredIdx === null && !isCoreHovered && activeCycleIdx === idx;
-            const isActive = isHovered || isAutoActive || isCoreHovered;
+            const isActive = isHovered || isCoreHovered;
 
             // Absolute positioning anchors based on index (Left 3, Right 3)
             const isLeft = idx < 3;
@@ -275,8 +236,7 @@ export const ProblemSection: React.FC = () => {
               >
                 <motion.div
                   animate={{
-                    x: mouseOffset.x * 0.7,
-                    y: mouseOffset.y * 0.7 + (isActive ? -3 : 0),
+                    y: isActive ? -3 : 0,
                     scale: isActive ? 1.03 : 1,
                     borderColor: isActive ? 'rgba(37,99,235,0.35)' : 'rgba(0,0,0,0.045)',
                     boxShadow: isActive 

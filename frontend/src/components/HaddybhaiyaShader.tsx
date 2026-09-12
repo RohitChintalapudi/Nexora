@@ -221,7 +221,7 @@ export function HaddybhaiyaShader({ theme = "dark", background, time, onError, c
   return <canvas ref={canvas} className={className} style={{ display: "block", width: "100%", height: "100%", ...style }} aria-hidden="true" />;
 }
 
-const MAX_PIXELS = 2400000;
+const MAX_PIXELS = 1440000;
 const THEME_EASE = 7;
 
 function parseHex(hex: string): [number, number, number] {
@@ -250,7 +250,7 @@ function animate(options: ShaderOptions, draw: (time: number, theme: number, pix
   }
 
   function fitCanvas() {
-    const scale = Math.min(deviceRatio, 2, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
+    const scale = Math.min(deviceRatio, 1.25, Math.sqrt(MAX_PIXELS / (width * height)), maxDimension / width, maxDimension / height);
     const w = Math.max(1, Math.floor(width * scale)), h = Math.max(1, Math.floor(height * scale));
     if (canvas.width !== w || canvas.height !== h) {
       canvas.width = w;

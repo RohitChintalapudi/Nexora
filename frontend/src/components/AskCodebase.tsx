@@ -149,7 +149,7 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
               <button
                 key={q}
                 onClick={() => setSelectedQuestion(q)}
-                className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm font-sans font-medium transition-all duration-300 ${
+                className={`w-full text-left p-3.5 rounded-xl border text-xs sm:text-sm font-sans font-medium transition-all duration-300 cursor-pointer ${
                   selectedQuestion === q
                     ? 'bg-white border-blue-500/20 text-blue-600 shadow-[0_2px_12px_rgba(37,99,235,0.03)]'
                     : 'bg-white/40 border-black/[0.03] text-neutral-500 hover:text-neutral-800 hover:bg-white/80'

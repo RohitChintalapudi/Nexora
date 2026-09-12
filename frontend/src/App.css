@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Times New Roman', Times, Georgia, serif;
   --font-serif: 'Times New Roman', Times, Georgia, serif;
   --color-blue-600: #2563EB;
   --color-blue-700: #1D4ED8;
@@ -12,17 +12,27 @@
   --color-border: rgba(255, 255, 255, 0.15);
 }
 
-/* Global resets for NEXORA */
+/* Global resets for NEXORA with Times New Roman */
 html, body {
   background-color: #F7F7F5;
   color: #111111;
-  font-family: var(--font-sans);
+  font-family: 'Times New Roman', Times, Georgia, serif;
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Ensure landing page and all children use Times New Roman */
+.landing-page,
+.landing-page * {
+  font-family: 'Times New Roman', Times, Georgia, serif !important;
+}
+
+button:not(:disabled), [role="button"] {
+  cursor: pointer;
 }
 
 /* High-quality selection style */

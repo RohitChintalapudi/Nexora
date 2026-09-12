@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 export const PricingSection: React.FC = () => {
+  const { navigateTo } = useAuth();
+
   const basicFeatures = [
     'Up to 3 GitHub Repositories',
     'Interactive dependency tree mapping',
@@ -56,14 +59,15 @@ export const PricingSection: React.FC = () => {
               ))}
             </ul>
 
-            <motion.a
-              href="#getstarted"
+            <motion.button
+              type="button"
+              onClick={() => navigateTo('signup')}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className="block w-full py-3 rounded-xl border border-black/[0.08] hover:bg-neutral-50 text-neutral-700 font-medium text-xs font-sans tracking-wide text-center transition-colors shadow-sm"
+              className="block w-full py-3 rounded-xl border border-black/[0.08] hover:bg-neutral-50 text-neutral-700 font-medium text-xs font-sans tracking-wide text-center transition-colors shadow-sm cursor-pointer"
             >
               Start with Basic
-            </motion.a>
+            </motion.button>
           </div>
 
           <div className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative">
@@ -91,14 +95,15 @@ export const PricingSection: React.FC = () => {
               ))}
             </ul>
 
-            <motion.a
-              href="#getstarted"
+            <motion.button
+              type="button"
+              onClick={() => navigateTo('signup')}
               whileHover={{ scale: 1.01, y: -1 }}
               whileTap={{ scale: 0.99 }}
-              className="block w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs font-sans tracking-wide text-center transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20"
+              className="block w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs font-sans tracking-wide text-center transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 cursor-pointer"
             >
               Start with Premium
-            </motion.a>
+            </motion.button>
           </div>
 
         </div>
@@ -107,4 +112,5 @@ export const PricingSection: React.FC = () => {
     </section>
   );
 };
+
 export default PricingSection;

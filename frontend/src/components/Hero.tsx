@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { FloatingInsightCard } from './FloatingInsightCard';
 import { HaddybhaiyaShader } from './HaddybhaiyaShader';
+import { useAuth } from '../context/AuthContext';
 
 export const Hero: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
+  const { navigateTo } = useAuth();
 
   const containerVariants = {
     initial: {},
@@ -27,19 +29,53 @@ export const Hero: React.FC = () => {
     },
   };
 
-  const cardVariants = (startX: number, startY: number) => ({
-    initial: { x: startX, y: startY, opacity: 0 },
-    animate: {
-      x: 0,
-      y: 0,
-      opacity: 1,
-      transition: {
-        duration: 1.1,
-        ease: [0.16, 1, 0.3, 1] as const,
-        delay: 0.6,
+  const cardFlyInVariants = (direction: 'left' | 'right' | 'bottom-left' | 'bottom-right', delay: number) => {
+    let initialX = 0;
+    let initialY = 0;
+    let initialRotate = 0;
+
+    if (direction === 'left') {
+      initialX = -700;
+      initialY = -80;
+      initialRotate = -14;
+    } else if (direction === 'right') {
+      initialX = 700;
+      initialY = -80;
+      initialRotate = 14;
+    } else if (direction === 'bottom-left') {
+      initialX = -700;
+      initialY = 160;
+      initialRotate = -10;
+    } else if (direction === 'bottom-right') {
+      initialX = 700;
+      initialY = 160;
+      initialRotate = 10;
+    }
+
+    return {
+      initial: {
+        x: initialX,
+        y: initialY,
+        opacity: 0,
+        rotate: initialRotate,
+        scale: 0.8,
       },
-    },
-  });
+      animate: {
+        x: 0,
+        y: 0,
+        opacity: 1,
+        rotate: 0,
+        scale: 1,
+        transition: {
+          type: 'spring' as const,
+          stiffness: 85,
+          damping: 15,
+          mass: 0.9,
+          delay: delay,
+        },
+      },
+    };
+  };
 
   return (
     <section className="relative min-h-screen flex items-center justify-center pt-28 pb-20 overflow-hidden px-6 bg-[#090909] text-white">
@@ -87,7 +123,7 @@ export const Hero: React.FC = () => {
           variants={itemVariants}
           style={{ 
             fontFamily: '"Times New Roman", Times, Georgia, serif',
-            textShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
+            textShadow: '0 2px 10px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.6)'
           }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-tight text-white leading-[1.12] mb-6 max-w-3xl"
         >
@@ -106,14 +142,15 @@ export const Hero: React.FC = () => {
           variants={itemVariants}
           className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto"
         >
-          <motion.a
-            href="#getstarted"
+          <motion.button
+            type="button"
+            onClick={() => navigateTo('signup')}
             whileHover={{ scale: 1.03, y: -1 }}
             whileTap={{ scale: 0.97 }}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm font-sans tracking-wide transition-all text-center shadow-[0_0_28px_rgba(37,99,235,0.4)] hover:shadow-[0_0_36px_rgba(37,99,235,0.6)]"
+            className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm font-sans tracking-wide transition-all text-center shadow-[0_0_28px_rgba(37,99,235,0.4)] hover:shadow-[0_0_36px_rgba(37,99,235,0.6)] cursor-pointer"
           >
             Explore your codebase
-          </motion.a>
+          </motion.button>
           
           <motion.a
             href="#howitworks"
@@ -125,11 +162,12 @@ export const Hero: React.FC = () => {
         </motion.div>
       </motion.div>
 
+      {/* 1. Top-Left Card: Flying in from outside left */}
       <motion.div
-        variants={cardVariants(-30, -20)}
+        variants={cardFlyInVariants('left', 0.4)}
         initial="initial"
         animate="animate"
-        className="absolute top-[24%] left-[2%] xl:left-[4%] 2xl:left-[8%] z-30 hidden xl:block w-56"
+        className="absolute top-[20%] left-[2%] xl:left-[4%] 2xl:left-[7%] z-30 hidden lg:block w-56 will-change-transform"
       >
         <FloatingInsightCard depth={12} tiltMax={6}>
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2.5">
@@ -164,11 +202,12 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
+      {/* 2. Top-Right Card: Flying in from outside right */}
       <motion.div
-        variants={cardVariants(30, -20)}
+        variants={cardFlyInVariants('right', 0.5)}
         initial="initial"
         animate="animate"
-        className="absolute top-[22%] right-[2%] xl:right-[4%] 2xl:right-[8%] z-30 hidden xl:block w-64"
+        className="absolute top-[18%] right-[2%] xl:right-[4%] 2xl:right-[7%] z-30 hidden lg:block w-64 will-change-transform"
       >
         <FloatingInsightCard depth={18} tiltMax={8}>
           <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-3">
@@ -215,11 +254,12 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
+      {/* 3. Bottom-Left Card: Flying in from outside bottom-left */}
       <motion.div
-        variants={cardVariants(-30, 20)}
+        variants={cardFlyInVariants('bottom-left', 0.6)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[10%] left-[2%] xl:left-[3%] 2xl:left-[6%] z-30 hidden 2xl:block w-64"
+        className="absolute bottom-[10%] left-[2%] xl:left-[4%] 2xl:left-[7%] z-30 hidden lg:block w-64 will-change-transform"
       >
         <FloatingInsightCard depth={14} tiltMax={7}>
           <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2.5">
@@ -245,11 +285,12 @@ export const Hero: React.FC = () => {
         </FloatingInsightCard>
       </motion.div>
 
+      {/* 4. Bottom-Right Card: Flying in from outside bottom-right */}
       <motion.div
-        variants={cardVariants(30, 20)}
+        variants={cardFlyInVariants('bottom-right', 0.7)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[14%] right-[2%] xl:right-[3%] 2xl:right-[8%] z-30 hidden 2xl:block w-60"
+        className="absolute bottom-[12%] right-[2%] xl:right-[4%] 2xl:right-[7%] z-30 hidden lg:block w-64 will-change-transform"
       >
         <FloatingInsightCard depth={10} tiltMax={5}>
           <div className="flex items-center gap-2 mb-2">

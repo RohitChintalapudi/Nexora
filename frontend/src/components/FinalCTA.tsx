@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { HaddybhaiyaShader } from './HaddybhaiyaShader';
+import { useAuth } from '../context/AuthContext';
 
 export const FinalCTA: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
+  const { navigateTo } = useAuth();
 
   return (
     <section className="relative py-12 md:py-20 bg-[#F7F7F5] content-layer" id="getstarted">
@@ -50,14 +52,15 @@ export const FinalCTA: React.FC = () => {
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
-              <motion.a
-                href="#getstarted"
+              <motion.button
+                type="button"
+                onClick={() => navigateTo('signup')}
                 whileHover={{ scale: 1.03, y: -1 }}
                 whileTap={{ scale: 0.97 }}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm font-sans tracking-wide transition-all text-center shadow-[0_0_28px_rgba(37,99,235,0.4)] hover:shadow-[0_0_36px_rgba(37,99,235,0.6)]"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm font-sans tracking-wide transition-all text-center shadow-[0_0_28px_rgba(37,99,235,0.4)] hover:shadow-[0_0_36px_rgba(37,99,235,0.6)] cursor-pointer"
               >
                 Explore your codebase
-              </motion.a>
+              </motion.button>
               
               <motion.a
                 href="#howitworks"
