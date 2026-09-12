@@ -29,12 +29,24 @@ export const initDB = async () => {
         id SERIAL PRIMARY KEY,
         name VARCHAR(255) NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
+        password VARCHAR(255),
+        google_id VARCHAR(255),
+        avatar_url TEXT,
         created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
       );
     `;
-    console.log('✅ Neon Database initialized. "users" table is ready.');
+
+    // Ensure columns exist and password is not strictly required for OAuth users
+    try {
+      await db`ALTER TABLE users ALTER COLUMN password DROP NOT NULL;`;
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255);`;
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;`;
+    } catch {
+      // Ignore migration errors if already configured
+    }
+
+    console.log('✅ Neon Database initialized. "users" table is ready for Email + Google OAuth.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

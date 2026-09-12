@@ -1,6 +1,12 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/userModel.js';
+
+const googleClient = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID || '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com',
+  process.env.GOOGLE_CLIENT_SECRET || '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'
+);
 
 const generateToken = (id) => {
   return jwt.sign(
@@ -119,6 +125,74 @@ export const login = async (req, res) => {
   }
 };
 
+export const googleAuth = async (req, res) => {
+  try {
+    const { credential, accessToken } = req.body;
+
+    let payload = null;
+
+    if (credential) {
+      // ID Token verification from Google Identity Services
+      const clientId = process.env.GOOGLE_CLIENT_ID || '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com';
+      const ticket = await googleClient.verifyIdToken({
+        idToken: credential,
+        audience: clientId
+      });
+      payload = ticket.getPayload();
+    } else if (accessToken) {
+      // Access Token verification
+      const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${accessToken}` }
+      });
+      if (!response.ok) {
+        throw new Error('Failed to fetch Google profile with access token');
+      }
+      payload = await response.json();
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'Google credential is required'
+      });
+    }
+
+    if (!payload || !payload.email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Google account did not return a valid email address'
+      });
+    }
+
+    const { sub: googleId, email, name, picture: avatarUrl } = payload;
+
+    const user = await UserModel.upsertGoogleUser({
+      name: name || email.split('@')[0],
+      email,
+      googleId: googleId || payload.id || `google_${Date.now()}`,
+      avatarUrl
+    });
+
+    const token = generateToken(user.id);
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatar_url,
+        createdAt: user.created_at
+      }
+    });
+  } catch (error) {
+    console.error('Google Auth error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error during Google authentication'
+    });
+  }
+};
+
 export const getMe = async (req, res) => {
   try {
     return res.status(200).json({
@@ -127,6 +201,7 @@ export const getMe = async (req, res) => {
         id: req.user.id,
         name: req.user.name,
         email: req.user.email,
+        avatarUrl: req.user.avatar_url,
         createdAt: req.user.created_at
       }
     });
