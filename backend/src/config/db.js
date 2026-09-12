@@ -41,12 +41,13 @@ export const initDB = async () => {
     try {
       await db`ALTER TABLE users ALTER COLUMN password DROP NOT NULL;`;
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255);`;
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS github_id VARCHAR(255);`;
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;`;
     } catch {
       // Ignore migration errors if already configured
     }
 
-    console.log('✅ Neon Database initialized. "users" table is ready for Email + Google OAuth.');
+    console.log('✅ Neon Database initialized. "users" table is ready for Email + Google + GitHub OAuth.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

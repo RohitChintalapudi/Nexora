@@ -193,6 +193,110 @@ export const googleAuth = async (req, res) => {
   }
 };
 
+export const githubAuth = async (req, res) => {
+  try {
+    let { code, accessToken } = req.body;
+
+    if (!code && !accessToken) {
+      return res.status(400).json({
+        success: false,
+        message: 'GitHub authorization code or access token is required'
+      });
+    }
+
+    if (code && !accessToken) {
+      // Exchange code for access token with GitHub
+      const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
+      const clientSecret = process.env.GITHUB_CLIENT_SECRET || '5988278d28c1ea5bb7fa2f15c4856babd390df24';
+
+      const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          client_id: clientId,
+          client_secret: clientSecret,
+          code
+        })
+      });
+
+      const tokenData = await tokenRes.json();
+      if (tokenData.error || !tokenData.access_token) {
+        throw new Error(tokenData.error_description || tokenData.error || 'Failed to exchange GitHub authorization code');
+      }
+
+      accessToken = tokenData.access_token;
+    }
+
+    // Fetch user profile from GitHub API
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'User-Agent': 'Nexora-App'
+      }
+    });
+
+    if (!userRes.ok) {
+      throw new Error('Failed to retrieve GitHub user profile');
+    }
+
+    const ghUser = await userRes.json();
+    let email = ghUser.email;
+
+    // If email is not public on GitHub profile, retrieve primary verified email from emails endpoint
+    if (!email) {
+      try {
+        const emailsRes = await fetch('https://api.github.com/user/emails', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'User-Agent': 'Nexora-App'
+          }
+        });
+        if (emailsRes.ok) {
+          const emails = await emailsRes.json();
+          const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified) || emails[0];
+          if (primary) email = primary.email;
+        }
+      } catch (err) {
+        console.warn('Could not fetch GitHub user emails:', err.message);
+      }
+    }
+
+    if (!email) {
+      email = `${ghUser.login}@users.noreply.github.com`;
+    }
+
+    const user = await UserModel.upsertGithubUser({
+      name: ghUser.name || ghUser.login,
+      email,
+      githubId: String(ghUser.id),
+      avatarUrl: ghUser.avatar_url
+    });
+
+    const token = generateToken(user.id);
+
+    return res.status(200).json({
+      success: true,
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatar_url,
+        createdAt: user.created_at
+      }
+    });
+  } catch (error) {
+    console.error('GitHub Auth error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error during GitHub authentication'
+    });
+  }
+};
+
 export const getMe = async (req, res) => {
   try {
     return res.status(200).json({
@@ -213,3 +317,4 @@ export const getMe = async (req, res) => {
     });
   }
 };
+

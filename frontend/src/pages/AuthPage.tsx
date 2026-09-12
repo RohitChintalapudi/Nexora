@@ -35,7 +35,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { login, register, triggerGoogleSignIn, isLoading, navigateTo } = useAuth();
+  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, navigateTo } = useAuth();
 
   useEffect(() => {
     setMode(initialMode);
@@ -258,7 +258,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
                 <button
                   type="button"
-                  onClick={() => alert('GitHub authentication integration is ready in production.')}
+                  onClick={() => triggerGithubSignIn()}
                   className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98"
                 >
                   <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">

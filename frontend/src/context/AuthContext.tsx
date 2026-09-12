@@ -23,12 +23,18 @@ interface AuthContextType {
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   loginWithGoogle: (payload: { credential?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
   triggerGoogleSignIn: () => void;
+  loginWithGithub: (payload: { code?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
+  triggerGithubSignIn: () => void;
   logout: () => void;
 }
 
 export const GOOGLE_CLIENT_ID =
   import.meta.env.VITE_GOOGLE_CLIENT_ID ||
   '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com';
+
+export const GITHUB_CLIENT_ID =
+  import.meta.env.VITE_GITHUB_CLIENT_ID ||
+  'Ov23liM5dNvXngFXio8t';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -249,6 +255,52 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     alert('Google Identity Services is still loading or blocked by your browser extensions. Please try again in a moment.');
   };
 
+  const loginWithGithub = async (payload: { code?: string; accessToken?: string }) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/github`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setIsLoading(false);
+        return { success: false, message: data.message || 'GitHub authentication failed' };
+      }
+
+      localStorage.setItem('nexora_token', data.token);
+      setToken(data.token);
+      setUser(data.user);
+      setIsLoading(false);
+      closeAuthModal();
+      navigateTo('dashboard');
+      return { success: true };
+    } catch (err: any) {
+      setIsLoading(false);
+      return { success: false, message: err.message || 'Network error connecting to GitHub auth server' };
+    }
+  };
+
+  const triggerGithubSignIn = () => {
+    if (typeof window === 'undefined') return;
+    const redirectUri = window.location.origin + (window.location.pathname.startsWith('/signin') ? '/signin' : window.location.pathname.startsWith('/signup') ? '/signup' : '/');
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    window.location.href = githubAuthUrl;
+  };
+
+  // Check for GitHub OAuth callback code in URL query parameters on load
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      loginWithGithub({ code });
+    }
+  }, []);
+
   const logout = () => {
     localStorage.removeItem('nexora_token');
     setToken(null);
@@ -273,6 +325,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         loginWithGoogle,
         triggerGoogleSignIn,
+        loginWithGithub,
+        triggerGithubSignIn,
         logout,
       }}
     >
