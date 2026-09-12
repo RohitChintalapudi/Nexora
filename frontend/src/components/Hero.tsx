@@ -157,35 +157,35 @@ export const Hero: React.FC = () => {
         variants={cardFlyInVariants('left', 0.4)}
         initial="initial"
         animate="animate"
-        className="absolute top-[20%] left-[2%] xl:left-[4%] 2xl:left-[7%] z-30 hidden lg:block w-56 will-change-transform"
+        className="absolute top-[20%] left-[2%] xl:left-[4%] 2xl:left-[6%] z-30 hidden lg:block w-64 xl:w-72 will-change-transform"
       >
         <FloatingInsightCard depth={12} tiltMax={6}>
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-2.5">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-3">
+            <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-300">
               Repository Tree
             </span>
-            <div className="flex items-center gap-1">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[9px] font-medium text-neutral-400">Syncing</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-xs font-medium text-neutral-300">Syncing</span>
             </div>
           </div>
-          <div className="font-mono text-[11px] text-neutral-300 space-y-1.5 select-none">
-            <div className="flex items-center gap-1 text-neutral-400">
+          <div className="font-mono text-xs sm:text-sm text-neutral-200 space-y-2 select-none">
+            <div className="flex items-center gap-1.5 text-neutral-400">
               <span>📁</span> <span>src</span>
             </div>
-            <div className="flex items-center gap-1 pl-4 text-neutral-400">
+            <div className="flex items-center gap-1.5 pl-4 text-neutral-400">
               <span>📁</span> <span>components</span>
             </div>
-            <div className="flex items-center justify-between pl-4 py-0.5 px-1.5 rounded bg-blue-500/15 border border-blue-500/30 text-blue-400 font-medium">
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-between pl-4 py-1 px-2 rounded bg-blue-500/20 border border-blue-500/35 text-blue-400 font-medium">
+              <div className="flex items-center gap-1.5">
                 <span>📁</span> <span>services</span>
               </div>
-              <span className="w-1 h-1 rounded-full bg-blue-400 shadow-[0_0_6px_rgba(96,165,250,0.8)]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-[0_0_8px_rgba(96,165,250,0.9)]" />
             </div>
-            <div className="flex items-center gap-1 pl-4 text-neutral-400">
+            <div className="flex items-center gap-1.5 pl-4 text-neutral-400">
               <span>📁</span> <span>api</span>
             </div>
-            <div className="flex items-center gap-1 pl-4 text-neutral-400">
+            <div className="flex items-center gap-1.5 pl-4 text-neutral-400">
               <span>📁</span> <span>database</span>
             </div>
           </div>
@@ -197,45 +197,45 @@ export const Hero: React.FC = () => {
         variants={cardFlyInVariants('right', 0.5)}
         initial="initial"
         animate="animate"
-        className="absolute top-[18%] right-[2%] xl:right-[4%] 2xl:right-[7%] z-30 hidden lg:block w-64 will-change-transform"
+        className="absolute top-[18%] right-[2%] xl:right-[4%] 2xl:right-[6%] z-30 hidden lg:block w-72 xl:w-80 will-change-transform"
       >
         <FloatingInsightCard depth={18} tiltMax={8}>
-          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2 mb-3">
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400">
+          <div className="flex items-center justify-between border-b border-white/[0.08] pb-2.5 mb-3.5">
+            <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-300">
               Impact Sandbox
             </span>
-            <span className="text-[9px] font-sans font-semibold px-1.5 py-0.5 rounded bg-white/[0.08] text-neutral-300 border border-white/[0.1]">
+            <span className="text-xs font-serif font-semibold px-2 py-0.5 rounded bg-white/[0.1] text-neutral-200 border border-white/[0.12]">
               PREDICT
             </span>
           </div>
 
-          <div className="mb-3">
-            <div className="text-[9px] text-neutral-400 font-sans uppercase tracking-wider mb-1">Target Change</div>
-            <div className="flex items-center gap-1.5 py-1 px-2 rounded bg-white/[0.04] border border-white/[0.06] text-neutral-200 font-mono text-[10px]">
-              <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+          <div className="mb-3.5">
+            <div className="text-xs text-neutral-400 font-serif uppercase tracking-wider mb-1.5">Target Change</div>
+            <div className="flex items-center gap-2 py-1.5 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08] text-neutral-100 font-mono text-xs sm:text-sm">
+              <span className="w-2 h-2 rounded-full bg-blue-400" />
               <span>services/auth.ts</span>
-              <span className="text-[9px] ml-auto text-neutral-400 font-sans">Modified</span>
+              <span className="text-xs ml-auto text-neutral-400 font-serif">Modified</span>
             </div>
           </div>
 
           <div>
-            <div className="text-[9px] text-neutral-400 font-sans uppercase tracking-wider mb-1.5">Downstream Risks</div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between py-1 px-2 rounded bg-white/[0.04] border border-white/[0.06]">
-                <span className="text-[10px] font-mono text-neutral-300">gateway/router.ts</span>
-                <span className="text-[9px] font-sans font-bold px-1.5 py-0.5 bg-red-500/20 text-red-300 border border-red-500/30 rounded">
+            <div className="text-xs text-neutral-400 font-serif uppercase tracking-wider mb-1.5">Downstream Risks</div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08]">
+                <span className="text-xs sm:text-sm font-mono text-neutral-200">gateway/router.ts</span>
+                <span className="text-xs font-serif font-bold px-2 py-0.5 bg-red-500/25 text-red-300 border border-red-500/40 rounded">
                   High Risk
                 </span>
               </div>
-              <div className="flex items-center justify-between py-1 px-2 rounded bg-white/[0.04] border border-white/[0.06]">
-                <span className="text-[10px] font-mono text-neutral-300">services/user.ts</span>
-                <span className="text-[9px] font-sans font-medium px-1.5 py-0.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded">
+              <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08]">
+                <span className="text-xs sm:text-sm font-mono text-neutral-200">services/user.ts</span>
+                <span className="text-xs font-serif font-medium px-2 py-0.5 bg-amber-500/25 text-amber-300 border border-amber-500/40 rounded">
                   Med Risk
                 </span>
               </div>
-              <div className="flex items-center justify-between py-1 px-2 rounded bg-white/[0.04] border border-white/[0.06]">
-                <span className="text-[10px] font-mono text-neutral-400">tests/auth.test.ts</span>
-                <span className="text-[9px] font-sans text-emerald-400 px-1 py-0.5">
+              <div className="flex items-center justify-between py-1.5 px-3 rounded-lg bg-white/[0.05] border border-white/[0.08]">
+                <span className="text-xs sm:text-sm font-mono text-neutral-300">tests/auth.test.ts</span>
+                <span className="text-xs font-serif font-semibold text-emerald-400 px-1.5 py-0.5">
                   Safe
                 </span>
               </div>
@@ -249,26 +249,26 @@ export const Hero: React.FC = () => {
         variants={cardFlyInVariants('bottom-left', 0.6)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[10%] left-[2%] xl:left-[4%] 2xl:left-[7%] z-30 hidden lg:block w-64 will-change-transform"
+        className="absolute bottom-[10%] left-[2%] xl:left-[4%] 2xl:left-[6%] z-30 hidden lg:block w-72 xl:w-80 will-change-transform"
       >
         <FloatingInsightCard depth={14} tiltMax={7}>
-          <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2.5">
+          <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-300 block mb-3">
             Dependency Flow
           </span>
-          <div className="flex items-center gap-1.5 select-none">
-            <div className="flex-1 py-1 px-2 text-center rounded bg-white/[0.05] border border-white/[0.08] text-[10px] text-neutral-300 font-mono font-medium shadow-sm">
+          <div className="flex items-center gap-2 select-none">
+            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm">
               Auth
             </div>
-            <span className="text-neutral-500 text-xs font-mono">→</span>
-            <div className="flex-1 py-1 px-2 text-center rounded bg-blue-500/20 border border-blue-500/30 text-[10px] text-blue-400 font-mono font-medium shadow-sm">
+            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
+            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-blue-500/25 border border-blue-500/40 text-xs sm:text-sm text-blue-300 font-mono font-semibold shadow-sm">
               Gateway
             </div>
-            <span className="text-neutral-500 text-xs font-mono">→</span>
-            <div className="flex-1 py-1 px-2 text-center rounded bg-white/[0.05] border border-white/[0.08] text-[10px] text-neutral-300 font-mono font-medium shadow-sm">
+            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
+            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm">
               Service
             </div>
-            <span className="text-neutral-500 text-xs font-mono">→</span>
-            <div className="flex-1 py-1 px-2 text-center rounded bg-white/[0.05] border border-white/[0.08] text-[10px] text-neutral-400 font-mono font-medium shadow-sm">
+            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
+            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-300 font-mono font-medium shadow-sm">
               DB
             </div>
           </div>
@@ -280,24 +280,24 @@ export const Hero: React.FC = () => {
         variants={cardFlyInVariants('bottom-right', 0.7)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[12%] right-[2%] xl:right-[4%] 2xl:right-[7%] z-30 hidden lg:block w-64 will-change-transform"
+        className="absolute bottom-[12%] right-[2%] xl:right-[4%] 2xl:right-[6%] z-30 hidden lg:block w-72 xl:w-80 will-change-transform"
       >
         <FloatingInsightCard depth={10} tiltMax={5}>
-          <div className="flex items-center gap-2 mb-2">
-            <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-ping" />
-            <span className="text-[10px] font-sans font-bold uppercase tracking-wider text-neutral-400">
+          <div className="flex items-center gap-2 mb-2.5">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping" />
+            <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-300">
               AI Analysis
             </span>
           </div>
-          <div className="text-xs font-sans text-white font-medium mb-1">
+          <div className="text-sm sm:text-base font-serif text-white font-semibold mb-1.5">
             Authentication flow mapped
           </div>
-          <div className="text-[10px] font-sans text-neutral-400 leading-normal mb-3">
+          <div className="text-xs sm:text-sm font-serif text-neutral-300 leading-relaxed mb-3.5">
             Identified 12 related files across API Gateway and PostgreSQL connectors.
           </div>
-          <div className="w-full h-1 bg-white/[0.08] rounded-full overflow-hidden">
+          <div className="w-full h-1.5 bg-white/[0.1] rounded-full overflow-hidden">
             <motion.div
-              className="h-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]"
+              className="h-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.9)]"
               initial={{ width: '0%' }}
               animate={{ width: '78%' }}
               transition={{ duration: 1.5, delay: 1, ease: 'easeOut' }}
