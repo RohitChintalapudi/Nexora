@@ -40,11 +40,11 @@ export const AuthSwitch: React.FC<AuthSwitchProps> = ({
         type="button"
         onClick={() => onModeChange('signin')}
         className={cn(
-          'relative z-10 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium transition-colors duration-200 cursor-pointer',
+          'relative z-10 flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium transition-colors duration-200 cursor-pointer font-serif',
           mode === 'signin' ? 'text-neutral-900 font-semibold' : 'text-neutral-500 hover:text-neutral-900'
         )}
       >
-        <LogIn className="w-3.5 h-3.5" />
+        <LogIn className="w-4 h-4" />
         <span>Sign In</span>
       </button>
 
@@ -52,11 +52,11 @@ export const AuthSwitch: React.FC<AuthSwitchProps> = ({
         type="button"
         onClick={() => onModeChange('signup')}
         className={cn(
-          'relative z-10 flex items-center justify-center gap-2 py-2 text-xs sm:text-sm font-medium transition-colors duration-200 cursor-pointer',
+          'relative z-10 flex items-center justify-center gap-2.5 py-2.5 text-sm sm:text-base font-medium transition-colors duration-200 cursor-pointer font-serif',
           mode === 'signup' ? 'text-neutral-900 font-semibold' : 'text-neutral-500 hover:text-neutral-900'
         )}
       >
-        <UserPlus className="w-3.5 h-3.5" />
+        <UserPlus className="w-4 h-4" />
         <span>Create Account</span>
       </button>
     </div>

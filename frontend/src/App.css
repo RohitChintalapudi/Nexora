@@ -12,11 +12,18 @@
   --color-border: rgba(255, 255, 255, 0.15);
 }
 
-/* Global resets for NEXORA with Times New Roman */
+/* Global typography sizing and scaling for Times New Roman */
+html {
+  font-size: 17.5px;
+}
+
 html, body {
   background-color: #F7F7F5;
   color: #111111;
   font-family: 'Times New Roman', Times, Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
@@ -25,9 +32,11 @@ html, body {
   -ms-overflow-style: none; /* IE and Edge */
 }
 
-/* Ensure landing page and all children use Times New Roman */
+/* Ensure landing page, auth pages, and all child typography are styled in Times New Roman with clear visibility */
 .landing-page,
-.landing-page * {
+.landing-page *,
+.auth-page,
+.auth-page * {
   font-family: 'Times New Roman', Times, Georgia, serif !important;
 }
 
