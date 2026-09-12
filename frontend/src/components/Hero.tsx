@@ -109,16 +109,6 @@ export const Hero: React.FC = () => {
         animate="animate"
         className="relative z-20 max-w-3xl text-center flex flex-col items-center"
       >
-        <motion.div
-          variants={itemVariants}
-          className="mb-5 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.08] border border-white/[0.12] backdrop-blur-md shadow-inner"
-        >
-          <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse shadow-[0_0_8px_rgba(96,165,250,0.8)]" />
-          <span className="text-[11px] font-sans font-medium uppercase tracking-wider text-neutral-300">
-            Understand the system. Build the future.
-          </span>
-        </motion.div>
-
         <motion.h1
           variants={itemVariants}
           style={{ 
