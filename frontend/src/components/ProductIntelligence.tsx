@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
-  Sparkles,
   Network,
   ShieldAlert,
   CheckCircle2,
@@ -75,16 +73,12 @@ export const ProductIntelligence: React.FC = () => {
   };
 
   return (
-    <div id="product" className="relative bg-[#F7F7F5] content-layer py-16 md:py-24 border-t border-black/[0.04]">
+    <div id="product" className="relative bg-[#F7F7F5] content-layer pt-8 pb-12 md:pt-10 md:pb-16 border-t border-black/[0.04]">
       <div className="max-w-7xl mx-auto px-6">
 
-        {/* Modern Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 md:mb-20">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs sm:text-sm font-serif font-medium shadow-2xs mb-4">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Core Intelligence Architecture</span>
-          </div>
-          <h2 className="text-3.5xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.14] mb-4">
+        {/* Section Header with tighter padding */}
+        <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.14] mb-3">
             Three pillars of total software clarity.
           </h2>
           <p className="text-sm sm:text-base text-neutral-600 font-serif leading-relaxed max-w-2xl mx-auto font-light">
@@ -93,16 +87,16 @@ export const ProductIntelligence: React.FC = () => {
         </div>
 
         {/* Pillar 01 — UNDERSTAND */}
-        <section className="relative py-10 md:py-14">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <section className="relative py-6 md:py-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             
-            <div className="lg:col-span-5 flex flex-col justify-center space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-3.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-black/[0.04] border border-black/[0.07] text-neutral-800 text-xs font-serif font-semibold tracking-wider uppercase w-fit">
                 <Search className="w-3.5 h-3.5 text-blue-600" />
                 <span>01 — UNDERSTAND</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3.5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
+              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
                 AI-powered codebase intelligence.
               </h3>
               
@@ -110,7 +104,7 @@ export const ProductIntelligence: React.FC = () => {
                 Ask questions about your project and receive answers grounded in your actual AST and execution graph. NEXORA understands services, functions, controllers, and their cross-system relationships.
               </p>
               
-              <ul className="space-y-3 pt-2 font-serif text-sm sm:text-base text-neutral-800">
+              <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
                   <span>Repository-wide semantic query resolution</span>
@@ -128,7 +122,7 @@ export const ProductIntelligence: React.FC = () => {
 
             <div className="lg:col-span-7">
               <div className="code-panel rounded-3xl border border-black/[0.08] bg-white shadow-[0_12px_36px_rgba(0,0,0,0.03),_0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden font-serif">
-                <div className="flex items-center justify-between border-b border-black/[0.06] px-6 py-4 bg-neutral-50/70">
+                <div className="flex items-center justify-between border-b border-black/[0.06] px-6 py-3.5 bg-neutral-50/70">
                   <div className="flex items-center gap-2">
                     <FileCode2 className="w-4 h-4 text-neutral-500" />
                     <span className="font-serif text-xs font-semibold text-neutral-700 tracking-wide uppercase">NEXORA QUERY ENGINE</span>
@@ -139,22 +133,22 @@ export const ProductIntelligence: React.FC = () => {
                   </span>
                 </div>
                 
-                <div className="p-6 sm:p-7 space-y-5">
-                  <div className="space-y-2">
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="space-y-1.5">
                     <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-serif">Prompt Query</div>
-                    <div className="text-neutral-950 font-medium bg-neutral-50 border border-black/[0.06] rounded-xl py-3 px-4.5 shadow-2xs text-sm sm:text-base font-serif">
+                    <div className="text-neutral-950 font-medium bg-neutral-50 border border-black/[0.06] rounded-xl py-2.5 px-4 shadow-2xs text-sm sm:text-base font-serif">
                       "Where is session authentication and token validation handled?"
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <div className="text-[11px] font-bold text-blue-600 uppercase tracking-wider font-serif">Synthesized Flow Path</div>
-                    <div className="text-neutral-800 bg-white border border-black/[0.08] rounded-xl p-5 shadow-2xs space-y-3">
+                    <div className="text-neutral-800 bg-white border border-black/[0.08] rounded-xl p-4 shadow-2xs space-y-2.5">
                       <div className="font-semibold text-neutral-950 text-sm sm:text-base font-serif flex items-center justify-between">
                         <span>4 connected execution layers detected</span>
                         <span className="text-xs text-neutral-500 font-normal">240ms resolution</span>
                       </div>
-                      <div className="font-mono text-xs sm:text-sm space-y-2.5 text-neutral-700 bg-neutral-50/70 p-3.5 rounded-lg border border-black/[0.04]">
+                      <div className="font-mono text-xs sm:text-sm space-y-2 text-neutral-700 bg-neutral-50/70 p-3 rounded-lg border border-black/[0.04]">
                         <div className="flex items-center gap-2.5">
                           <span className="w-2 h-2 rounded-full bg-neutral-400" />
                           <span className="font-medium text-neutral-800">AuthController.ts</span>
@@ -183,7 +177,7 @@ export const ProductIntelligence: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="border-t border-black/[0.06] px-6 py-3.5 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
+                <div className="border-t border-black/[0.06] px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
                   <span className="flex items-center gap-1.5">
                     <Activity className="w-3.5 h-3.5 text-neutral-500" />
                     <span>12 connected repository files mapped</span>
@@ -201,12 +195,12 @@ export const ProductIntelligence: React.FC = () => {
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.06]" />
 
         {/* Pillar 02 — VISUALIZE */}
-        <section className="relative py-12 md:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <section className="relative py-8 md:py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             
             <div className="lg:col-span-7 order-last lg:order-first">
-              <div className="code-panel rounded-3xl border border-black/[0.08] bg-white shadow-[0_12px_36px_rgba(0,0,0,0.03),_0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden font-sans text-xs relative flex flex-col min-h-[320px]">
-                <div className="h-12 flex items-center justify-between border-b border-black/[0.06] px-6 bg-neutral-50/70 select-none">
+              <div className="code-panel rounded-3xl border border-black/[0.08] bg-white shadow-[0_12px_36px_rgba(0,0,0,0.03),_0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden font-sans text-xs relative flex flex-col min-h-[300px]">
+                <div className="h-11 flex items-center justify-between border-b border-black/[0.06] px-6 bg-neutral-50/70 select-none">
                   <div className="flex items-center gap-2">
                     <Network className="w-4 h-4 text-blue-600" />
                     <span className="font-serif text-xs font-semibold text-neutral-800 tracking-wide uppercase">LIVE TOPOLOGY MAP</span>
@@ -222,7 +216,7 @@ export const ProductIntelligence: React.FC = () => {
                   )}
                 </div>
 
-                <div className="flex-1 flex items-center justify-center p-6 select-none relative min-h-[220px]">
+                <div className="flex-1 flex items-center justify-center p-5 select-none relative min-h-[200px]">
                   <svg className="w-full max-w-[340px] h-[175px] overflow-visible" viewBox={`0 0 ${viewWidth} ${viewHeight}`}>
                     {edges.map((edge, idx) => {
                       const fromNode = nodes.find(n => n.id === edge.from);
@@ -307,7 +301,7 @@ export const ProductIntelligence: React.FC = () => {
                   </svg>
                 </div>
 
-                <div className="border-t border-black/[0.06] px-6 py-3.5 bg-neutral-50/70 flex items-center justify-between text-xs font-serif text-neutral-500 select-none">
+                <div className="border-t border-black/[0.06] px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs font-serif text-neutral-500 select-none">
                   <span className="flex items-center gap-1.5">
                     <Layers className="w-3.5 h-3.5 text-neutral-500" />
                     <span>18 active micro-dependencies mapped</span>
@@ -320,13 +314,13 @@ export const ProductIntelligence: React.FC = () => {
               </div>
             </div>
 
-            <div className="lg:col-span-5 order-first lg:order-last space-y-4">
+            <div className="lg:col-span-5 order-first lg:order-last space-y-3.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-black/[0.04] border border-black/[0.07] text-neutral-800 text-xs font-serif font-semibold tracking-wider uppercase w-fit">
                 <Network className="w-3.5 h-3.5 text-blue-600" />
                 <span>02 — VISUALIZE</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3.5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
+              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
                 See how everything connects.
               </h3>
               
@@ -334,7 +328,7 @@ export const ProductIntelligence: React.FC = () => {
                 Explore relationships between databases, microservices, APIs, routes, and asynchronous handlers with deep interactive topology maps.
               </p>
               
-              <ul className="space-y-3 pt-2 font-serif text-sm sm:text-base text-neutral-800">
+              <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
                   <span>Interactive dependency graph navigation</span>
@@ -345,7 +339,7 @@ export const ProductIntelligence: React.FC = () => {
                 </li>
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
-                  <span>Automated service boundary boundary identification</span>
+                  <span>Automated service boundary identification</span>
                 </li>
               </ul>
             </div>
@@ -356,16 +350,16 @@ export const ProductIntelligence: React.FC = () => {
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.06]" />
 
         {/* Pillar 03 — PREDICT */}
-        <section className="relative py-12 md:py-16">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+        <section className="relative py-8 md:py-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             
-            <div className="lg:col-span-5 flex flex-col justify-center space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-center space-y-3.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-black/[0.04] border border-black/[0.07] text-neutral-800 text-xs font-serif font-semibold tracking-wider uppercase w-fit">
                 <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
                 <span>03 — PREDICT</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3.5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
+              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
                 Understand impact before code changes.
               </h3>
               
@@ -373,7 +367,7 @@ export const ProductIntelligence: React.FC = () => {
                 NEXORA traces downstream blast radius to forecast what will break before committing code. Spot dangerous schema mutations and broken consumer contracts instantly.
               </p>
               
-              <ul className="space-y-3 pt-2 font-serif text-sm sm:text-base text-neutral-800">
+              <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
                   <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0" />
                   <span>Automated PR mutation & blast-radius forecasting</span>
@@ -391,7 +385,7 @@ export const ProductIntelligence: React.FC = () => {
 
             <div className="lg:col-span-7">
               <div className="code-panel rounded-3xl border border-black/[0.08] bg-white shadow-[0_12px_36px_rgba(0,0,0,0.03),_0_1px_3px_rgba(0,0,0,0.02)] overflow-hidden font-serif text-sm">
-                <div className="flex items-center justify-between border-b border-black/[0.06] px-6 py-4 bg-neutral-50/70">
+                <div className="flex items-center justify-between border-b border-black/[0.06] px-6 py-3.5 bg-neutral-50/70">
                   <div className="flex items-center gap-2">
                     <ShieldAlert className="w-4 h-4 text-red-600" />
                     <span className="font-serif text-xs font-semibold text-neutral-800 tracking-wide uppercase">MUTATION BLAST RADIUS</span>
@@ -402,60 +396,60 @@ export const ProductIntelligence: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-6 sm:p-7 space-y-5">
-                  <div className="space-y-2">
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div className="space-y-1.5">
                     <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-serif">Modified Target File</div>
-                    <div className="font-mono text-neutral-950 font-semibold bg-neutral-50 border border-black/[0.06] rounded-xl py-2.5 px-4 inline-flex items-center gap-2 shadow-2xs text-sm sm:text-base">
+                    <div className="font-mono text-neutral-950 font-semibold bg-neutral-50 border border-black/[0.06] rounded-xl py-2 px-3.5 inline-flex items-center gap-2 shadow-2xs text-sm sm:text-base">
                       <GitBranch className="w-4 h-4 text-neutral-600" />
                       <span>AuthService.ts</span>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-serif">Downstream Affected Surface</div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-neutral-900 font-serif font-medium text-xs sm:text-sm">
-                      <div className="flex items-center gap-2 p-3 rounded-xl bg-red-50/60 border border-red-100 text-red-700">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-neutral-900 font-serif font-medium text-xs sm:text-sm">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-red-50/60 border border-red-100 text-red-700">
                         <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                         <span>12 files</span>
                       </div>
-                      <div className="flex items-center gap-2 p-3 rounded-xl bg-neutral-50 border border-black/[0.06]">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-neutral-50 border border-black/[0.06]">
                         <span className="w-2 h-2 rounded-full bg-neutral-500" />
                         <span>4 API routes</span>
                       </div>
-                      <div className="flex items-center gap-2 p-3 rounded-xl bg-neutral-50 border border-black/[0.06]">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-neutral-50 border border-black/[0.06]">
                         <span className="w-2 h-2 rounded-full bg-neutral-500" />
                         <span>3 services</span>
                       </div>
-                      <div className="flex items-center gap-2 p-3 rounded-xl bg-neutral-50 border border-black/[0.06]">
+                      <div className="flex items-center gap-2 p-2.5 rounded-xl bg-neutral-50 border border-black/[0.06]">
                         <span className="w-2 h-2 rounded-full bg-neutral-500" />
                         <span>2 UI views</span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <div className="text-[11px] font-bold text-neutral-400 uppercase tracking-wider font-serif">Critical Dependency Chain</div>
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-xs text-neutral-800 bg-neutral-50/70 border border-black/[0.06] rounded-xl p-3.5">
-                      <div className="flex-1 w-full sm:w-auto py-2 px-3 text-center rounded-lg border border-red-200 bg-red-50 text-red-700 font-semibold shadow-2xs">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-2 font-mono text-xs text-neutral-800 bg-neutral-50/70 border border-black/[0.06] rounded-xl p-3">
+                      <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-red-200 bg-red-50 text-red-700 font-semibold shadow-2xs">
                         AuthService
                       </div>
                       <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
-                      <div className="flex-1 w-full sm:w-auto py-2 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-900 shadow-2xs">
+                      <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-900 shadow-2xs">
                         AuthController
                       </div>
                       <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
-                      <div className="flex-1 w-full sm:w-auto py-2 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-900 shadow-2xs">
+                      <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-900 shadow-2xs">
                         API Gateway
                       </div>
                       <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
-                      <div className="flex-1 w-full sm:w-auto py-2 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-700 shadow-2xs">
+                      <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-black/[0.08] bg-white text-neutral-700 shadow-2xs">
                         Dashboard
                       </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="border-t border-black/[0.06] px-6 py-3.5 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
+                <div className="border-t border-black/[0.06] px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
                   <span>Impact Score: High (Severity Level 3)</span>
                   <span className="text-neutral-950 font-semibold">0 Unhandled Exceptions</span>
                 </div>
