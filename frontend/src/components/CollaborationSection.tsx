@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 export const CollaborationSection: React.FC = () => {
   return (
@@ -8,13 +7,7 @@ export const CollaborationSection: React.FC = () => {
         
         {/* Left Column: Context */}
         <div className="lg:col-span-5 flex flex-col justify-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-            className="max-w-md"
-          >
+          <div className="max-w-md">
             {/* Status Eyebrow */}
             <div className="mb-4 inline-flex items-center gap-2 px-2.5 py-1 rounded bg-blue-50 border border-blue-100 text-[10px] font-sans font-bold uppercase tracking-wider text-blue-600">
               ⚡ COMING TO NEXORA
@@ -42,17 +35,11 @@ export const CollaborationSection: React.FC = () => {
                 <span>Shared context vector grounding for AI queries</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
         </div>
 
         {/* Right Column: Visual Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.1 }}
-          className="lg:col-span-7"
-        >
+        <div className="lg:col-span-7">
           <div className="code-panel p-5 sm:p-8 rounded-3xl border border-black/[0.045] bg-white shadow-[0_8px_32px_rgba(0,0,0,0.015)] relative min-h-[300px] overflow-hidden select-none">
             
             {/* Avatars Header */}
@@ -110,7 +97,7 @@ export const CollaborationSection: React.FC = () => {
             </div>
 
           </div>
-        </motion.div>
+        </div>
 
       </div>
     </section>

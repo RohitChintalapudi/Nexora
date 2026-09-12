@@ -1,414 +1,339 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
+interface ToolItem {
+  id: string;
+  name: string;
+  icon: string;
+  desc: string;
+  meta: string;
+  pathD: string;
+  speed: number;
+}
+
 export const ProblemSection: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement | null>(null);
   const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [isCoreHovered, setIsCoreHovered] = useState(false);
 
-  const tools = [
-    { name: 'CODE', icon: '💻', desc: 'Repositories', meta: '142 files indexed' },
-    { name: 'DOCUMENTATION', icon: '📄', desc: 'Wiki & Readmes', meta: '18 sources connected' },
-    { name: 'ARCHITECTURE', icon: '📐', desc: 'System Maps', meta: '12 services detected' },
-    { name: 'ISSUES', icon: '🎫', desc: 'Tickets & Tasks', meta: '24 active issues' },
-    { name: 'AI', icon: '🤖', desc: 'Contextual Intelligence', meta: 'Repository-aware answers' },
-    { name: 'LOGS', icon: '📝', desc: 'Trace Outputs', meta: '3 environments monitored' }
+  // Exact 6 original tools, emojis & metadata from before
+  const tools: ToolItem[] = [
+    {
+      id: 'code',
+      name: 'CODE',
+      icon: '💻',
+      desc: 'Repositories',
+      meta: '142 files indexed',
+      pathD: 'M 180 110 Q 295 160 345 220',
+      speed: 2.8
+    },
+    {
+      id: 'documentation',
+      name: 'DOCUMENTATION',
+      icon: '📄',
+      desc: 'Wiki & Readmes',
+      meta: '18 sources connected',
+      pathD: 'M 160 250 Q 280 250 335 250',
+      speed: 3.2
+    },
+    {
+      id: 'architecture',
+      name: 'ARCHITECTURE',
+      icon: '📐',
+      desc: 'System Maps',
+      meta: '12 services detected',
+      pathD: 'M 180 390 Q 295 340 345 280',
+      speed: 3.0
+    },
+    {
+      id: 'issues',
+      name: 'ISSUES',
+      icon: '🎫',
+      desc: 'Tickets & Tasks',
+      meta: '24 active issues',
+      pathD: 'M 620 110 Q 505 160 455 220',
+      speed: 2.9
+    },
+    {
+      id: 'ai',
+      name: 'AI',
+      icon: '🤖',
+      desc: 'Contextual Intelligence',
+      meta: 'Repository-aware answers',
+      pathD: 'M 640 250 Q 520 250 465 250',
+      speed: 3.1
+    },
+    {
+      id: 'logs',
+      name: 'LOGS',
+      icon: '📝',
+      desc: 'Trace Outputs',
+      meta: '3 environments monitored',
+      pathD: 'M 620 390 Q 505 340 455 280',
+      speed: 3.3
+    }
   ];
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    const container = containerRef.current;
-    if (!container) return;
-
-    const rect = container.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-
-    setMouseOffset({ x: x * 0.04, y: y * 0.04 });
-  };
 
   const handleMouseLeave = () => {
-    setMouseOffset({ x: 0, y: 0 });
     setHoveredIdx(null);
+    setIsCoreHovered(false);
   };
 
-  const paths = [
-    { d: "M 180 120 Q 300 200 400 250", speed: 3.8 },
-    { d: "M 130 250 Q 250 250 400 250", speed: 3.2 },
-    { d: "M 180 380 Q 300 300 400 250", speed: 4.5 },
-    { d: "M 620 120 Q 500 200 400 250", speed: 3.5 },
-    { d: "M 670 250 Q 550 250 400 250", speed: 3.0 },
-    { d: "M 620 380 Q 500 300 400 250", speed: 4.0 }
-  ];
-
-  const connectionPoints = [
-    { cx: 336, cy: 218 },
-    { cx: 328, cy: 250 },
-    { cx: 336, cy: 282 },
-    { cx: 464, cy: 218 },
-    { cx: 472, cy: 250 },
-    { cx: 464, cy: 282 }
-  ];
-
   return (
-    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="problem">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="relative py-12 md:py-18 bg-[#F7F7F5] border-t border-black/[0.035] content-layer overflow-hidden" id="problem">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         
-        <style dangerouslySetInnerHTML={{ __html: `
-          @keyframes flow-inward {
-            0% {
-              offset-distance: 0%;
-              opacity: 0;
-            }
-            8% {
-              opacity: 0.9;
-            }
-            92% {
-              opacity: 0.9;
-            }
-            100% {
-              offset-distance: 100%;
-              opacity: 0;
-            }
-          }
-          @keyframes flow-outward {
-            0% {
-              offset-distance: 100%;
-              opacity: 0;
-            }
-            8% {
-              opacity: 0.9;
-            }
-            92% {
-              opacity: 0.9;
-            }
-            100% {
-              offset-distance: 0%;
-              opacity: 0;
-            }
-          }
-          .particle-dot {
-            transform-box: fill-box;
-            transform-origin: center;
-          }
-        `}} />
-
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-12 md:mb-16">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             The Problem
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-5">
             Modern software is connected.<br />
             Your tools shouldn't be fragmented.
           </h2>
-          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed">
+          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed font-sans">
             Developers constantly move between repositories, documentation, architecture diagrams, issue trackers, terminals, and AI tools just to understand how a system works. NEXORA brings that understanding into one intelligent workspace.
           </p>
         </div>
 
+        {/* ========================================================= */}
+        {/* DESKTOP & TABLET: Living Intelligence Graph */}
+        {/* ========================================================= */}
         <div
-          ref={containerRef}
-          onMouseMove={handleMouseMove}
           onMouseLeave={handleMouseLeave}
-          className="relative max-w-4xl mx-auto h-[450px] md:h-[500px] flex items-center justify-center overflow-hidden"
+          className="hidden md:flex relative max-w-5xl mx-auto h-[520px] items-center justify-center select-none"
         >
-          
+          {/* SVG Living Data Streams Canvas */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none z-0" viewBox="0 0 800 500">
-            {paths.map((p, idx) => {
-              const isPathHovered = hoveredIdx === idx;
-              const isAnyHovered = hoveredIdx !== null;
-              
-              let baseOpacity = 0.095;
-              let glowOpacity = 0.35;
-              let lineSpeed = p.speed;
+            {/* Concentric Intelligence Orbit Rings around NEXORA Core */}
+            <circle cx="400" cy="250" r="70" fill="none" stroke="rgba(37,99,235,0.15)" strokeWidth="1.2" strokeDasharray="3, 3" />
+            <circle cx="400" cy="250" r="115" fill="none" stroke="rgba(37,99,235,0.08)" strokeWidth="1" strokeDasharray="4, 4" />
+            <circle cx="400" cy="250" r="165" fill="none" stroke="rgba(37,99,235,0.05)" strokeWidth="1" strokeDasharray="5, 5" />
 
-              if (isAnyHovered) {
-                if (isPathHovered) {
-                  baseOpacity = 0.28;
-                  glowOpacity = 1.0;
-                  lineSpeed = p.speed * 0.55;
-                } else {
-                  baseOpacity = 0.02;
-                  glowOpacity = 0.04;
-                }
-              }
-
-              const isOutward = idx === 1 || idx === 4;
+            {/* Clean Solid Blue Flowing Streams for ALL 6 Links */}
+            {tools.map((tool, idx) => {
+              const isDirectHovered = hoveredIdx === idx;
+              const isHoveredState = isDirectHovered || isCoreHovered;
+              const particleDuration = isHoveredState ? tool.speed * 0.6 : tool.speed;
 
               return (
-                <g key={idx}>
-                  <motion.path
-                    d={p.d}
-                    stroke="rgba(37, 99, 235, 0.45)"
-                    strokeWidth="1.2"
+                <g key={tool.id}>
+                  {/* Crisp Base Track Line */}
+                  <path
+                    d={tool.pathD}
+                    stroke={isHoveredState ? 'rgba(37,99,235,0.35)' : 'rgba(37,99,235,0.2)'}
+                    strokeWidth={isHoveredState ? '2' : '1.5'}
                     strokeDasharray="4, 4"
                     fill="none"
-                    animate={{ opacity: baseOpacity }}
-                    transition={{ duration: 0.35 }}
+                    className="transition-all duration-200"
                   />
+
+                  {/* Clean Solid Blue Flowing Stream */}
                   <motion.path
-                    d={p.d}
+                    d={tool.pathD}
                     stroke="#2563EB"
-                    strokeWidth={isPathHovered ? 2.5 : 1.6}
-                    strokeDasharray="8, 25"
-                    strokeDashoffset="0"
+                    strokeWidth={isHoveredState ? '2.8' : '2.2'}
+                    strokeDasharray="12, 16"
+                    strokeLinecap="round"
                     fill="none"
-                    animate={{ 
-                      strokeDashoffset: isPathHovered ? [0, -96] : [-100, 100],
-                      opacity: glowOpacity
+                    animate={{ strokeDashoffset: [0, -56] }}
+                    transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }}
+                  />
+
+                  {/* Leading Solid Blue Particle Dot 1 */}
+                  <motion.circle
+                    r={isHoveredState ? '4' : '3.5'}
+                    fill="#2563EB"
+                    stroke="#FFFFFF"
+                    strokeWidth="1"
+                    className="transition-all duration-200"
+                    style={{
+                      offsetPath: `path("${tool.pathD}")`,
                     }}
-                    transition={{ 
-                      strokeDashoffset: { repeat: Infinity, duration: isPathHovered ? 1.2 : lineSpeed, ease: "linear" },
-                      opacity: { duration: 0.3 }
+                    animate={{
+                      offsetDistance: ['0%', '100%'],
+                      opacity: [0, 1, 1, 0]
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: particleDuration,
+                      ease: 'easeInOut'
                     }}
                   />
 
-                  <circle
-                    className="particle-dot"
-                    r="2.2"
-                    fill="#2563EB"
+                  {/* Trailing Solid Blue Particle Dot 2 */}
+                  <motion.circle
+                    r={isHoveredState ? '3' : '2.5'}
+                    fill="#3B82F6"
+                    className="transition-all duration-200"
                     style={{
-                      offsetPath: `path("${p.d}")`,
-                      animation: `${isOutward ? 'flow-outward' : 'flow-inward'} ${isPathHovered ? lineSpeed * 0.55 : lineSpeed}s linear infinite`,
-                      animationDelay: `${idx * 0.45}s`
-                    } as React.CSSProperties}
-                  />
-
-                  <circle
-                    className="particle-dot"
-                    r="2.2"
-                    fill="#2563EB"
-                    style={{
-                      offsetPath: `path("${p.d}")`,
-                      animation: `${isOutward ? 'flow-outward' : 'flow-inward'} ${isPathHovered ? lineSpeed * 0.55 : lineSpeed}s linear infinite`,
-                      animationDelay: `${idx * 0.45 + (isPathHovered ? lineSpeed * 0.275 : lineSpeed * 0.5)}s`
-                    } as React.CSSProperties}
+                      offsetPath: `path("${tool.pathD}")`,
+                    }}
+                    animate={{
+                      offsetDistance: ['0%', '100%'],
+                      opacity: [0, 0.9, 0.9, 0]
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: particleDuration,
+                      delay: particleDuration * 0.4,
+                      ease: 'easeInOut'
+                    }}
                   />
                 </g>
               );
             })}
-
-            {connectionPoints.map((pt, idx) => {
-              const isPointHovered = hoveredIdx === idx;
-              return (
-                <motion.circle
-                  key={idx}
-                  cx={pt.cx}
-                  cy={pt.cy}
-                  animate={{
-                    r: isPointHovered ? 4.5 : 2.5,
-                    fill: isPointHovered ? '#2563EB' : '#A3A3A3',
-                    opacity: isPointHovered ? 0.95 : 0.35
-                  }}
-                  transition={{ type: 'spring', stiffness: 350, damping: 18 }}
-                />
-              );
-            })}
           </svg>
 
-          <motion.div 
-            animate={{ 
-              x: mouseOffset.x * 0.4, 
-              y: mouseOffset.y * 0.4,
-              scale: hoveredIdx !== null ? 1.025 : 1,
-              boxShadow: hoveredIdx !== null 
-                ? '0 12px 48px rgba(37, 99, 235, 0.12), 0 0 20px rgba(37, 99, 235, 0.08)' 
-                : '0 8px 40px rgba(37,99,235,0.06)'
+          {/* ========================================================= */}
+          {/* CENTRAL NEXORA INTELLIGENCE CORE */}
+          {/* ========================================================= */}
+          <motion.div
+            animate={{
+              scale: isCoreHovered ? 1.05 : hoveredIdx !== null ? 1.02 : [1, 1.015, 1],
+              boxShadow: (isCoreHovered || hoveredIdx !== null)
+                ? '0 16px 44px rgba(37, 99, 235, 0.14), 0 0 24px rgba(37, 99, 235, 0.1)'
+                : '0 8px 32px rgba(37, 99, 235, 0.07)'
             }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="absolute z-10 w-36 h-36 rounded-full bg-white flex flex-col items-center justify-center border border-blue-500/20 text-center p-3 select-none"
+            transition={{
+              scale: isCoreHovered ? { duration: 0.2 } : { repeat: Infinity, duration: 3.6, ease: 'easeInOut' },
+              boxShadow: { duration: 0.3 }
+            }}
+            onMouseEnter={() => setIsCoreHovered(true)}
+            onMouseLeave={() => setIsCoreHovered(false)}
+            className="absolute z-20 w-36 h-36 rounded-full bg-white flex flex-col items-center justify-center border border-blue-500/25 text-center p-3 cursor-pointer shadow-sm select-none"
           >
+            {/* Concentric ping aura */}
+            <div className="absolute inset-0 rounded-full border border-blue-500/20 animate-ping opacity-25" style={{ animationDuration: '3.2s' }} />
+
             <span className="text-[11px] font-sans font-bold uppercase tracking-wider text-blue-600 mb-0.5">
               NEXORA
             </span>
             <span className="text-[8.5px] font-semibold text-neutral-400 font-sans leading-tight">
               One context. Every signal.
             </span>
-            <div className="absolute inset-0 rounded-full border border-blue-500/25 animate-ping opacity-25" style={{ animationDuration: '3s' }} />
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: -35, y: -25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.1 }}
-            className="absolute top-[8%] left-[2%] sm:left-[10%] xl:left-[15%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8 + (hoveredIdx === 0 ? -4 : 0),
-                scale: hoveredIdx === 0 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 0 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 0 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(0)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl select-none">{tools[0].icon}</span>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[0].name}</div>
-              </div>
-              <div className="w-full">
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[0].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[0].meta}</div>
-              </div>
-            </motion.div>
-          </motion.div>
+          {/* ========================================================= */}
+          {/* THE 6 ORIGINAL SURROUNDING CARDS */}
+          {/* ========================================================= */}
+          {tools.map((tool, idx) => {
+            const isHovered = hoveredIdx === idx;
+            const isActive = isHovered || isCoreHovered;
 
-          <motion.div
-            initial={{ opacity: 0, x: -45 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.2 }}
-            className="absolute top-[45%] left-[0%] sm:left-[4%] xl:left-[8%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.9, 
-                y: mouseOffset.y * 0.9 + (hoveredIdx === 1 ? -4 : 0),
-                scale: hoveredIdx === 1 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 1 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 1 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(1)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl select-none">{tools[1].icon}</span>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[1].name}</div>
-              </div>
-              <div className="w-full">
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[1].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[1].meta}</div>
-              </div>
-            </motion.div>
-          </motion.div>
+            // Absolute positioning anchors based on index (Left 3, Right 3)
+            const isLeft = idx < 3;
+            const yPositions = ['top-[8%]', 'top-[44%]', 'bottom-[8%]'];
+            const yPosClass = yPositions[idx % 3];
+            const xPosClass = isLeft 
+              ? (idx === 1 ? 'left-[0%] sm:left-[2%] lg:left-[4%]' : 'left-[3%] sm:left-[6%] lg:left-[10%]')
+              : (idx === 4 ? 'right-[0%] sm:right-[2%] lg:right-[4%]' : 'right-[3%] sm:right-[6%] lg:right-[10%]');
 
-          <motion.div
-            initial={{ opacity: 0, x: -35, y: 25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.3 }}
-            className="absolute bottom-[8%] left-[2%] sm:left-[10%] xl:left-[15%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8 + (hoveredIdx === 2 ? -4 : 0),
-                scale: hoveredIdx === 2 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 2 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 2 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(2)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl select-none">{tools[2].icon}</span>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[2].name}</div>
-              </div>
-              <div className="w-full">
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[2].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[2].meta}</div>
-              </div>
-            </motion.div>
-          </motion.div>
+            return (
+              <motion.div
+                key={tool.id}
+                className={`absolute ${yPosClass} ${xPosClass} z-10 flex items-center justify-center`}
+              >
+                <motion.div
+                  animate={{
+                    y: isActive ? -3 : 0,
+                    scale: isActive ? 1.03 : 1,
+                    borderColor: isActive ? 'rgba(37,99,235,0.35)' : 'rgba(0,0,0,0.045)',
+                    boxShadow: isActive 
+                      ? '0 10px 24px rgba(37,99,235,0.08), 0 2px 8px rgba(0,0,0,0.02)'
+                      : '0 2px 8px rgba(0,0,0,0.015)'
+                  }}
+                  transition={{ type: 'spring', damping: 22, stiffness: 220 }}
+                  onMouseEnter={() => setHoveredIdx(idx)}
+                  onMouseLeave={() => setHoveredIdx(null)}
+                  className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-200"
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg sm:text-xl select-none">{tool.icon}</span>
+                    <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">
+                      {tool.name}
+                    </div>
+                  </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 35, y: -25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.4 }}
-            className="absolute top-[8%] right-[2%] sm:right-[10%] xl:right-[15%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8 + (hoveredIdx === 3 ? -4 : 0),
-                scale: hoveredIdx === 3 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 3 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 3 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(3)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl select-none">{tools[3].icon}</span>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[3].name}</div>
-              </div>
-              <div className="w-full">
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[3].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[3].meta}</div>
-              </div>
-            </motion.div>
-          </motion.div>
+                  <div className="w-full">
+                    <div className="text-neutral-500 text-[10px] font-sans font-medium">
+                      {tool.desc}
+                    </div>
+                    <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">
+                      {tool.meta}
+                    </div>
+                  </div>
+                </motion.div>
+              </motion.div>
+            );
+          })}
 
-          <motion.div
-            initial={{ opacity: 0, x: 45 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.5 }}
-            className="absolute top-[45%] right-[0%] sm:right-[4%] xl:right-[8%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.9, 
-                y: mouseOffset.y * 0.9 + (hoveredIdx === 4 ? -4 : 0),
-                scale: hoveredIdx === 4 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 4 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 4 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(4)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <div className="flex items-center gap-2">
-                <span className="text-lg sm:text-xl select-none">{tools[4].icon}</span>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[4].name}</div>
-              </div>
-              <div className="w-full">
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[4].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[4].meta}</div>
-              </div>
-            </motion.div>
-          </motion.div>
+        </div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 35, y: 25 }}
-            whileInView={{ opacity: 1, x: 0, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.6 }}
-            className="absolute bottom-[8%] right-[2%] sm:right-[10%] xl:right-[15%] flex items-center justify-center"
-          >
-            <motion.div
-              animate={{ 
-                x: mouseOffset.x * 0.8, 
-                y: mouseOffset.y * 0.8 + (hoveredIdx === 5 ? -4 : 0),
-                scale: hoveredIdx === 5 ? 1.03 : 1,
-                boxShadow: hoveredIdx === 5 ? '0 12px 30px rgba(37,99,235,0.08)' : '0 2px 8px rgba(0,0,0,0.015)',
-                borderColor: hoveredIdx === 5 ? 'rgba(37,99,235,0.22)' : 'rgba(0,0,0,0.045)'
-              }}
-              transition={{ type: 'spring', damping: 20, stiffness: 150 }}
-              onMouseEnter={() => setHoveredIdx(5)}
-              onMouseLeave={() => setHoveredIdx(null)}
-              className="w-36 sm:w-44 p-3.5 rounded-xl bg-white border cursor-pointer flex flex-col items-start gap-1.5 transition-colors duration-300"
-            >
-              <span className="text-xl sm:text-2xl">{tools[5].icon}</span>
-              <div>
-                <div className="text-neutral-800 font-bold text-[10px] tracking-wider font-sans leading-none">{tools[5].name}</div>
-                <div className="text-neutral-500 text-[10px] font-sans font-medium">{tools[5].desc}</div>
-                <div className="text-neutral-300 text-[8.5px] font-mono mt-0.5">{tools[5].meta}</div>
+        {/* ========================================================= */}
+        {/* MOBILE VIEW: Balanced 6-Card Flow */}
+        {/* ========================================================= */}
+        <div className="md:hidden flex flex-col gap-4 max-w-sm mx-auto select-none">
+          
+          {/* Top 3 Cards */}
+          <div className="space-y-2.5">
+            {tools.slice(0, 3).map((tool) => (
+              <div
+                key={tool.id}
+                className="p-3.5 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg select-none">{tool.icon}</span>
+                  <div>
+                    <div className="font-sans font-bold text-xs text-neutral-900">{tool.name}</div>
+                    <div className="text-[10px] text-neutral-500 font-medium">{tool.desc}</div>
+                    <div className="text-[8.5px] text-neutral-300 font-mono">{tool.meta}</div>
+                  </div>
+                </div>
+                <span className="text-[9px] font-mono text-blue-600 bg-blue-50/70 px-2 py-0.5 rounded">
+                  Active
+                </span>
               </div>
-            </motion.div>
-          </motion.div>
+            ))}
+          </div>
+
+          {/* Central NEXORA Connector */}
+          <div className="flex flex-col items-center justify-center my-1">
+            <div className="h-5 w-[2px] bg-gradient-to-b from-blue-200 to-blue-500" />
+            
+            <div className="w-full p-3.5 rounded-xl bg-white border border-blue-500/25 text-center shadow-sm relative overflow-hidden">
+              <span className="text-xs font-sans font-bold uppercase tracking-wider text-blue-600 block mb-0.5">
+                NEXORA
+              </span>
+              <span className="text-[9px] font-semibold text-neutral-400 font-sans leading-tight block">
+                One context. Every signal.
+              </span>
+            </div>
+
+            <div className="h-5 w-[2px] bg-gradient-to-b from-blue-500 to-blue-200" />
+          </div>
+
+          {/* Bottom 3 Cards */}
+          <div className="space-y-2.5">
+            {tools.slice(3, 6).map((tool) => (
+              <div
+                key={tool.id}
+                className="p-3.5 rounded-xl bg-white border border-black/[0.045] shadow-sm flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span className="text-lg select-none">{tool.icon}</span>
+                  <div>
+                    <div className="font-sans font-bold text-xs text-neutral-900">{tool.name}</div>
+                    <div className="text-[10px] text-neutral-500 font-medium">{tool.desc}</div>
+                    <div className="text-[8.5px] text-neutral-300 font-mono">{tool.meta}</div>
+                  </div>
+                </div>
+                <span className="text-[9px] font-mono text-blue-600 bg-blue-50/70 px-2 py-0.5 rounded">
+                  Active
+                </span>
+              </div>
+            ))}
+          </div>
 
         </div>
 
@@ -416,4 +341,5 @@ export const ProblemSection: React.FC = () => {
     </section>
   );
 };
+
 export default ProblemSection;

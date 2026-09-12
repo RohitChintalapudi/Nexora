@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface NodeItem {
   id: string;
@@ -62,15 +61,7 @@ export const ProductIntelligence: React.FC = () => {
            (to === hoveredNode && connectedMap[hoveredNode]?.includes(from));
   };
 
-  const textVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as const } }
-  };
 
-  const cardVariants = {
-    initial: { opacity: 0, scale: 0.98 },
-    animate: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] as const } }
-  };
 
   return (
     <div id="product" className="relative bg-[#F7F7F5] content-layer">
@@ -78,13 +69,7 @@ export const ProductIntelligence: React.FC = () => {
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          <motion.div
-            variants={textVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-5 flex flex-col justify-center"
-          >
+          <div className="lg:col-span-5 flex flex-col justify-center">
             <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
               01 — UNDERSTAND
             </span>
@@ -109,15 +94,9 @@ export const ProductIntelligence: React.FC = () => {
                 <span>Dependency-aware answers</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={cardVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-7"
-          >
+          <div className="lg:col-span-7">
             <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs">
               <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50">
                 <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">NEXORA INTELLIGENCE</span>
@@ -169,7 +148,7 @@ export const ProductIntelligence: React.FC = () => {
                 <span className="text-blue-500 font-semibold hover:underline cursor-pointer flex items-center gap-0.5">Open context →</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>
@@ -179,22 +158,18 @@ export const ProductIntelligence: React.FC = () => {
       <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          <motion.div
-            variants={cardVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-7 order-last lg:order-first"
-          >
+          <div className="lg:col-span-7 order-last lg:order-first">
             <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs relative flex flex-col min-h-[300px]">
-              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50 select-none">
+              <div className="h-11 flex items-center justify-between border-b border-black/[0.035] px-6 bg-neutral-50/50 select-none">
                 <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">ARCHITECTURE MAP</span>
                 {hoveredNode ? (
                   <span className="text-[9px] font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded px-2 py-0.5 max-w-[200px] truncate">
                     {nodes.find(n => n.id === hoveredNode)?.info}
                   </span>
                 ) : (
-                  <span className="text-[9px] text-neutral-400">Hover nodes to explore connections</span>
+                  <span className="text-[9px] text-neutral-400 border border-transparent py-0.5 px-2">
+                    Hover nodes to explore connections
+                  </span>
                 )}
               </div>
 
@@ -288,15 +263,9 @@ export const ProductIntelligence: React.FC = () => {
                 <span className="text-neutral-400 font-semibold">Live Interactive Map</span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={textVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-5 order-first lg:order-last"
-          >
+          <div className="lg:col-span-5 order-first lg:order-last">
             <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
               02 — VISUALIZE
             </span>
@@ -321,7 +290,7 @@ export const ProductIntelligence: React.FC = () => {
                 <span>Connected system boundaries</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
         </div>
       </section>
@@ -331,13 +300,7 @@ export const ProductIntelligence: React.FC = () => {
       <section className="relative py-12 md:py-16 max-w-7xl mx-auto px-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          <motion.div
-            variants={textVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-5 flex flex-col justify-center"
-          >
+          <div className="lg:col-span-5 flex flex-col justify-center">
             <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
               03 — PREDICT
             </span>
@@ -362,15 +325,9 @@ export const ProductIntelligence: React.FC = () => {
                 <span>Potential risk detection</span>
               </li>
             </ul>
-          </motion.div>
+          </div>
 
-          <motion.div
-            variants={cardVariants}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-100px' }}
-            className="lg:col-span-7"
-          >
+          <div className="lg:col-span-7">
             <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs">
               <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50">
                 <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">CHANGE IMPACT ANALYSIS</span>
@@ -431,7 +388,7 @@ export const ProductIntelligence: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
 
         </div>
       </section>

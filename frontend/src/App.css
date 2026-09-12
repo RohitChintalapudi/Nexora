@@ -1,20 +1,47 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Times New Roman', Times, Georgia, serif;
+  --font-serif: 'Times New Roman', Times, Georgia, serif;
   --color-blue-600: #2563EB;
   --color-blue-700: #1D4ED8;
+  --color-background: #09090b;
+  --color-foreground: #fafafa;
+  --color-primary: #2563EB;
+  --color-primary-foreground: #ffffff;
+  --color-border: rgba(255, 255, 255, 0.15);
 }
 
-/* Global resets for NEXORA */
+/* Global typography sizing and scaling for Times New Roman */
+html {
+  font-size: 17.5px;
+}
+
 html, body {
   background-color: #F7F7F5;
   color: #111111;
-  font-family: var(--font-sans);
+  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  letter-spacing: 0.005em;
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+/* Ensure landing page, auth pages, and all child typography are styled in Times New Roman with clear visibility */
+.landing-page,
+.landing-page *,
+.auth-page,
+.auth-page * {
+  font-family: 'Times New Roman', Times, Georgia, serif !important;
+}
+
+button:not(:disabled), [role="button"] {
+  cursor: pointer;
 }
 
 /* High-quality selection style */
@@ -23,23 +50,18 @@ html, body {
   color: #2563EB;
 }
 
-/* Customized scrollbar for premium aesthetic */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* Hide scrollbars across all browsers while preserving scroll functionality */
+* {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
 }
 
-::-webkit-scrollbar-track {
-  background: #F7F7F5;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(17, 17, 17, 0.08);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(17, 17, 17, 0.16);
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
 }
 
 /* Base layering utilities to prevent background elements from blocking clicks */

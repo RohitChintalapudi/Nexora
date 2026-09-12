@@ -1,41 +1,37 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-interface LogoProps {
+export interface LogoProps {
   className?: string;
   size?: number;
+  theme?: 'dark' | 'light';
 }
 
-export const Logo: React.FC<LogoProps> = ({ className = '', size = 32 }) => {
-  // SVG points:
-  // Node A: (10, 10) - top left
-  // Node B: (10, 30) - bottom left
-  // Node C: (20, 20) - center
-  // Node D: (30, 10) - top right
-  // Node E: (30, 30) - bottom right
+export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = 'dark' }) => {
+  const isDark = theme === 'dark';
 
   const pathVariants = {
-    initial: { pathLength: 0.8, opacity: 0.6, stroke: 'rgba(17, 17, 17, 0.4)' },
+    initial: { pathLength: 0.8, opacity: 0.7, stroke: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(17, 17, 17, 0.4)' },
     hover: { 
       pathLength: 1, 
       opacity: 1, 
-      stroke: '#2563EB', // refined blue accent
+      stroke: '#3B82F6',
       transition: { duration: 0.4, ease: 'easeInOut' as const } 
     }
   };
 
   const nodeVariants = {
-    initial: { scale: 1, fill: '#111111' },
+    initial: { scale: 1, fill: isDark ? '#FFFFFF' : '#111111' },
     hover: { 
       scale: 1.25, 
-      fill: '#2563EB',
+      fill: '#3B82F6',
       transition: { duration: 0.3, ease: 'easeOut' as const }
     }
   };
 
   return (
     <motion.div 
-      className={`flex items-center gap-2.5 font-sans font-medium text-lg tracking-wider text-neutral-900 cursor-pointer select-none ${className}`}
+      className={`flex items-center gap-2.5 font-sans font-medium text-lg tracking-wider ${isDark ? 'text-white' : 'text-neutral-900'} cursor-pointer select-none ${className}`}
       whileHover="hover"
       initial="initial"
     >
@@ -78,7 +74,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32 }) => {
         {/* Bottom Right Node */}
         <motion.circle cx="30" cy="30" r="3.5" variants={nodeVariants} />
       </svg>
-      <span className="font-semibold text-neutral-950 font-sans tracking-tight text-xl">
+      <span className={`font-semibold ${isDark ? 'text-white' : 'text-neutral-950'} font-sans tracking-tight text-xl`}>
         NEXORA
       </span>
     </motion.div>

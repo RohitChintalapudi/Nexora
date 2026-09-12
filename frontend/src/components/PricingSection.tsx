@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '../context/AuthContext';
 
 export const PricingSection: React.FC = () => {
+  const { navigateTo } = useAuth();
+
   const basicFeatures = [
     'Up to 3 GitHub Repositories',
     'Interactive dependency tree mapping',
@@ -35,13 +38,7 @@ export const PricingSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const }}
-            className="flex flex-col rounded-3xl bg-white border border-black/[0.045] p-8 shadow-[0_2px_12px_rgba(0,0,0,0.01)]"
-          >
+          <div className="flex flex-col rounded-3xl bg-white border border-black/[0.045] p-8 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
             <div className="mb-6">
               <h3 className="text-neutral-500 font-sans font-bold uppercase tracking-wider text-[11px] mb-2">Basic</h3>
               <div className="flex items-baseline gap-1">
@@ -62,23 +59,18 @@ export const PricingSection: React.FC = () => {
               ))}
             </ul>
 
-            <motion.a
-              href="#getstarted"
+            <motion.button
+              type="button"
+              onClick={() => navigateTo('signup')}
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.99 }}
-              className="block w-full py-3 rounded-xl border border-black/[0.08] hover:bg-neutral-50 text-neutral-700 font-medium text-xs font-sans tracking-wide text-center transition-colors shadow-sm"
+              className="block w-full py-3 rounded-xl border border-black/[0.08] hover:bg-neutral-50 text-neutral-700 font-medium text-xs font-sans tracking-wide text-center transition-colors shadow-sm cursor-pointer"
             >
               Start with Basic
-            </motion.a>
-          </motion.div>
+            </motion.button>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-50px' }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] as const, delay: 0.1 }}
-            className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative"
-          >
+          <div className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-blue-600 text-[9px] font-sans font-bold uppercase tracking-wider text-white select-none">
               Most Popular
             </div>
@@ -103,15 +95,16 @@ export const PricingSection: React.FC = () => {
               ))}
             </ul>
 
-            <motion.a
-              href="#getstarted"
+            <motion.button
+              type="button"
+              onClick={() => navigateTo('signup')}
               whileHover={{ scale: 1.01, y: -1 }}
               whileTap={{ scale: 0.99 }}
-              className="block w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs font-sans tracking-wide text-center transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20"
+              className="block w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs font-sans tracking-wide text-center transition-all shadow-md shadow-blue-500/10 hover:shadow-blue-500/20 cursor-pointer"
             >
               Start with Premium
-            </motion.a>
-          </motion.div>
+            </motion.button>
+          </div>
 
         </div>
 
@@ -119,4 +112,5 @@ export const PricingSection: React.FC = () => {
     </section>
   );
 };
+
 export default PricingSection;

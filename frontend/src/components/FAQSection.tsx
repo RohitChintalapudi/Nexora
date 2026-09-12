@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 
 interface FAQItem {
   question: string;
@@ -37,7 +36,7 @@ export const FAQSection: React.FC = () => {
   };
 
   return (
-    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="faq">
+    <section className="relative py-12 md:py-16 bg-[#F7F7F5] content-layer" id="faq">
       <div className="max-w-4xl mx-auto px-6">
         
         <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
@@ -53,17 +52,13 @@ export const FAQSection: React.FC = () => {
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <motion.div
+              <div
                 key={idx}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] as const, delay: idx * 0.05 }}
                 className="bg-white border border-black/[0.045] rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.005)]"
               >
                 <button
                   onClick={() => toggleFAQ(idx)}
-                  className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none"
+                  className="w-full flex items-center justify-between p-5 text-left font-sans font-medium text-sm sm:text-base text-neutral-800 hover:text-neutral-950 transition-colors select-none cursor-pointer"
                 >
                   <span>{faq.question}</span>
                   <span className={`text-xs text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>
@@ -80,7 +75,7 @@ export const FAQSection: React.FC = () => {
                     {faq.answer}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>

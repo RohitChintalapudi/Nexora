@@ -5,16 +5,23 @@ export const useMousePosition = (): MousePosition => {
   const [mousePosition, setMousePosition] = useState<MousePosition>({ x: 0, y: 0 });
 
   useEffect(() => {
+    let rafId: number | null = null;
+
     const handleMouseMove = (event: MouseEvent) => {
-      setMousePosition({
-        x: event.clientX,
-        y: event.clientY,
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        setMousePosition({
+          x: event.clientX,
+          y: event.clientY,
+        });
+        rafId = null;
       });
     };
 
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId !== null) cancelAnimationFrame(rafId);
     };
   }, []);
 
