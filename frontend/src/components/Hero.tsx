@@ -249,26 +249,26 @@ export const Hero: React.FC = () => {
         variants={cardFlyInVariants('bottom-left', 0.6)}
         initial="initial"
         animate="animate"
-        className="absolute bottom-[10%] left-[2%] xl:left-[4%] 2xl:left-[6%] z-30 hidden lg:block w-72 xl:w-80 will-change-transform"
+        className="absolute bottom-[10%] left-[2%] xl:left-[4%] 2xl:left-[6%] z-30 hidden lg:block w-80 xl:w-[360px] will-change-transform"
       >
         <FloatingInsightCard depth={14} tiltMax={7}>
           <span className="text-xs font-serif font-bold uppercase tracking-wider text-neutral-300 block mb-3">
             Dependency Flow
           </span>
-          <div className="flex items-center gap-2 select-none">
-            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm">
+          <div className="flex items-center gap-1.5 select-none w-full">
+            <div className="flex-1 py-1.5 px-2 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm truncate">
               Auth
             </div>
-            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
-            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-blue-500/25 border border-blue-500/40 text-xs sm:text-sm text-blue-300 font-mono font-semibold shadow-sm">
+            <span className="text-neutral-400 text-xs sm:text-sm font-mono font-bold flex-shrink-0">→</span>
+            <div className="flex-1 py-1.5 px-2 text-center rounded-lg bg-blue-500/25 border border-blue-500/40 text-xs sm:text-sm text-blue-300 font-mono font-semibold shadow-sm truncate">
               Gateway
             </div>
-            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
-            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm">
+            <span className="text-neutral-400 text-xs sm:text-sm font-mono font-bold flex-shrink-0">→</span>
+            <div className="flex-1 py-1.5 px-2 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-200 font-mono font-medium shadow-sm truncate">
               Service
             </div>
-            <span className="text-neutral-400 text-sm font-mono font-bold">→</span>
-            <div className="flex-1 py-1.5 px-2.5 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-300 font-mono font-medium shadow-sm">
+            <span className="text-neutral-400 text-xs sm:text-sm font-mono font-bold flex-shrink-0">→</span>
+            <div className="flex-1 py-1.5 px-2 text-center rounded-lg bg-white/[0.06] border border-white/[0.09] text-xs sm:text-sm text-neutral-300 font-mono font-medium shadow-sm truncate">
               DB
             </div>
           </div>

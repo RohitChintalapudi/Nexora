@@ -97,45 +97,45 @@ export const ProductIntelligence: React.FC = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs">
-              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50">
-                <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">NEXORA INTELLIGENCE</span>
-                <span className="text-[9px] font-semibold text-emerald-600 flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-serif text-sm">
+              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-4 bg-neutral-50/50">
+                <span className="font-mono text-xs text-neutral-400 font-bold uppercase tracking-wider">NEXORA INTELLIGENCE</span>
+                <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1.5 font-serif">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   ANALYZED
                 </span>
               </div>
               
-              <div className="p-6 sm:p-8 space-y-5">
-                <div className="flex flex-col gap-1.5">
-                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">USER</div>
-                  <div className="text-neutral-800 font-semibold bg-neutral-50 border border-neutral-100/50 rounded-xl py-2 px-3.5 shadow-[0_1px_2px_rgba(0,0,0,0.005)] inline-block self-start">
+              <div className="p-6 sm:p-8 space-y-6">
+                <div className="flex flex-col gap-2">
+                  <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-serif">USER</div>
+                  <div className="text-neutral-900 font-semibold bg-neutral-50 border border-neutral-100/60 rounded-xl py-2.5 px-4 shadow-[0_1px_2px_rgba(0,0,0,0.005)] inline-block self-start text-sm sm:text-base font-serif">
                     Where is authentication handled?
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-1.5">
-                  <div className="text-[10px] font-bold text-blue-600 uppercase tracking-wider">NEXORA</div>
-                  <div className="text-neutral-600 bg-white border border-neutral-100 rounded-xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
-                    <div className="font-semibold text-neutral-800 mb-3">Authentication flow detected</div>
-                    <div className="font-mono text-[10px] sm:text-xs space-y-2 text-neutral-500">
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded bg-neutral-150" />
+                <div className="flex flex-col gap-2">
+                  <div className="text-xs font-bold text-blue-600 uppercase tracking-wider font-serif">NEXORA</div>
+                  <div className="text-neutral-700 bg-white border border-neutral-100 rounded-xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.01)]">
+                    <div className="font-semibold text-neutral-900 text-sm sm:text-base mb-3.5 font-serif">Authentication flow detected</div>
+                    <div className="font-mono text-xs sm:text-sm space-y-2.5 text-neutral-600">
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded bg-neutral-200" />
                         <span>AuthController.ts</span>
                       </div>
-                      <div className="pl-5 text-neutral-200">↓</div>
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded bg-blue-500 shadow-sm shadow-blue-500/20" />
-                        <span className="font-semibold text-neutral-800">AuthService.ts</span>
+                      <div className="pl-6 text-neutral-300">↓</div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded bg-blue-500 shadow-sm shadow-blue-500/20" />
+                        <span className="font-semibold text-neutral-900">AuthService.ts</span>
                       </div>
-                      <div className="pl-5 text-neutral-200">↓</div>
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded bg-neutral-150" />
+                      <div className="pl-6 text-neutral-300">↓</div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded bg-neutral-200" />
                         <span>JWTMiddleware.ts</span>
                       </div>
-                      <div className="pl-5 text-neutral-200">↓</div>
-                      <div className="flex items-center gap-2">
-                        <span className="w-2 h-2 rounded bg-neutral-150" />
+                      <div className="pl-6 text-neutral-300">↓</div>
+                      <div className="flex items-center gap-2.5">
+                        <span className="w-2.5 h-2.5 rounded bg-neutral-200" />
                         <span>UserRepository.ts</span>
                       </div>
                     </div>
@@ -143,9 +143,9 @@ export const ProductIntelligence: React.FC = () => {
                 </div>
               </div>
 
-              <div className="border-t border-black/[0.035] px-6 py-3 bg-neutral-50/50 flex items-center justify-between text-[10px] text-neutral-400">
+              <div className="border-t border-black/[0.035] px-6 py-3.5 bg-neutral-50/50 flex items-center justify-between text-xs font-serif text-neutral-500">
                 <span>12 related files</span>
-                <span className="text-blue-500 font-semibold hover:underline cursor-pointer flex items-center gap-0.5">Open context →</span>
+                <span className="text-blue-600 font-semibold hover:underline cursor-pointer flex items-center gap-1">Open context →</span>
               </div>
             </div>
           </div>
@@ -328,60 +328,60 @@ export const ProductIntelligence: React.FC = () => {
           </div>
 
           <div className="lg:col-span-7">
-            <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-sans text-xs">
-              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-3.5 bg-neutral-50/50">
-                <span className="font-mono text-[10px] text-neutral-400 font-bold uppercase tracking-wider">CHANGE IMPACT ANALYSIS</span>
-                <span className="text-[9px] font-sans font-bold px-2 py-0.5 rounded bg-red-50 border border-red-100 text-red-600 tracking-wide select-none">
+            <div className="code-panel rounded-3xl border border-black/[0.045] bg-white shadow-[0_4px_24px_rgba(0,0,0,0.015)] overflow-hidden font-serif text-sm">
+              <div className="flex items-center justify-between border-b border-black/[0.035] px-6 py-4 bg-neutral-50/50">
+                <span className="font-mono text-xs text-neutral-400 font-bold uppercase tracking-wider">CHANGE IMPACT ANALYSIS</span>
+                <span className="text-xs font-serif font-bold px-2.5 py-1 rounded bg-red-50 border border-red-100 text-red-600 tracking-wide select-none">
                   ⚠ Potential impact detected
                 </span>
               </div>
 
               <div className="p-6 sm:p-8 space-y-6">
-                <div className="flex flex-col gap-1.5">
-                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Changed</div>
-                  <div className="font-mono text-neutral-800 font-semibold bg-neutral-50 border border-neutral-100/50 rounded-lg py-2 px-3 inline-block self-start shadow-[0_1px_2px_rgba(0,0,0,0.005)]">
+                <div className="flex flex-col gap-2">
+                  <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-serif">Changed</div>
+                  <div className="font-mono text-neutral-900 font-semibold bg-neutral-50 border border-neutral-100/60 rounded-xl py-2.5 px-3.5 inline-block self-start shadow-[0_1px_2px_rgba(0,0,0,0.005)] text-sm sm:text-base">
                     AuthService.ts
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Potential impact</div>
-                  <div className="grid grid-cols-2 gap-2.5 text-neutral-700 font-sans font-medium">
-                    <div className="flex items-center gap-2 py-1.5 px-3 rounded bg-neutral-50/50 border border-neutral-100/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                <div className="flex flex-col gap-2.5">
+                  <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-serif">Potential impact</div>
+                  <div className="grid grid-cols-2 gap-3 text-neutral-800 font-serif font-medium text-sm sm:text-base">
+                    <div className="flex items-center gap-2.5 py-2 px-3.5 rounded-lg bg-neutral-50/70 border border-neutral-100/60">
+                      <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                       <span>12 files</span>
                     </div>
-                    <div className="flex items-center gap-2 py-1.5 px-3 rounded bg-neutral-50/50 border border-neutral-100/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                    <div className="flex items-center gap-2.5 py-2 px-3.5 rounded-lg bg-neutral-50/70 border border-neutral-100/60">
+                      <span className="w-2 h-2 rounded-full bg-neutral-600" />
                       <span>4 API routes</span>
                     </div>
-                    <div className="flex items-center gap-2 py-1.5 px-3 rounded bg-neutral-50/50 border border-neutral-100/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                    <div className="flex items-center gap-2.5 py-2 px-3.5 rounded-lg bg-neutral-50/70 border border-neutral-100/60">
+                      <span className="w-2 h-2 rounded-full bg-neutral-600" />
                       <span>3 services</span>
                     </div>
-                    <div className="flex items-center gap-2 py-1.5 px-3 rounded bg-neutral-50/50 border border-neutral-100/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-neutral-600" />
+                    <div className="flex items-center gap-2.5 py-2 px-3.5 rounded-lg bg-neutral-50/70 border border-neutral-100/60">
+                      <span className="w-2 h-2 rounded-full bg-neutral-600" />
                       <span>2 frontend components</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-2.5">
-                  <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">Dependency path</div>
-                  <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-1.5 font-mono text-[10px] text-neutral-600 bg-neutral-50/30 border border-neutral-100/30 rounded-xl p-3.5">
-                    <div className="flex-1 w-full sm:w-auto py-1 px-2.5 text-center rounded border border-red-200/50 bg-red-50/30 text-red-600 font-semibold shadow-sm">
+                  <div className="text-xs font-bold text-neutral-400 uppercase tracking-wider font-serif">Dependency path</div>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-2.5 sm:gap-2 font-mono text-xs sm:text-sm text-neutral-700 bg-neutral-50/40 border border-neutral-100/50 rounded-xl p-4">
+                    <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-red-200/60 bg-red-50/40 text-red-600 font-semibold shadow-sm">
                       AuthService
                     </div>
-                    <span className="text-neutral-300 text-xs rotate-90 sm:rotate-0">→</span>
-                    <div className="flex-1 w-full sm:w-auto py-1 px-2.5 text-center rounded border border-neutral-200/50 bg-white text-neutral-700 shadow-sm">
+                    <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
+                    <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-neutral-200/60 bg-white text-neutral-800 shadow-sm">
                       AuthController
                     </div>
-                    <span className="text-neutral-300 text-xs rotate-90 sm:rotate-0">→</span>
-                    <div className="flex-1 w-full sm:w-auto py-1 px-2.5 text-center rounded border border-neutral-200/50 bg-white text-neutral-700 shadow-sm">
+                    <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
+                    <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-neutral-200/60 bg-white text-neutral-800 shadow-sm">
                       API Gateway
                     </div>
-                    <span className="text-neutral-300 text-xs rotate-90 sm:rotate-0">→</span>
-                    <div className="flex-1 w-full sm:w-auto py-1 px-2.5 text-center rounded border border-neutral-200/50 bg-white text-neutral-500 shadow-sm">
+                    <span className="text-neutral-300 text-sm rotate-90 sm:rotate-0">→</span>
+                    <div className="flex-1 w-full sm:w-auto py-1.5 px-3 text-center rounded-lg border border-neutral-200/60 bg-white text-neutral-600 shadow-sm">
                       Dashboard
                     </div>
                   </div>
