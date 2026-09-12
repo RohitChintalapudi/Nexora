@@ -297,6 +297,142 @@ export const githubAuth = async (req, res) => {
   }
 };
 
+export const githubCallback = async (req, res) => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.redirect(`${clientUrl}/signin?error=No+GitHub+code+provided`);
+    }
+
+    const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
+    const clientSecret = process.env.GITHUB_CLIENT_SECRET || '5988278d28c1ea5bb7fa2f15c4856babd390df24';
+
+    const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code
+      })
+    });
+
+    const tokenData = await tokenRes.json();
+    if (tokenData.error || !tokenData.access_token) {
+      throw new Error(tokenData.error_description || tokenData.error || 'Failed to exchange GitHub authorization code');
+    }
+
+    const accessToken = tokenData.access_token;
+
+    // Fetch GitHub user profile
+    const userRes = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'User-Agent': 'Nexora-App'
+      }
+    });
+
+    if (!userRes.ok) {
+      throw new Error('Failed to retrieve GitHub user profile');
+    }
+
+    const ghUser = await userRes.json();
+    let email = ghUser.email;
+
+    if (!email) {
+      try {
+        const emailsRes = await fetch('https://api.github.com/user/emails', {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'User-Agent': 'Nexora-App'
+          }
+        });
+        if (emailsRes.ok) {
+          const emails = await emailsRes.json();
+          const primary = emails.find((e) => e.primary && e.verified) || emails.find((e) => e.verified) || emails[0];
+          if (primary) email = primary.email;
+        }
+      } catch (err) {
+        console.warn('Could not fetch GitHub user emails:', err.message);
+      }
+    }
+
+    if (!email) {
+      email = `${ghUser.login}@users.noreply.github.com`;
+    }
+
+    const user = await UserModel.upsertGithubUser({
+      name: ghUser.name || ghUser.login,
+      email,
+      githubId: String(ghUser.id),
+      avatarUrl: ghUser.avatar_url
+    });
+
+    const token = generateToken(user.id);
+
+    return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}`);
+  } catch (error) {
+    console.error('GitHub callback error:', error);
+    return res.redirect(`${clientUrl}/signin?error=${encodeURIComponent(error.message || 'GitHub authentication failed')}`);
+  }
+};
+
+export const googleCallback = async (req, res) => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+  try {
+    const { code } = req.query;
+
+    if (!code) {
+      return res.redirect(`${clientUrl}/signin?error=No+Google+code+provided`);
+    }
+
+    const redirectUri = 'http://localhost:5000/api/auth/google/callback';
+    const { tokens } = await googleClient.getToken({
+      code,
+      redirect_uri: redirectUri
+    });
+
+    let payload = null;
+    if (tokens.id_token) {
+      const ticket = await googleClient.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: process.env.GOOGLE_CLIENT_ID || '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com'
+      });
+      payload = ticket.getPayload();
+    } else if (tokens.access_token) {
+      const userRes = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${tokens.access_token}` }
+      });
+      payload = await userRes.json();
+    }
+
+    if (!payload || !payload.email) {
+      throw new Error('Could not retrieve Google profile');
+    }
+
+    const { sub: googleId, email, name, picture: avatarUrl } = payload;
+
+    const user = await UserModel.upsertGoogleUser({
+      name: name || email.split('@')[0],
+      email,
+      googleId: googleId || payload.id || `google_${Date.now()}`,
+      avatarUrl
+    });
+
+    const token = generateToken(user.id);
+
+    return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}`);
+  } catch (error) {
+    console.error('Google callback error:', error);
+    return res.redirect(`${clientUrl}/signin?error=${encodeURIComponent(error.message || 'Google authentication failed')}`);
+  }
+};
+
 export const getMe = async (req, res) => {
   try {
     return res.status(200).json({

@@ -88,8 +88,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthModalOpen(false);
   };
 
-  // Verify token on mount
+  // Verify token on mount or process incoming OAuth token
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tokenFromUrl = params.get('token');
+    const code = params.get('code');
+
+    if (tokenFromUrl) {
+      localStorage.setItem('nexora_token', tokenFromUrl);
+      setToken(tokenFromUrl);
+      const cleanUrl = window.location.pathname === '/dashboard' ? '/dashboard' : '/dashboard';
+      window.history.replaceState({}, document.title, cleanUrl);
+      setCurrentPage('dashboard');
+
+      fetch(`${API_BASE_URL}/api/auth/me`, {
+        headers: { Authorization: `Bearer ${tokenFromUrl}` },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.success && data.user) {
+            setUser(data.user);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+      return;
+    }
+
+    if (code) {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+      loginWithGithub({ code });
+      return;
+    }
+
     const fetchCurrentUser = async () => {
       const storedToken = localStorage.getItem('nexora_token');
       if (!storedToken) {
@@ -252,7 +284,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return;
     }
 
-    alert('Google Identity Services is still loading or blocked by your browser extensions. Please try again in a moment.');
+    // Fallback: Redirect to server-side Google OAuth endpoint
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent('http://localhost:5000/api/auth/google/callback')}&response_type=code&scope=openid%20email%20profile`;
   };
 
   const loginWithGithub = async (payload: { code?: string; accessToken?: string }) => {
@@ -285,21 +318,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const triggerGithubSignIn = () => {
     if (typeof window === 'undefined') return;
-    const redirectUri = window.location.origin + (window.location.pathname.startsWith('/signin') ? '/signin' : window.location.pathname.startsWith('/signup') ? '/signup' : '/');
+    const redirectUri = 'http://localhost:5000/api/auth/github/callback';
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = githubAuthUrl;
   };
-
-  // Check for GitHub OAuth callback code in URL query parameters on load
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const code = params.get('code');
-    if (code) {
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-      loginWithGithub({ code });
-    }
-  }, []);
 
   const logout = () => {
     localStorage.removeItem('nexora_token');
