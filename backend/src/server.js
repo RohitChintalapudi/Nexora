@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import githubRoutes from './routes/githubRoutes.js';
+import repositoryRoutes from './routes/repositoryRoutes.js';
 import { initDB } from './config/db.js';
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/github', githubRoutes);
+app.use('/api/repositories', repositoryRoutes);
 
 // Healthcheck route
 app.get('/api/health', (req, res) => {

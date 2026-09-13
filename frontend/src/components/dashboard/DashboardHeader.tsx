@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 interface DashboardHeaderProps {
   onConnectClick: () => void;
   onDisconnectClick?: () => void;
+  onChooseRepoClick?: () => void;
   isGitHubConnected?: boolean;
   githubUsername?: string | null;
   isConnecting?: boolean;
@@ -13,6 +14,7 @@ interface DashboardHeaderProps {
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onConnectClick,
   onDisconnectClick,
+  onChooseRepoClick,
   isGitHubConnected = false,
   githubUsername = null,
   isConnecting = false,
@@ -56,6 +58,17 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
                 @{githubUsername}
               </span>
             </div>
+
+            {/* Choose Repository Action */}
+            {onChooseRepoClick && (
+              <button
+                type="button"
+                onClick={onChooseRepoClick}
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all cursor-pointer shadow-2xs"
+              >
+                <span>Choose Repository</span>
+              </button>
+            )}
 
             {/* Disconnect Button */}
             {onDisconnectClick && (

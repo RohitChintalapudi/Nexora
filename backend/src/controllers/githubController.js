@@ -201,6 +201,113 @@ export const githubController = {
   },
 
   /**
+   * List repositories from GitHub for authenticated NEXORA user
+   * GET /api/github/repositories?page=1&per_page=20&search=...
+   */
+  async listRepositories(req, res) {
+    try {
+      const account = await GithubAccountModel.findByUserId(req.user.id);
+
+      if (!account || !account.access_token) {
+        return res.status(200).json({
+          success: true,
+          connected: false,
+          repositories: [],
+          totalCount: 0,
+          page: 1,
+          perPage: 20,
+          hasMore: false,
+          message: 'GitHub is not connected. Please connect your GitHub account.'
+        });
+      }
+
+      const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+      const perPage = Math.min(100, Math.max(1, parseInt(req.query.per_page, 10) || 20));
+      const search = req.query.search ? String(req.query.search).trim() : '';
+
+      let ghUrl = '';
+      if (search) {
+        // Use GitHub Search API scoped to user's repositories
+        ghUrl = `https://api.github.com/search/repositories?q=user:${encodeURIComponent(account.username)}+${encodeURIComponent(search)}+in:name&page=${page}&per_page=${perPage}&sort=updated`;
+      } else {
+        // Use GitHub user repos endpoint
+        ghUrl = `https://api.github.com/user/repos?page=${page}&per_page=${perPage}&sort=updated&affiliation=owner,collaborator,organization_member`;
+      }
+
+      const response = await fetchWithRetry(ghUrl, {
+        headers: {
+          Authorization: `Bearer ${account.access_token}`,
+          'User-Agent': 'Nexora-App',
+          Accept: 'application/vnd.github.v3+json'
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          return res.status(200).json({
+            success: true,
+            connected: true,
+            needs_reauth: true,
+            repositories: [],
+            totalCount: 0,
+            page,
+            perPage,
+            hasMore: false,
+            message: 'GitHub authorization has expired or was revoked. Please reconnect your account.'
+          });
+        }
+        throw new Error(`GitHub API error (${response.status})`);
+      }
+
+      const data = await response.json();
+      let rawRepos = [];
+      let totalCount = 0;
+
+      if (search) {
+        rawRepos = Array.isArray(data.items) ? data.items : [];
+        totalCount = data.total_count || rawRepos.length;
+      } else {
+        rawRepos = Array.isArray(data) ? data : [];
+        totalCount = rawRepos.length;
+      }
+
+      // Safe repository metadata only - never leak credentials
+      const repositories = rawRepos.map(repo => ({
+        id: repo.id,
+        name: repo.name,
+        fullName: repo.full_name,
+        owner: repo.owner?.login || account.username,
+        description: repo.description || '',
+        private: Boolean(repo.private),
+        defaultBranch: repo.default_branch || 'main',
+        language: repo.language || null,
+        htmlUrl: repo.html_url,
+        updatedAt: repo.updated_at
+      }));
+
+      const hasMore = search 
+        ? (page * perPage) < totalCount 
+        : rawRepos.length === perPage;
+
+      return res.status(200).json({
+        success: true,
+        connected: true,
+        repositories,
+        totalCount: search ? totalCount : undefined,
+        page,
+        perPage,
+        hasMore
+      });
+    } catch (error) {
+      console.error('Error fetching GitHub repositories:', error.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to retrieve repositories from GitHub. Please try again.'
+      });
+    }
+  },
+
+  /**
    * Get GitHub connection status for authenticated user
    * GET /api/github/status
    */

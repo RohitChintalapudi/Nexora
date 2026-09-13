@@ -63,7 +63,28 @@ export const initDB = async () => {
       );
     `;
 
-    console.log('✅ Neon Database initialized. "users" and "github_accounts" tables are ready.');
+    // Initialize repositories table for M3 repository selection & management
+    await db`
+      CREATE TABLE IF NOT EXISTS repositories (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        github_repository_id VARCHAR(255) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        full_name VARCHAR(255) NOT NULL,
+        owner VARCHAR(255) NOT NULL,
+        description TEXT,
+        private BOOLEAN DEFAULT false,
+        default_branch VARCHAR(255) DEFAULT 'main',
+        language VARCHAR(100),
+        html_url TEXT,
+        github_updated_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (user_id, github_repository_id)
+      );
+    `;
+
+    console.log('✅ Neon Database initialized. "users", "github_accounts", and "repositories" tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

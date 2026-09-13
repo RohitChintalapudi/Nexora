@@ -13,7 +13,10 @@ router.get('/callback', githubController.callback);
 // 3. Status - Returns whether current user has connected GitHub
 router.get('/status', protect, githubController.getStatus);
 
-// 4. Disconnect - Disconnects GitHub authorization without deleting NEXORA user account
+// 4. Repositories - Returns paginated repositories from GitHub for authenticated user
+router.get('/repositories', protect, githubController.listRepositories);
+
+// 5. Disconnect - Disconnects GitHub authorization without deleting NEXORA user account
 router.delete('/disconnect', protect, githubController.disconnect);
 
 export default router;

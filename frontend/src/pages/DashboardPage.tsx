@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useGitHub } from '../hooks/useGitHub';
+import { useRepositories, type SavedRepository } from '../hooks/useRepositories';
 import { DashboardLayout, type DashboardTab } from '../components/dashboard/DashboardLayout';
 import { DashboardHeader } from '../components/dashboard/DashboardHeader';
 import { RecentRepositories } from '../components/dashboard/RecentRepositories';
@@ -21,6 +22,11 @@ export const DashboardPage: React.FC = () => {
     disconnectGitHub,
     dismissNotification
   } = useGitHub();
+
+  const {
+    savedRepositories,
+    setActiveSavedRepo
+  } = useRepositories(isGitHubConnected);
 
   const [activeTab, setActiveTab] = useState<DashboardTab>('dashboard');
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
@@ -48,6 +54,11 @@ export const DashboardPage: React.FC = () => {
     await disconnectGitHub();
     setIsDisconnecting(false);
     setIsDisconnectModalOpen(false);
+  };
+
+  const handleViewSavedRepo = (repo: SavedRepository) => {
+    setActiveSavedRepo(repo);
+    setActiveTab('repositories');
   };
 
   if (isLoading) {
@@ -98,16 +109,19 @@ export const DashboardPage: React.FC = () => {
           <DashboardHeader
             onConnectClick={handleOpenConnect}
             onDisconnectClick={() => setIsDisconnectModalOpen(true)}
+            onChooseRepoClick={() => setActiveTab('repositories')}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
           />
           <RecentRepositories
             onConnectClick={handleOpenConnect}
+            onChooseRepoClick={() => setActiveTab('repositories')}
+            onViewRepoDetails={handleViewSavedRepo}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
-            repositories={[]}
+            repositories={savedRepositories}
           />
         </div>
       )}
