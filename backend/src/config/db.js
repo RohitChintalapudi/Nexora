@@ -84,7 +84,23 @@ export const initDB = async () => {
       );
     `;
 
-    console.log('✅ Neon Database initialized. "users", "github_accounts", and "repositories" tables are ready.');
+    // Initialize analysis_jobs table for M4 Analysis Job System
+    await db`
+      CREATE TABLE IF NOT EXISTS analysis_jobs (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        status VARCHAR(50) NOT NULL DEFAULT 'QUEUED',
+        current_stage VARCHAR(100) NOT NULL DEFAULT 'QUEUED',
+        error_message TEXT,
+        started_at TIMESTAMP WITH TIME ZONE,
+        completed_at TIMESTAMP WITH TIME ZONE,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", and "analysis_jobs" tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

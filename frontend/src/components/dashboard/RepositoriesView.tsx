@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, 
   Plus, 
@@ -12,9 +12,11 @@ import {
   RefreshCw, 
   ArrowRight
 } from 'lucide-react';
-import { useRepositories } from '../../hooks/useRepositories';
+import { useRepositories, type SavedRepository } from '../../hooks/useRepositories';
+import { useAnalysisJob } from '../../hooks/useAnalysisJob';
 import { RepositoryCard } from './RepositoryCard';
 import { RepositoryDetailsView } from './RepositoryDetailsView';
+import { AnalysisProgressView } from './AnalysisProgressView';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
@@ -22,6 +24,7 @@ interface RepositoriesViewProps {
   isGitHubConnected?: boolean;
   githubUsername?: string | null;
   isConnecting?: boolean;
+  initialSelectedRepo?: SavedRepository | null;
 }
 
 export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
@@ -29,7 +32,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   onDisconnectClick,
   isGitHubConnected = false,
   githubUsername = null,
-  isConnecting = false
+  isConnecting = false,
+  initialSelectedRepo = null
 }) => {
   const {
     gitHubRepos,
@@ -53,19 +57,84 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     refetchGitHub
   } = useRepositories(isGitHubConnected);
 
-  // If a repository has been selected and saved, view its details confirmation screen
-  if (activeSavedRepo) {
+  const {
+    job,
+    isStarting: isStartingAnalysis,
+    startAnalysis,
+    fetchLatestJob,
+    resetJob
+  } = useAnalysisJob();
+
+  const [subView, setSubView] = useState<'list' | 'details' | 'progress'>('list');
+
+  // Handle initialSelectedRepo if passed from Dashboard
+  useEffect(() => {
+    if (initialSelectedRepo) {
+      setActiveSavedRepo(initialSelectedRepo);
+      setSubView('details');
+      fetchLatestJob(initialSelectedRepo.id);
+    }
+  }, [initialSelectedRepo, setActiveSavedRepo, fetchLatestJob]);
+
+  // When an active saved repo is clicked
+  const handleOpenDetails = (repo: SavedRepository) => {
+    setActiveSavedRepo(repo);
+    setSubView('details');
+    fetchLatestJob(repo.id);
+  };
+
+  const handleStartAnalysis = async () => {
+    if (!activeSavedRepo) return;
+    const started = await startAnalysis(activeSavedRepo.id);
+    if (started) {
+      setSubView('progress');
+    }
+  };
+
+  const handleRetryAnalysis = async () => {
+    if (!activeSavedRepo) return;
+    resetJob();
+    await startAnalysis(activeSavedRepo.id);
+  };
+
+  // If viewing analysis progress
+  if (subView === 'progress' && activeSavedRepo) {
+    return (
+      <AnalysisProgressView
+        repository={activeSavedRepo}
+        job={job}
+        isStarting={isStartingAnalysis}
+        onBackToDetails={() => setSubView('details')}
+        onRetry={handleRetryAnalysis}
+      />
+    );
+  }
+
+  // If viewing details of a selected saved repository
+  if (subView === 'details' && activeSavedRepo) {
     return (
       <RepositoryDetailsView
         repository={activeSavedRepo}
-        onBackToSelection={() => setActiveSavedRepo(null)}
+        latestJob={job}
+        onBackToSelection={() => {
+          setActiveSavedRepo(null);
+          setSubView('list');
+          resetJob();
+        }}
+        onStartAnalysis={handleStartAnalysis}
+        isStartingAnalysis={isStartingAnalysis}
+        onViewAnalysisProgress={() => setSubView('progress')}
       />
     );
   }
 
   const handleContinue = async () => {
     if (!selectedRepo) return;
-    await saveSelectedRepository();
+    const saved = await saveSelectedRepository();
+    if (saved) {
+      setSubView('details');
+      fetchLatestJob(saved.id);
+    }
   };
 
   return (
@@ -182,7 +251,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
                 {savedRepositories.map((saved) => (
                   <div
                     key={saved.id}
-                    onClick={() => setActiveSavedRepo(saved)}
+                    onClick={() => handleOpenDetails(saved)}
                     className="p-4 rounded-2xl border border-slate-200/80 bg-white hover:border-blue-300 hover:shadow-xs transition-all cursor-pointer flex items-center justify-between gap-3 group"
                   >
                     <div className="min-w-0">

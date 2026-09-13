@@ -9,21 +9,35 @@ import {
   Sparkles, 
   CheckCircle2, 
   Clock, 
-  Cpu
+  Cpu,
+  Loader2,
+  ArrowRight
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
+import type { AnalysisJob } from '../../hooks/useAnalysisJob';
 
 interface RepositoryDetailsViewProps {
   repository: SavedRepository;
   onBackToSelection: () => void;
+  onStartAnalysis: () => void;
+  isStartingAnalysis?: boolean;
+  latestJob?: AnalysisJob | null;
+  onViewAnalysisProgress?: () => void;
 }
 
 export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
   repository,
-  onBackToSelection
+  onBackToSelection,
+  onStartAnalysis,
+  isStartingAnalysis = false,
+  latestJob = null,
+  onViewAnalysisProgress
 }) => {
+  const isJobActive = latestJob && (latestJob.status === 'QUEUED' || latestJob.status === 'PROCESSING');
+  const isJobCompleted = latestJob && latestJob.status === 'COMPLETED';
+
   return (
-    <div className="space-y-6 animate-in fade-in duration-200">
+    <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
       
       {/* Top Navigation / Breadcrumb */}
       <button
@@ -47,6 +61,13 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
                 <span>Selected & Connected</span>
               </div>
+
+              {isJobCompleted && (
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600 stroke-[2.5]" />
+                  <span>Analysis Ready</span>
+                </div>
+              )}
 
               <span
                 className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold ${
@@ -131,7 +152,7 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
           <div className="p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
             <div className="flex items-center gap-2 text-slate-400 mb-1">
               <Clock className="w-4 h-4" />
-              <span className="text-xs font-semibold text-slate-500">Connected To Nexora</span>
+              <span className="text-xs font-semibold text-slate-500">Registered</span>
             </div>
             <p className="text-sm font-bold text-slate-900">
               {new Date(repository.createdAt).toLocaleDateString(undefined, {
@@ -144,18 +165,26 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
         </div>
       </div>
 
-      {/* Next Step Action Card (Milestone M4 Preview) */}
-      <div className="bg-gradient-to-br from-blue-50/50 via-white to-slate-50/80 rounded-[2rem] border border-blue-100 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
+      {/* Analysis Initiation Card */}
+      <div className="bg-gradient-to-br from-blue-50/50 via-white to-slate-50/80 rounded-[2rem] border border-blue-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
         <div className="space-y-1.5 max-w-xl">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
             <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Next Milestone (M4)</span>
+            <span>Codebase Intelligence</span>
           </div>
           <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-            Ready for Codebase Analysis
+            {isJobActive 
+              ? 'Analysis Job in Progress'
+              : isJobCompleted 
+                ? 'Repository Analyzed' 
+                : 'Ready for Codebase Analysis'}
           </h2>
           <p className="text-xs font-medium text-slate-600 leading-relaxed">
-            Repository metadata has been verified and registered with NEXORA. In Milestone M4, the pipeline will clone, parse AST hierarchies, and generate architecture graphs.
+            {isJobActive
+              ? 'An asynchronous analysis job is currently processing this repository. Track stage progression in real-time.'
+              : isJobCompleted
+                ? 'This repository has been verified and processed by the analysis pipeline. You can re-run analysis at any time.'
+                : 'Initiate the background analysis pipeline to scan repository structure, inspect module boundaries, and generate architecture graphs.'}
           </p>
         </div>
 
@@ -168,16 +197,36 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
             Choose Different Repo
           </button>
 
-          {/* Analyze Repository (M4 Placeholder) */}
-          <button
-            type="button"
-            disabled
-            className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white/80 bg-blue-600/70 cursor-not-allowed rounded-full shadow-2xs text-center"
-            title="Codebase analysis will be implemented in Milestone M4"
-          >
-            <Cpu className="w-4 h-4" />
-            <span>Analyze Repository (M4)</span>
-          </button>
+          {isJobActive ? (
+            <button
+              type="button"
+              onClick={onViewAnalysisProgress}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
+            >
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Track Progress</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          ) : (
+            <button
+              type="button"
+              onClick={onStartAnalysis}
+              disabled={isStartingAnalysis}
+              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
+            >
+              {isStartingAnalysis ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span>Initiating...</span>
+                </>
+              ) : (
+                <>
+                  <Cpu className="w-4 h-4" />
+                  <span>{isJobCompleted ? 'Re-analyze Repository' : 'Analyze Repository'}</span>
+                </>
+              )}
+            </button>
+          )}
         </div>
       </div>
     </div>
