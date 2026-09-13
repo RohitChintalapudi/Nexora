@@ -112,12 +112,15 @@ export const initDB = async () => {
       );
     `;
 
-    // Ensure analysis_jobs table has M5 stats columns
+    // Ensure analysis_jobs table has M5 & M6 stats columns
     try {
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS files_scanned INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS files_included INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS files_ignored INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS total_size_bytes BIGINT DEFAULT 0;`;
+      await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS symbols_count INTEGER DEFAULT 0;`;
+      await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS relationships_count INTEGER DEFAULT 0;`;
+      await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS routes_count INTEGER DEFAULT 0;`;
     } catch {
       // Ignore migration errors if already added
     }
@@ -143,17 +146,103 @@ export const initDB = async () => {
       );
     `;
 
+    // Initialize symbols table for M6 Codebase Intelligence
+    await db`
+      CREATE TABLE IF NOT EXISTS symbols (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        file_id INTEGER NOT NULL REFERENCES repository_files(id) ON DELETE CASCADE,
+        name VARCHAR(255) NOT NULL,
+        type VARCHAR(50) NOT NULL,
+        language VARCHAR(100),
+        line_start INTEGER,
+        line_end INTEGER,
+        is_exported BOOLEAN DEFAULT false,
+        parent_symbol_id INTEGER REFERENCES symbols(id) ON DELETE SET NULL,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Initialize code_relationships table for M6 Codebase Intelligence
+    await db`
+      CREATE TABLE IF NOT EXISTS code_relationships (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        source_file_id INTEGER NOT NULL REFERENCES repository_files(id) ON DELETE CASCADE,
+        target_file_id INTEGER REFERENCES repository_files(id) ON DELETE CASCADE,
+        relationship_type VARCHAR(50) NOT NULL,
+        metadata JSONB,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Initialize routes table for M6 Codebase Intelligence
+    await db`
+      CREATE TABLE IF NOT EXISTS routes (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        file_id INTEGER NOT NULL REFERENCES repository_files(id) ON DELETE CASCADE,
+        method VARCHAR(20) NOT NULL,
+        path TEXT NOT NULL,
+        handler VARCHAR(255),
+        line_start INTEGER,
+        line_end INTEGER,
+        framework VARCHAR(100),
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Initialize project_metadata table for M6 Codebase Intelligence
+    await db`
+      CREATE TABLE IF NOT EXISTS project_metadata (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER UNIQUE NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        frameworks JSONB DEFAULT '[]'::jsonb,
+        languages JSONB DEFAULT '{}'::jsonb,
+        package_manager VARCHAR(50),
+        runtime VARCHAR(100),
+        dependencies JSONB DEFAULT '{}'::jsonb,
+        scripts JSONB DEFAULT '{}'::jsonb,
+        entry_points JSONB DEFAULT '[]'::jsonb,
+        database_indicators JSONB DEFAULT '[]'::jsonb,
+        architectural_roles JSONB DEFAULT '[]'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
     // Create performance indexes for M5/M6 queries
     try {
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_repo_id ON repository_files(repository_id);`;
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_user_id ON repository_files(user_id);`;
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_language ON repository_files(language);`;
       await db`CREATE INDEX IF NOT EXISTS idx_analysis_jobs_repo_user ON analysis_jobs(repository_id, user_id, status);`;
+      
+      // M6 Indexes
+      await db`CREATE INDEX IF NOT EXISTS idx_symbols_repo_user ON symbols(repository_id, user_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_symbols_file ON symbols(file_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_symbols_name ON symbols(name);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_symbols_type ON symbols(type);`;
+
+      await db`CREATE INDEX IF NOT EXISTS idx_relationships_repo ON code_relationships(repository_id, user_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_relationships_source ON code_relationships(source_file_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_relationships_target ON code_relationships(target_file_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_relationships_type ON code_relationships(relationship_type);`;
+
+      await db`CREATE INDEX IF NOT EXISTS idx_routes_repo_user ON routes(repository_id, user_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_routes_file ON routes(file_id);`;
+
+      await db`CREATE INDEX IF NOT EXISTS idx_proj_meta_repo ON project_metadata(repository_id, user_id);`;
     } catch {
       // Ignore index creation errors if already present
     }
 
-    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", and "repository_files" tables are ready.');
+    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", "repository_files", "symbols", "code_relationships", "routes", and "project_metadata" tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

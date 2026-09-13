@@ -11,13 +11,16 @@ import {
   Globe, 
   Check, 
   Circle, 
-  Cpu,
-  FileCode2,
-  Filter,
-  Database,
-  CheckCheck,
-  FileText,
-  FileX
+  Cpu, 
+  FileCode2, 
+  Filter, 
+  Database, 
+  CheckCheck, 
+  Code2, 
+  Network, 
+  Route as RouteIcon, 
+  Layers, 
+  Box 
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob, AnalysisStage } from '../../hooks/useAnalysisJob';
@@ -42,7 +45,7 @@ const STAGES: StageStep[] = [
   {
     id: 'stage-1',
     stageKey: 'INITIALIZING',
-    title: 'Initializing Ingestion Pipeline',
+    title: 'Initializing Analysis Pipeline',
     description: 'Validating GitHub OAuth authorization and creating isolated temporary workspace',
     icon: Sparkles
   },
@@ -76,9 +79,51 @@ const STAGES: StageStep[] = [
   },
   {
     id: 'stage-6',
+    stageKey: 'PARSING_FILES',
+    title: 'AST Syntax Tree Parsing',
+    description: 'Parsing TypeScript, JavaScript, Python, and system languages into normalized ASTs',
+    icon: Code2
+  },
+  {
+    id: 'stage-7',
+    stageKey: 'EXTRACTING_SYMBOLS',
+    title: 'Deterministic Symbol Extraction',
+    description: 'Extracting functions, classes, methods, React components, types, interfaces, and enums',
+    icon: Box
+  },
+  {
+    id: 'stage-8',
+    stageKey: 'EXTRACTING_IMPORTS',
+    title: 'Import & Module Resolution',
+    description: 'Resolving relative imports, tsconfig path aliases (@/*), and module dependencies',
+    icon: Layers
+  },
+  {
+    id: 'stage-9',
+    stageKey: 'DETECTING_ROUTES',
+    title: 'API & Convention Route Detection',
+    description: 'Identifying Express, FastAPI, Flask, and Next.js App/Pages route handlers',
+    icon: RouteIcon
+  },
+  {
+    id: 'stage-10',
+    stageKey: 'BUILDING_RELATIONSHIPS',
+    title: 'Building Relationship Graph',
+    description: 'Mapping deterministic IMPORTS, EXTENDS, IMPLEMENTS, and ROUTES_TO edges',
+    icon: Network
+  },
+  {
+    id: 'stage-11',
+    stageKey: 'EXTRACTING_PROJECT_METADATA',
+    title: 'Project & Architectural Classification',
+    description: 'Detecting frameworks, database indicators, entry points, and classifying architectural roles',
+    icon: Cpu
+  },
+  {
+    id: 'stage-12',
     stageKey: 'COMPLETED',
-    title: 'Ingestion Complete',
-    description: 'Repository files structured and ready for M6 deterministic codebase intelligence',
+    title: 'Codebase Intelligence Ready',
+    description: 'Deterministic codebase fact graph complete and prepared for embeddings & AI analysis',
     icon: CheckCheck
   }
 ];
@@ -90,7 +135,15 @@ const STAGE_ORDER: Record<AnalysisStage, number> = {
   SCANNING_FILES: 3,
   FILTERING_FILES: 4,
   PERSISTING_FILES: 5,
-  COMPLETED: 6,
+  PARSING_FILES: 6,
+  EXTRACTING_SYMBOLS: 7,
+  EXTRACTING_IMPORTS: 8,
+  EXTRACTING_EXPORTS: 8,
+  DETECTING_ROUTES: 9,
+  BUILDING_RELATIONSHIPS: 10,
+  EXTRACTING_PROJECT_METADATA: 11,
+  INTELLIGENCE_COMPLETE: 12,
+  COMPLETED: 12,
   FAILED: -1
 };
 
@@ -171,52 +224,62 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
             {isCompleted ? (
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
-                <span>Ingestion Complete</span>
+                <span>Intelligence Ready</span>
               </span>
             ) : isFailed ? (
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-red-50 border border-red-200 text-red-800 text-xs font-bold shadow-2xs">
                 <AlertCircle className="w-4 h-4 text-red-600 stroke-[2.5]" />
-                <span>Ingestion Failed</span>
+                <span>Analysis Failed</span>
               </span>
             ) : (
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-2xs">
                 <Loader2 className="w-4 h-4 text-blue-600 animate-spin stroke-[2.5]" />
-                <span>Ingesting Repository...</span>
+                <span>Analyzing Codebase...</span>
               </span>
             )}
           </div>
         </div>
 
-        {/* Real-time Ingestion Statistics (if available) */}
+        {/* Real-time Ingestion & Intelligence Statistics */}
         {job && (job.filesScanned || 0) > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 animate-in fade-in duration-300">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 animate-in fade-in duration-300">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
                 <FileCode2 className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-slate-500">Files Scanned</p>
-                <p className="text-sm font-extrabold text-slate-900">{job.filesScanned}</p>
+                <p className="text-[11px] font-semibold text-slate-500">Source Files</p>
+                <p className="text-sm font-extrabold text-slate-900">{job.filesIncluded || 0}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+                <Box className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-[11px] font-semibold text-slate-500">Symbols</p>
+                <p className="text-sm font-extrabold text-purple-700">{job.symbolsCount ?? '-'}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
-                <FileText className="w-4 h-4" />
+                <Network className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-slate-500">Source Files Included</p>
-                <p className="text-sm font-extrabold text-emerald-700">{job.filesIncluded}</p>
+                <p className="text-[11px] font-semibold text-slate-500">Relationships</p>
+                <p className="text-sm font-extrabold text-emerald-700">{job.relationshipsCount ?? '-'}</p>
               </div>
             </div>
 
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-slate-200 text-slate-700 flex items-center justify-center">
-                <FileX className="w-4 h-4" />
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+                <RouteIcon className="w-4 h-4" />
               </div>
               <div>
-                <p className="text-[11px] font-semibold text-slate-500">Ignored / Binary</p>
-                <p className="text-sm font-extrabold text-slate-700">{job.filesIgnored}</p>
+                <p className="text-[11px] font-semibold text-slate-500">Routes</p>
+                <p className="text-sm font-extrabold text-amber-700">{job.routesCount ?? '-'}</p>
               </div>
             </div>
           </div>
@@ -225,12 +288,12 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
         {/* Stage-Based Progress Checklist */}
         <div className="space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            M5 Ingestion Pipeline Progression
+            M5 Ingestion & M6 Codebase Intelligence Pipeline
           </h2>
 
           <div className="space-y-3">
             {STAGES.map((step, index) => {
-              const stepIndex = index + 1; // 1, 2, 3, 4, 5, 6
+              const stepIndex = index + 1;
               const isStepDone = !isFailed && currentStageIndex >= stepIndex;
               const isStepActive = isRunning && (currentStageIndex === stepIndex - 1 || (currentStageIndex === 0 && index === 0));
 
@@ -311,7 +374,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
           <div className="p-5 rounded-2xl bg-red-50 border border-red-200 space-y-3">
             <div className="flex items-center gap-2 text-red-800 font-bold text-xs">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-              <span>{job?.errorMessage || 'Ingestion encountered an unexpected failure.'}</span>
+              <span>{job?.errorMessage || 'Analysis encountered an unexpected failure.'}</span>
             </div>
             <div className="flex items-center gap-3 pt-1">
               <button
@@ -338,10 +401,10 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
           <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-blue-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             <div className="space-y-1">
               <h3 className="text-base font-extrabold text-slate-900">
-                Repository Files Ingested Successfully
+                Codebase Intelligence Model Ready
               </h3>
               <p className="text-xs text-slate-600 max-w-lg">
-                Your repository files have been parsed, filtered, and persisted. In Milestone M6, deterministic codebase analysis (imports, functions, dependencies) will be performed on these files.
+                Deterministic facts (symbols, relationships, routes, frameworks, architectural roles) have been extracted and structured in PostgreSQL. Ready for M7 vector embeddings and semantic search.
               </p>
             </div>
 
@@ -354,15 +417,12 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 Repository Details
               </button>
 
-              <button
-                type="button"
-                disabled
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white/80 bg-blue-600/70 rounded-full cursor-not-allowed shadow-2xs"
-                title="Codebase Intelligence will activate in Milestone M6"
+              <div
+                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-emerald-800 bg-emerald-100/80 border border-emerald-200 rounded-full shadow-2xs"
               >
-                <Cpu className="w-3.5 h-3.5" />
-                <span>Codebase Intel (M6)</span>
-              </button>
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                <span>M6 Facts Extracted</span>
+              </div>
             </div>
           </div>
         )}

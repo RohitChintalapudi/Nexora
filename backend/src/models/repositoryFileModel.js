@@ -100,6 +100,56 @@ export const RepositoryFileModel = {
     if (!sql) throw new Error('Database not connected. Please check DATABASE_URL.');
 
     const onlySource = filter.onlySource ?? false;
+    const includeContent = filter.includeContent ?? false;
+
+    if (includeContent && onlySource) {
+      return await sql`
+        SELECT 
+          id,
+          repository_id,
+          user_id,
+          path,
+          name,
+          extension,
+          language,
+          size_bytes,
+          is_binary,
+          is_generated,
+          is_ignored,
+          content,
+          created_at,
+          updated_at
+        FROM repository_files
+        WHERE repository_id = ${repositoryId} 
+          AND user_id = ${userId}
+          AND is_binary = false
+          AND is_ignored = false
+        ORDER BY path ASC;
+      `;
+    }
+
+    if (includeContent) {
+      return await sql`
+        SELECT 
+          id,
+          repository_id,
+          user_id,
+          path,
+          name,
+          extension,
+          language,
+          size_bytes,
+          is_binary,
+          is_generated,
+          is_ignored,
+          content,
+          created_at,
+          updated_at
+        FROM repository_files
+        WHERE repository_id = ${repositoryId} AND user_id = ${userId}
+        ORDER BY path ASC;
+      `;
+    }
 
     if (onlySource) {
       return await sql`

@@ -11,6 +11,14 @@ export type AnalysisStage =
   | 'SCANNING_FILES' 
   | 'FILTERING_FILES' 
   | 'PERSISTING_FILES' 
+  | 'PARSING_FILES'
+  | 'EXTRACTING_SYMBOLS'
+  | 'EXTRACTING_IMPORTS'
+  | 'EXTRACTING_EXPORTS'
+  | 'DETECTING_ROUTES'
+  | 'BUILDING_RELATIONSHIPS'
+  | 'EXTRACTING_PROJECT_METADATA'
+  | 'INTELLIGENCE_COMPLETE'
   | 'COMPLETED' 
   | 'FAILED';
 
@@ -26,6 +34,9 @@ export interface AnalysisJob {
   filesIncluded?: number;
   filesIgnored?: number;
   totalSizeBytes?: number;
+  symbolsCount?: number;
+  relationshipsCount?: number;
+  routesCount?: number;
   startedAt?: string | null;
   completedAt?: string | null;
   createdAt: string;

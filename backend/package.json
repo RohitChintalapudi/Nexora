@@ -8,6 +8,10 @@
     "dev": "nodemon src/server.js"
   },
   "dependencies": {
+    "@babel/parser": "^7.29.8",
+    "@babel/traverse": "^7.29.8",
+    "@lezer/common": "^1.5.2",
+    "@lezer/python": "^1.1.19",
     "@neondatabase/serverless": "^0.10.4",
     "@upstash/redis": "^1.38.4",
     "adm-zip": "^0.6.1",

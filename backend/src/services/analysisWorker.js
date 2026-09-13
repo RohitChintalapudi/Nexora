@@ -3,6 +3,7 @@ import { RepositoryModel } from '../models/repositoryModel.js';
 import { RepositoryFileModel } from '../models/repositoryFileModel.js';
 import { RepositoryFetcher } from './repositoryFetcher.js';
 import { FileScanner } from './fileScanner.js';
+import { CodebaseIntelligenceService } from '../code-analysis/services/codebase-intelligence.service.js';
 import { CacheService } from '../config/redis.js';
 
 class AnalysisWorkerService {
@@ -17,7 +18,7 @@ class AnalysisWorkerService {
    */
   enqueue(jobId) {
     this.queue.push(jobId);
-    console.log(`📥 [AnalysisWorker] Job #${jobId} enqueued for M5 Ingestion. Queue length: ${this.queue.length}`);
+    console.log(`📥 [AnalysisWorker] Job #${jobId} enqueued for M5 Ingestion & M6 Intelligence. Queue length: ${this.queue.length}`);
     this.processQueue();
   }
 
@@ -43,7 +44,7 @@ class AnalysisWorkerService {
   }
 
   /**
-   * Execute the full M5 Repository Ingestion Pipeline
+   * Execute the full M5 Ingestion + M6 Codebase Intelligence Pipeline
    * @param {number|string} jobId
    */
   async executeJobPipeline(jobId) {
@@ -140,8 +141,23 @@ class AnalysisWorkerService {
         totalSourceSizeBytes: stats.totalSourceSizeBytes
       });
 
-      // 6. Stage: COMPLETED (Ingestion Complete)
-      console.log(`✅ [AnalysisWorker] Job #${jobId} repository ingestion complete.`);
+      // 6. M6 Codebase Intelligence Pipeline
+      console.log(`🧠 [AnalysisWorker] Job #${jobId} -> Entering M6 Codebase Intelligence Pipeline`);
+      const intelligenceStats = await CodebaseIntelligenceService.analyzeRepository({
+        repositoryId: job.repository_id,
+        userId: job.user_id,
+        onStageChange: async (stageName) => {
+          console.log(`⚡ [AnalysisWorker] Job #${jobId} -> ${stageName}`);
+          await AnalysisJobModel.updateStage({
+            id: jobId,
+            status: 'PROCESSING',
+            currentStage: stageName
+          });
+        }
+      });
+
+      // 7. Stage: COMPLETED (Codebase Intelligence Ready)
+      console.log(`✅ [AnalysisWorker] Job #${jobId} Codebase Intelligence complete! (${intelligenceStats.symbolsCount} symbols, ${intelligenceStats.relationshipsCount} relationships, ${intelligenceStats.routesCount} routes)`);
       const completedJob = await AnalysisJobModel.updateStage({
         id: jobId,
         status: 'COMPLETED',
@@ -150,6 +166,9 @@ class AnalysisWorkerService {
         filesIncluded: stats.sourceFilesCount,
         filesIgnored: stats.ignoredFilesCount,
         totalSizeBytes: stats.totalSizeBytes,
+        symbolsCount: intelligenceStats.symbolsCount,
+        relationshipsCount: intelligenceStats.relationshipsCount,
+        routesCount: intelligenceStats.routesCount,
         completedAt: new Date(),
         errorMessage: null
       });
@@ -162,7 +181,7 @@ class AnalysisWorkerService {
       console.error(`💥 [AnalysisWorker] Job #${jobId} failed:`, error.message);
 
       // Secure, user-facing error message without leaking tokens or paths
-      let userMessage = error.message || 'Repository ingestion failed. Please try again.';
+      let userMessage = error.message || 'Repository analysis failed. Please try again.';
       if (userMessage.includes('fetch failed') || userMessage.includes('terminated')) {
         userMessage = 'Network connection to GitHub was interrupted during download. Please try again.';
       }
