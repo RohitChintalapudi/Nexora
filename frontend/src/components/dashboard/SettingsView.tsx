@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Shield, LogOut, Check, Sliders } from 'lucide-react';
+import { LogoutConfirmModal } from './LogoutConfirmModal';
 
 export const SettingsView: React.FC = () => {
   const { user, logout } = useAuth();
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   return (
     <div className="space-y-6 max-w-4xl">
@@ -99,18 +101,25 @@ export const SettingsView: React.FC = () => {
       {/* Session Termination Card */}
       <section className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-base font-extrabold text-slate-900">Sign Out</h2>
+          <h2 className="text-base font-extrabold text-slate-900">Logout</h2>
           <p className="text-xs font-medium text-slate-400 mt-0.5">Safely terminate active token and return to home</p>
         </div>
         <button
           type="button"
-          onClick={logout}
+          onClick={() => setIsLogoutModalOpen(true)}
           className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 rounded-full transition-all cursor-pointer shrink-0 shadow-xs"
         >
           <LogOut className="w-4 h-4 stroke-[2.5]" />
-          <span>Sign Out of NEXORA</span>
+          <span>Logout of NEXORA</span>
         </button>
       </section>
+
+      {/* Logout Confirmation Popup Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={logout}
+      />
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import { Logo } from '../Logo';
+import { LogoutConfirmModal } from './LogoutConfirmModal';
 import { 
   LogOut, 
   ChevronDown, 
   ExternalLink,
-  Radio,
   Menu,
   X
 } from 'lucide-react';
@@ -25,6 +26,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { user, logout, navigateTo } = useAuth();
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,27 +59,22 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     <div className="dashboard-workspace min-h-screen bg-[#F1F5F9] text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
       
       {/* ========================================================================= */}
-      {/* TOP FLOATING / CAPSULE NAVBAR */}
+      {/* TOP NAVBAR */}
       {/* ========================================================================= */}
-      <header className="sticky top-0 z-40 bg-[#F1F5F9]/85 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5 border-b border-slate-200/60 transition-all">
+      <header className="sticky top-0 z-40 bg-[#F1F5F9]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5 border-b border-slate-200/60 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Left: Brand Logo Pill */}
-          <div className="flex items-center gap-3">
+          {/* Left: Original NEXORA Logo (Directly on navbar, not inside card) */}
+          <div className="flex items-center">
             <button
               type="button"
               onClick={() => {
                 onTabChange('dashboard');
                 navigateTo('dashboard');
               }}
-              className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-all cursor-pointer group"
+              className="flex items-center cursor-pointer focus:outline-none group"
             >
-              <div className="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center font-black text-xs shadow-sm shadow-blue-500/30">
-                <Radio className="w-3.5 h-3.5 stroke-[2.5]" />
-              </div>
-              <span className="font-extrabold text-sm tracking-tight text-slate-900">
-                NEXORA
-              </span>
+              <Logo theme="light" size={26} />
             </button>
           </div>
 
@@ -102,16 +99,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             })}
           </nav>
 
-          {/* Right: Controls & Matching Profile Section */}
+          {/* Right: Profile Section */}
           <div className="flex items-center gap-3">
-            
-            {/* Live Indicator Pill */}
-            <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold shadow-2xs">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Live Sync</span>
-            </div>
-
-            {/* Profile Section (from screenshot) */}
+            {/* Profile Section */}
             <div className="relative" ref={userMenuRef}>
               <button
                 type="button"
@@ -164,12 +154,12 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     type="button"
                     onClick={() => {
                       setIsUserMenuOpen(false);
-                      logout();
+                      setIsLogoutModalOpen(true);
                     }}
                     className="flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl hover:bg-red-50 text-red-600 font-bold text-left cursor-pointer transition-colors mt-0.5"
                   >
                     <LogOut className="w-4 h-4 text-red-500" />
-                    <span>Sign Out</span>
+                    <span>Logout</span>
                   </button>
                 </div>
               )}
@@ -218,6 +208,13 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         {children}
       </main>
+
+      {/* Logout Confirmation Popup Modal */}
+      <LogoutConfirmModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={logout}
+      />
     </div>
   );
 };
