@@ -4,6 +4,7 @@ import { RepositoryFileModel } from '../models/repositoryFileModel.js';
 import { RepositoryFetcher } from './repositoryFetcher.js';
 import { FileScanner } from './fileScanner.js';
 import { CodebaseIntelligenceService } from '../code-analysis/services/codebase-intelligence.service.js';
+import { SemanticIndexingService } from '../ai/services/semantic-indexing.service.js';
 import { CacheService } from '../config/redis.js';
 
 class AnalysisWorkerService {
@@ -18,7 +19,7 @@ class AnalysisWorkerService {
    */
   enqueue(jobId) {
     this.queue.push(jobId);
-    console.log(`📥 [AnalysisWorker] Job #${jobId} enqueued for M5 Ingestion & M6 Intelligence. Queue length: ${this.queue.length}`);
+    console.log(`📥 [AnalysisWorker] Job #${jobId} enqueued for M5 Ingestion, M6 Intelligence & M7 Embeddings. Queue length: ${this.queue.length}`);
     this.processQueue();
   }
 
@@ -44,7 +45,7 @@ class AnalysisWorkerService {
   }
 
   /**
-   * Execute the full M5 Ingestion + M6 Codebase Intelligence Pipeline
+   * Execute the full M5 Ingestion + M6 Codebase Intelligence + M7 Semantic Vector Pipeline
    * @param {number|string} jobId
    */
   async executeJobPipeline(jobId) {
@@ -156,8 +157,23 @@ class AnalysisWorkerService {
         }
       });
 
-      // 7. Stage: COMPLETED (Codebase Intelligence Ready)
-      console.log(`✅ [AnalysisWorker] Job #${jobId} Codebase Intelligence complete! (${intelligenceStats.symbolsCount} symbols, ${intelligenceStats.relationshipsCount} relationships, ${intelligenceStats.routesCount} routes)`);
+      // 7. M7 Semantic Indexing & pgvector Pipeline
+      console.log(`📦 [AnalysisWorker] Job #${jobId} -> Entering M7 Semantic Vector Indexing`);
+      const indexingStats = await SemanticIndexingService.indexRepository({
+        repositoryId: job.repository_id,
+        userId: job.user_id,
+        onStageChange: async (stageName) => {
+          console.log(`⚡ [AnalysisWorker] Job #${jobId} -> ${stageName}`);
+          await AnalysisJobModel.updateStage({
+            id: jobId,
+            status: 'PROCESSING',
+            currentStage: stageName
+          });
+        }
+      });
+
+      // 8. Stage: COMPLETED (Semantic Vector Index Ready)
+      console.log(`✅ [AnalysisWorker] Job #${jobId} Pipeline complete! (${intelligenceStats.symbolsCount} symbols, ${intelligenceStats.relationshipsCount} relationships, ${indexingStats.embeddingsCount} embeddings)`);
       const completedJob = await AnalysisJobModel.updateStage({
         id: jobId,
         status: 'COMPLETED',
@@ -169,6 +185,8 @@ class AnalysisWorkerService {
         symbolsCount: intelligenceStats.symbolsCount,
         relationshipsCount: intelligenceStats.relationshipsCount,
         routesCount: intelligenceStats.routesCount,
+        chunksCount: indexingStats.chunksCount,
+        embeddingsCount: indexingStats.embeddingsCount,
         completedAt: new Date(),
         errorMessage: null
       });

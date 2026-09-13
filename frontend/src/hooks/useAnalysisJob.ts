@@ -19,6 +19,10 @@ export type AnalysisStage =
   | 'BUILDING_RELATIONSHIPS'
   | 'EXTRACTING_PROJECT_METADATA'
   | 'INTELLIGENCE_COMPLETE'
+  | 'CHUNKING_FILES'
+  | 'GENERATING_EMBEDDINGS'
+  | 'STORING_EMBEDDINGS'
+  | 'INDEXING_COMPLETE'
   | 'COMPLETED' 
   | 'FAILED';
 
@@ -37,6 +41,8 @@ export interface AnalysisJob {
   symbolsCount?: number;
   relationshipsCount?: number;
   routesCount?: number;
+  chunksCount?: number;
+  embeddingsCount?: number;
   startedAt?: string | null;
   completedAt?: string | null;
   createdAt: string;

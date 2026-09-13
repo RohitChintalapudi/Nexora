@@ -112,7 +112,14 @@ export const initDB = async () => {
       );
     `;
 
-    // Ensure analysis_jobs table has M5 & M6 stats columns
+    // Ensure pgvector extension is enabled for M7 Semantic Vector Indexing
+    try {
+      await db`CREATE EXTENSION IF NOT EXISTS vector;`;
+    } catch (vecErr) {
+      console.warn('⚠️ Could not automatically enable vector extension (may already be active or require superuser):', vecErr.message);
+    }
+
+    // Ensure analysis_jobs table has M5, M6 & M7 stats columns
     try {
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS files_scanned INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS files_included INTEGER DEFAULT 0;`;
@@ -121,6 +128,8 @@ export const initDB = async () => {
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS symbols_count INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS relationships_count INTEGER DEFAULT 0;`;
       await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS routes_count INTEGER DEFAULT 0;`;
+      await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS chunks_count INTEGER DEFAULT 0;`;
+      await db`ALTER TABLE analysis_jobs ADD COLUMN IF NOT EXISTS embeddings_count INTEGER DEFAULT 0;`;
     } catch {
       // Ignore migration errors if already added
     }
@@ -216,7 +225,31 @@ export const initDB = async () => {
       );
     `;
 
-    // Create performance indexes for M5/M6 queries
+    // Initialize code_chunks table for M7 Semantic Vector Indexing
+    const EMBEDDING_DIM = parseInt(process.env.EMBEDDING_DIMENSIONS || '384', 10);
+    await db`
+      CREATE TABLE IF NOT EXISTS code_chunks (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        file_id INTEGER NOT NULL REFERENCES repository_files(id) ON DELETE CASCADE,
+        symbol_id INTEGER REFERENCES symbols(id) ON DELETE SET NULL,
+        chunk_index INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        content_hash VARCHAR(64) NOT NULL,
+        chunk_type VARCHAR(50) NOT NULL,
+        language VARCHAR(100),
+        file_path TEXT NOT NULL,
+        start_line INTEGER,
+        end_line INTEGER,
+        embedding vector(384),
+        metadata JSONB DEFAULT '{}'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Create performance indexes for M5, M6 & M7 queries
     try {
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_repo_id ON repository_files(repository_id);`;
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_user_id ON repository_files(user_id);`;
@@ -238,11 +271,17 @@ export const initDB = async () => {
       await db`CREATE INDEX IF NOT EXISTS idx_routes_file ON routes(file_id);`;
 
       await db`CREATE INDEX IF NOT EXISTS idx_proj_meta_repo ON project_metadata(repository_id, user_id);`;
+
+      // M7 Indexes
+      await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_repo_user ON code_chunks(repository_id, user_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_file ON code_chunks(file_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_hash ON code_chunks(repository_id, content_hash);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_embedding_cosine ON code_chunks USING hnsw (embedding vector_cosine_ops);`;
     } catch {
       // Ignore index creation errors if already present
     }
 
-    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", "repository_files", "symbols", "code_relationships", "routes", and "project_metadata" tables are ready.');
+    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", "repository_files", "symbols", "code_relationships", "routes", "project_metadata", and "code_chunks" (pgvector) tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

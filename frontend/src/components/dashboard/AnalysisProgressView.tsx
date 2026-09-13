@@ -20,7 +20,10 @@ import {
   Network, 
   Route as RouteIcon, 
   Layers, 
-  Box 
+  Box,
+  Binary,
+  Search,
+  Zap
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob, AnalysisStage } from '../../hooks/useAnalysisJob';
@@ -121,9 +124,30 @@ const STAGES: StageStep[] = [
   },
   {
     id: 'stage-12',
+    stageKey: 'CHUNKING_FILES',
+    title: 'Semantic Code Chunking',
+    description: 'AST symbol-guided, markdown heading, and configuration chunking with SHA-256 deduplication',
+    icon: Binary
+  },
+  {
+    id: 'stage-13',
+    stageKey: 'GENERATING_EMBEDDINGS',
+    title: 'Generating Vector Embeddings',
+    description: 'Batch-producing 384-dimensional dense vector embeddings with Xenova/all-MiniLM-L6-v2',
+    icon: Zap
+  },
+  {
+    id: 'stage-14',
+    stageKey: 'STORING_EMBEDDINGS',
+    title: 'pgvector & HNSW Cosine Indexing',
+    description: 'Persisting vectors in PostgreSQL code_chunks with HNSW fast similarity index',
+    icon: Search
+  },
+  {
+    id: 'stage-15',
     stageKey: 'COMPLETED',
-    title: 'Codebase Intelligence Ready',
-    description: 'Deterministic codebase fact graph complete and prepared for embeddings & AI analysis',
+    title: 'Semantic Index & Intelligence Ready',
+    description: 'Codebase intelligence graph and pgvector semantic index complete and searchable',
     icon: CheckCheck
   }
 ];
@@ -142,8 +166,12 @@ const STAGE_ORDER: Record<AnalysisStage, number> = {
   DETECTING_ROUTES: 9,
   BUILDING_RELATIONSHIPS: 10,
   EXTRACTING_PROJECT_METADATA: 11,
-  INTELLIGENCE_COMPLETE: 12,
-  COMPLETED: 12,
+  INTELLIGENCE_COMPLETE: 11,
+  CHUNKING_FILES: 12,
+  GENERATING_EMBEDDINGS: 13,
+  STORING_EMBEDDINGS: 14,
+  INDEXING_COMPLETE: 15,
+  COMPLETED: 15,
   FAILED: -1
 };
 
@@ -240,46 +268,66 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
           </div>
         </div>
 
-        {/* Real-time Ingestion & Intelligence Statistics */}
+        {/* Real-time Ingestion, Intelligence & Embedding Statistics */}
         {job && (job.filesScanned || 0) > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 animate-in fade-in duration-300">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 animate-in fade-in duration-300">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
                 <FileCode2 className="w-4 h-4" />
               </div>
-              <div>
-                <p className="text-[11px] font-semibold text-slate-500">Source Files</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Source Files</p>
                 <p className="text-sm font-extrabold text-slate-900">{job.filesIncluded || 0}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center shrink-0">
                 <Box className="w-4 h-4" />
               </div>
-              <div>
-                <p className="text-[11px] font-semibold text-slate-500">Symbols</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Symbols</p>
                 <p className="text-sm font-extrabold text-purple-700">{job.symbolsCount ?? '-'}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                 <Network className="w-4 h-4" />
               </div>
-              <div>
-                <p className="text-[11px] font-semibold text-slate-500">Relationships</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Relationships</p>
                 <p className="text-sm font-extrabold text-emerald-700">{job.relationshipsCount ?? '-'}</p>
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0">
                 <RouteIcon className="w-4 h-4" />
               </div>
-              <div>
-                <p className="text-[11px] font-semibold text-slate-500">Routes</p>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Routes</p>
                 <p className="text-sm font-extrabold text-amber-700">{job.routesCount ?? '-'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+                <Binary className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Code Chunks</p>
+                <p className="text-sm font-extrabold text-indigo-700">{job.chunksCount ?? '-'}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-xl bg-cyan-100 text-cyan-700 flex items-center justify-center shrink-0">
+                <Zap className="w-4 h-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[10px] font-semibold text-slate-500 truncate">Embeddings</p>
+                <p className="text-sm font-extrabold text-cyan-700">{job.embeddingsCount ?? '-'}</p>
               </div>
             </div>
           </div>
@@ -288,7 +336,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
         {/* Stage-Based Progress Checklist */}
         <div className="space-y-4">
           <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            M5 Ingestion & M6 Codebase Intelligence Pipeline
+            M5 Ingestion, M6 Intelligence & M7 Semantic Vector Pipeline
           </h2>
 
           <div className="space-y-3">
@@ -401,10 +449,10 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
           <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-blue-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
             <div className="space-y-1">
               <h3 className="text-base font-extrabold text-slate-900">
-                Codebase Intelligence Model Ready
+                Semantic Index & Intelligence Graph Ready
               </h3>
               <p className="text-xs text-slate-600 max-w-lg">
-                Deterministic facts (symbols, relationships, routes, frameworks, architectural roles) have been extracted and structured in PostgreSQL. Ready for M7 vector embeddings and semantic search.
+                Deterministic facts and dense vector embeddings (384d) have been indexed in PostgreSQL via pgvector and HNSW. The codebase is fully prepared for semantic vector retrieval.
               </p>
             </div>
 
@@ -421,7 +469,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-emerald-800 bg-emerald-100/80 border border-emerald-200 rounded-full shadow-2xs"
               >
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-                <span>M6 Facts Extracted</span>
+                <span>M7 Vectors Indexed</span>
               </div>
             </div>
           </div>
