@@ -1,12 +1,22 @@
 import React, { useState } from 'react';
-import { Search, Plus, FolderGit2 } from 'lucide-react';
+import { Search, Plus, FolderGit2, CheckCircle2, Unlink } from 'lucide-react';
 import { RepositoryEmptyState } from './RepositoryEmptyState';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
+  onDisconnectClick?: () => void;
+  isGitHubConnected?: boolean;
+  githubUsername?: string | null;
+  isConnecting?: boolean;
 }
 
-export const RepositoriesView: React.FC<RepositoriesViewProps> = ({ onConnectClick }) => {
+export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
+  onConnectClick,
+  onDisconnectClick,
+  isGitHubConnected = false,
+  githubUsername = null,
+  isConnecting = false
+}) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -22,18 +32,42 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({ onConnectCli
             Repositories
           </h1>
           <p className="text-sm font-medium text-slate-500 mt-1">
-            Manage connected GitHub codebases, active branches, and AST indexing sync triggers.
+            {isGitHubConnected
+              ? `Connected to GitHub as @${githubUsername}. Repository selection and indexing will activate in Milestone M3.`
+              : 'Authorize your GitHub account to access codebases, index AST hierarchies, and manage branches.'}
           </p>
         </div>
 
-        <button
-          type="button"
-          onClick={onConnectClick}
-          className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer shrink-0"
-        >
-          <Plus className="w-4 h-4 stroke-[3]" />
-          <span>Connect Repository</span>
-        </button>
+        <div className="flex items-center gap-3">
+          {isGitHubConnected ? (
+            <>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                <span>@{githubUsername}</span>
+              </div>
+              {onDisconnectClick && (
+                <button
+                  type="button"
+                  onClick={onDisconnectClick}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-500 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-full transition-all cursor-pointer shadow-2xs"
+                >
+                  <Unlink className="w-3.5 h-3.5" />
+                  <span>Disconnect</span>
+                </button>
+              )}
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={onConnectClick}
+              disabled={isConnecting}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer shrink-0 disabled:opacity-60"
+            >
+              <Plus className="w-4 h-4 stroke-[3]" />
+              <span>Connect GitHub</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Search & Filter Bar */}
@@ -51,7 +85,12 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({ onConnectCli
       </div>
 
       {/* Repositories Content */}
-      <RepositoryEmptyState onConnectClick={onConnectClick} />
+      <RepositoryEmptyState
+        onConnectClick={onConnectClick}
+        isGitHubConnected={isGitHubConnected}
+        githubUsername={githubUsername}
+        isConnecting={isConnecting}
+      />
     </div>
   );
 };

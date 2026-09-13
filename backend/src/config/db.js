@@ -47,7 +47,23 @@ export const initDB = async () => {
       // Ignore migration errors if already configured
     }
 
-    console.log('✅ Neon Database initialized. "users" table is ready for Email + Google + GitHub OAuth.');
+    // Initialize github_accounts table for M2 repository authorization
+    await db`
+      CREATE TABLE IF NOT EXISTS github_accounts (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER UNIQUE NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        github_user_id VARCHAR(255) NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        access_token TEXT NOT NULL,
+        refresh_token TEXT,
+        token_expires_at TIMESTAMP WITH TIME ZONE,
+        scopes TEXT,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    console.log('✅ Neon Database initialized. "users" and "github_accounts" tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

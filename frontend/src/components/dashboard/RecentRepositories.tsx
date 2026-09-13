@@ -3,11 +3,17 @@ import { RepositoryEmptyState } from './RepositoryEmptyState';
 
 interface RecentRepositoriesProps {
   onConnectClick: () => void;
+  isGitHubConnected?: boolean;
+  githubUsername?: string | null;
+  isConnecting?: boolean;
   repositories?: Array<any>;
 }
 
 export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
   onConnectClick,
+  isGitHubConnected = false,
+  githubUsername = null,
+  isConnecting = false,
   repositories = []
 }) => {
   const hasRepositories = repositories.length > 0;
@@ -31,7 +37,12 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
 
       {/* Repositories State */}
       {!hasRepositories ? (
-        <RepositoryEmptyState onConnectClick={onConnectClick} />
+        <RepositoryEmptyState
+          onConnectClick={onConnectClick}
+          isGitHubConnected={isGitHubConnected}
+          githubUsername={githubUsername}
+          isConnecting={isConnecting}
+        />
       ) : (
         <div className="border border-slate-200/80 rounded-[2rem] divide-y divide-slate-100 bg-white shadow-xs">
           {repositories.map((repo, idx) => (
