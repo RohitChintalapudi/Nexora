@@ -1,54 +1,41 @@
 import React from 'react';
-import { Plus, SlidersHorizontal, CheckCircle2, Calendar } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 interface DashboardHeaderProps {
   onConnectClick: () => void;
 }
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({ onConnectClick }) => {
+  const { user } = useAuth();
+  const displayName = user?.name ? user.name.split(' ')[0] : 'Developer';
 
   return (
-    <div className="w-full flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 pb-6">
+    <div className="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 pb-8 mb-8 border-b border-slate-200/80">
       
       {/* Left: Headline & Subtitle */}
-      <div className="space-y-2 max-w-2xl">
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 font-display">
-          We found your system
+      <div className="space-y-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs">
+          <Sparkles className="w-3.5 h-3.5 stroke-[2.5]" />
+          <span>Code Intelligence Workspace</span>
+          <span className="w-1 h-1 rounded-full bg-blue-400" />
+          <span className="font-mono text-[11px] text-blue-600 font-semibold">M1 Active</span>
+        </div>
+
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
+          Welcome, {displayName}
         </h1>
-        <p className="text-sm font-medium text-slate-500 leading-relaxed">
-          Everything below was mapped from your environment. Connect your repository to parse AST hierarchies and sandbox change impact.
+        <p className="text-sm font-medium text-slate-500 max-w-xl leading-relaxed">
+          Index your codebases, trace AST hierarchies, and simulate pull request blast radius across connected systems.
         </p>
       </div>
 
-      {/* Right: Badges & Action Controls */}
-      <div className="flex flex-wrap items-center gap-2.5">
-        
-        {/* Setup Complete Pill */}
-        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-bold shadow-2xs">
-          <CheckCircle2 className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>Setup complete - 3 of 3</span>
-        </div>
-
-        {/* Timestamp Pill */}
-        <div className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 text-slate-700 text-xs font-semibold shadow-2xs">
-          <Calendar className="w-3.5 h-3.5 text-slate-400" />
-          <span>Sep 9, 2026 · 09:41</span>
-        </div>
-
-        {/* Filter Button */}
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white border border-slate-200/80 hover:bg-slate-50 text-slate-700 text-xs font-bold shadow-2xs transition-colors cursor-pointer"
-        >
-          <SlidersHorizontal className="w-3.5 h-3.5 text-slate-500" />
-          <span>Filter</span>
-        </button>
-
-        {/* Primary CTA: Connect Repository */}
+      {/* Right: Primary Action CTA */}
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={onConnectClick}
-          className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer focus:outline-none"
+          className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer focus:outline-none shrink-0"
         >
           <Plus className="w-4 h-4 stroke-[3]" />
           <span>Connect Repository</span>
