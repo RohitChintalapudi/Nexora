@@ -24,6 +24,12 @@ export const RepositoryModel = {
         language,
         html_url,
         github_updated_at,
+        commit_sha,
+        file_count,
+        source_file_count,
+        ignored_file_count,
+        total_source_size_bytes,
+        ingested_at,
         created_at,
         updated_at
       FROM repositories
@@ -57,6 +63,12 @@ export const RepositoryModel = {
         language,
         html_url,
         github_updated_at,
+        commit_sha,
+        file_count,
+        source_file_count,
+        ignored_file_count,
+        total_source_size_bytes,
+        ingested_at,
         created_at,
         updated_at
       FROM repositories
@@ -90,6 +102,12 @@ export const RepositoryModel = {
         language,
         html_url,
         github_updated_at,
+        commit_sha,
+        file_count,
+        source_file_count,
+        ignored_file_count,
+        total_source_size_bytes,
+        ingested_at,
         created_at,
         updated_at
       FROM repositories
@@ -177,6 +195,40 @@ export const RepositoryModel = {
         github_updated_at,
         created_at,
         updated_at;
+    `;
+
+    return rows[0];
+  },
+
+  /**
+   * Update repository-level ingestion metrics and commit SHA
+   * @param {Object} params
+   * @returns {Promise<Object>}
+   */
+  async updateIngestionMetadata({
+    id,
+    userId,
+    commitSha = null,
+    fileCount = 0,
+    sourceFileCount = 0,
+    ignoredFileCount = 0,
+    totalSourceSizeBytes = 0
+  }) {
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please check DATABASE_URL.');
+
+    const rows = await sql`
+      UPDATE repositories
+      SET
+        commit_sha = COALESCE(${commitSha}, commit_sha),
+        file_count = ${fileCount},
+        source_file_count = ${sourceFileCount},
+        ignored_file_count = ${ignoredFileCount},
+        total_source_size_bytes = ${totalSourceSizeBytes},
+        ingested_at = CURRENT_TIMESTAMP,
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id} AND user_id = ${userId}
+      RETURNING *;
     `;
 
     return rows[0];

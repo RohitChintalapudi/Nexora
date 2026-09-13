@@ -101,6 +101,10 @@ export const analysisController = {
           status: job.status,
           currentStage: job.current_stage,
           errorMessage: job.error_message,
+          filesScanned: job.files_scanned || 0,
+          filesIncluded: job.files_included || 0,
+          filesIgnored: job.files_ignored || 0,
+          totalSizeBytes: job.total_size_bytes || 0,
           startedAt: job.started_at,
           completedAt: job.completed_at,
           createdAt: job.created_at
@@ -149,6 +153,10 @@ export const analysisController = {
               status: latestJob.status,
               currentStage: latestJob.current_stage,
               errorMessage: latestJob.error_message,
+              filesScanned: latestJob.files_scanned || 0,
+              filesIncluded: latestJob.files_included || 0,
+              filesIgnored: latestJob.files_ignored || 0,
+              totalSizeBytes: latestJob.total_size_bytes || 0,
               startedAt: latestJob.started_at,
               completedAt: latestJob.completed_at,
               createdAt: latestJob.created_at

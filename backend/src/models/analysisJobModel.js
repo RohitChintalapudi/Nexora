@@ -92,6 +92,10 @@ export const AnalysisJobModel = {
         j.status,
         j.current_stage,
         j.error_message,
+        j.files_scanned,
+        j.files_included,
+        j.files_ignored,
+        j.total_size_bytes,
         j.started_at,
         j.completed_at,
         j.created_at,
@@ -126,6 +130,10 @@ export const AnalysisJobModel = {
         status,
         current_stage,
         error_message,
+        files_scanned,
+        files_included,
+        files_ignored,
+        total_size_bytes,
         started_at,
         completed_at,
         created_at,
@@ -155,6 +163,10 @@ export const AnalysisJobModel = {
         status,
         current_stage,
         error_message,
+        files_scanned,
+        files_included,
+        files_ignored,
+        total_size_bytes,
         started_at,
         completed_at,
         created_at,
@@ -168,7 +180,7 @@ export const AnalysisJobModel = {
   },
 
   /**
-   * Update an analysis job's stage, status, timestamps, or error message
+   * Update an analysis job's stage, status, timestamps, stats, or error message
    * @param {Object} params
    * @returns {Promise<Object>}
    */
@@ -176,6 +188,10 @@ export const AnalysisJobModel = {
     id,
     status,
     currentStage,
+    filesScanned = null,
+    filesIncluded = null,
+    filesIgnored = null,
+    totalSizeBytes = null,
     startedAt = null,
     completedAt = null,
     errorMessage = null
@@ -188,6 +204,10 @@ export const AnalysisJobModel = {
       SET
         status = COALESCE(${status}, status),
         current_stage = COALESCE(${currentStage}, current_stage),
+        files_scanned = COALESCE(${filesScanned}, files_scanned),
+        files_included = COALESCE(${filesIncluded}, files_included),
+        files_ignored = COALESCE(${filesIgnored}, files_ignored),
+        total_size_bytes = COALESCE(${totalSizeBytes}, total_size_bytes),
         started_at = COALESCE(${startedAt}, started_at),
         completed_at = COALESCE(${completedAt}, completed_at),
         error_message = ${errorMessage},
@@ -200,6 +220,10 @@ export const AnalysisJobModel = {
         status,
         current_stage,
         error_message,
+        files_scanned,
+        files_included,
+        files_ignored,
+        total_size_bytes,
         started_at,
         completed_at,
         created_at,

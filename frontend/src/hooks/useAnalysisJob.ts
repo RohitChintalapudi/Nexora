@@ -8,7 +8,9 @@ export type AnalysisStage =
   | 'QUEUED' 
   | 'INITIALIZING' 
   | 'FETCHING_REPOSITORY' 
-  | 'SCANNING' 
+  | 'SCANNING_FILES' 
+  | 'FILTERING_FILES' 
+  | 'PERSISTING_FILES' 
   | 'COMPLETED' 
   | 'FAILED';
 
@@ -20,6 +22,10 @@ export interface AnalysisJob {
   status: JobStatus;
   currentStage: AnalysisStage;
   errorMessage?: string | null;
+  filesScanned?: number;
+  filesIncluded?: number;
+  filesIgnored?: number;
+  totalSizeBytes?: number;
   startedAt?: string | null;
   completedAt?: string | null;
   createdAt: string;

@@ -9,12 +9,14 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "adm-zip": "^0.6.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "google-auth-library": "^11.0.2",
     "groq-sdk": "^1.6.0",
+    "ignore": "^7.0.9",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
