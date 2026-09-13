@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.10.4",
+    "@upstash/redis": "^1.38.4",
     "adm-zip": "^0.6.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",

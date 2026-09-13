@@ -3,6 +3,7 @@ import { RepositoryModel } from '../models/repositoryModel.js';
 import { RepositoryFileModel } from '../models/repositoryFileModel.js';
 import { RepositoryFetcher } from './repositoryFetcher.js';
 import { FileScanner } from './fileScanner.js';
+import { CacheService } from '../config/redis.js';
 
 class AnalysisWorkerService {
   constructor() {
@@ -141,7 +142,7 @@ class AnalysisWorkerService {
 
       // 6. Stage: COMPLETED (Ingestion Complete)
       console.log(`✅ [AnalysisWorker] Job #${jobId} repository ingestion complete.`);
-      await AnalysisJobModel.updateStage({
+      const completedJob = await AnalysisJobModel.updateStage({
         id: jobId,
         status: 'COMPLETED',
         currentStage: 'COMPLETED',
@@ -152,6 +153,10 @@ class AnalysisWorkerService {
         completedAt: new Date(),
         errorMessage: null
       });
+
+      // Clear & update fast Redis cache
+      await CacheService.del(`nexora:repo-latest:${job.repository_id}:${job.user_id}`);
+      await CacheService.set(`nexora:job:${jobId}:${job.user_id}`, completedJob, 300);
 
     } catch (error) {
       console.error(`💥 [AnalysisWorker] Job #${jobId} failed:`, error.message);
