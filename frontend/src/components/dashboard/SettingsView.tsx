@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Shield, LogOut, Check, Sliders, Unlink, Plus } from 'lucide-react';
 import { LogoutConfirmModal } from './LogoutConfirmModal';
+import { DisconnectGithubModal } from './DisconnectGithubModal';
 
 interface SettingsViewProps {
   isGitHubConnected?: boolean;
@@ -20,9 +21,38 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 }) => {
   const { user, logout } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+  const handleOpenDisconnect = () => {
+    if (onDisconnectGitHub) {
+      onDisconnectGitHub();
+    } else {
+      setIsDisconnectModalOpen(true);
+    }
+  };
+
+  const handleConfirmInternalDisconnect = async () => {
+    setIsDisconnecting(true);
+    try {
+      const token = localStorage.getItem('nexora_token');
+      if (token) {
+        await fetch('http://localhost:5000/api/github/disconnect', {
+          method: 'DELETE',
+          headers: { Authorization: `Bearer ${token}` }
+        });
+      }
+    } catch (err) {
+      console.error('Failed to disconnect GitHub:', err);
+    } finally {
+      setIsDisconnecting(false);
+      setIsDisconnectModalOpen(false);
+      window.location.reload();
+    }
+  };
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-150">
       {/* Header Card */}
       <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-2">
@@ -121,7 +151,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             {isGitHubConnected ? (
               <button
                 type="button"
-                onClick={onDisconnectGitHub}
+                onClick={handleOpenDisconnect}
                 className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-red-600 hover:text-white bg-red-50 hover:bg-red-600 border border-red-200 hover:border-red-600 rounded-full transition-all cursor-pointer shadow-2xs"
               >
                 <Unlink className="w-3.5 h-3.5" />
@@ -169,10 +199,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
             <div>
               <p className="text-xs font-extrabold text-slate-900">Current Milestone</p>
-              <p className="text-[11px] font-medium text-slate-400">Milestone M2 — GitHub OAuth Authorization</p>
+              <p className="text-[11px] font-medium text-slate-400">Milestone M3 — Repository Selection & Ingestion</p>
             </div>
             <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-              NEXORA M2
+              NEXORA M3
             </span>
           </div>
         </div>
@@ -199,6 +229,15 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         isOpen={isLogoutModalOpen}
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={logout}
+      />
+
+      {/* Disconnect GitHub Confirmation Modal */}
+      <DisconnectGithubModal
+        isOpen={isDisconnectModalOpen}
+        username={githubUsername}
+        onClose={() => setIsDisconnectModalOpen(false)}
+        onConfirm={handleConfirmInternalDisconnect}
+        isProcessing={isDisconnecting}
       />
     </div>
   );
