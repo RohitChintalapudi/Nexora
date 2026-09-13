@@ -19,9 +19,16 @@ import { DashboardPage } from './pages/DashboardPage';
 import './App.css';
 
 function MainContent() {
-  const { currentPage, navigateTo } = useAuth();
+  const { currentPage, navigateTo, isAuthenticated, isLoading } = useAuth();
 
   if (currentPage === 'dashboard') {
+    if (!isLoading && !isAuthenticated) {
+      return (
+        <div className="fixed inset-0 z-50 bg-[#F7F7F5] overflow-hidden">
+          <SignInPage onNavigateHome={() => navigateTo('home')} />
+        </div>
+      );
+    }
     return <DashboardPage />;
   }
 

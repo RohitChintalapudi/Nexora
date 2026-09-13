@@ -298,6 +298,12 @@ export const githubAuth = async (req, res) => {
 };
 
 export const githubCallback = async (req, res) => {
+  // If state is present, delegate to githubController for M2 repository authorization
+  if (req.query.state) {
+    const { githubController } = await import('./githubController.js');
+    return githubController.callback(req, res);
+  }
+
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
   try {
     const { code } = req.query;
