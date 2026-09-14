@@ -11,21 +11,21 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = '
   const isDark = theme === 'dark';
 
   const pathVariants = {
-    initial: { pathLength: 0.8, opacity: 0.7, stroke: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(17, 17, 17, 0.4)' },
+    initial: { pathLength: 1, opacity: 0.9, stroke: isDark ? '#FFFFFF' : '#000000' },
     hover: { 
       pathLength: 1, 
       opacity: 1, 
-      stroke: '#3B82F6',
-      transition: { duration: 0.4, ease: 'easeInOut' as const } 
+      stroke: isDark ? '#FFFFFF' : '#000000',
+      transition: { duration: 0.25, ease: 'easeInOut' as const } 
     }
   };
 
   const nodeVariants = {
-    initial: { scale: 1, fill: isDark ? '#FFFFFF' : '#111111' },
+    initial: { scale: 1, fill: isDark ? '#FFFFFF' : '#000000' },
     hover: { 
-      scale: 1.25, 
-      fill: '#3B82F6',
-      transition: { duration: 0.3, ease: 'easeOut' as const }
+      scale: 1.15, 
+      fill: isDark ? '#FFFFFF' : '#000000',
+      transition: { duration: 0.25, ease: 'easeOut' as const }
     }
   };
 
@@ -33,6 +33,7 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = '
     <motion.div 
       className={`flex items-center gap-2.5 font-sans font-medium text-lg tracking-wider ${isDark ? 'text-white' : 'text-neutral-900'} cursor-pointer select-none ${className}`}
       whileHover="hover"
+      whileTap={{ scale: 0.96 }}
       initial="initial"
     >
       <svg
@@ -57,8 +58,8 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = '
           strokeWidth="1.5"
           strokeDasharray="4, 4"
           variants={{
-            initial: { opacity: 0.3, stroke: '#71717A' },
-            hover: { opacity: 0.8, stroke: '#3B82F6', transition: { duration: 0.4 } }
+            initial: { opacity: 0.35, stroke: isDark ? '#A1A1AA' : '#64748B' },
+            hover: { opacity: 0.7, stroke: isDark ? '#E4E4E7' : '#334155', transition: { duration: 0.25 } }
           }}
         />
 

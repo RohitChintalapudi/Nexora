@@ -23,6 +23,7 @@ interface RepositoryDetailsViewProps {
   isStartingAnalysis?: boolean;
   latestJob?: AnalysisJob | null;
   onViewAnalysisProgress?: () => void;
+  onViewAnalysis?: () => void;
 }
 
 export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
@@ -31,7 +32,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
   onStartAnalysis,
   isStartingAnalysis = false,
   latestJob = null,
-  onViewAnalysisProgress
+  onViewAnalysisProgress,
+  onViewAnalysis
 }) => {
   const isJobActive = latestJob && (latestJob.status === 'QUEUED' || latestJob.status === 'PROCESSING');
   const isJobCompleted = latestJob && latestJob.status === 'COMPLETED';
@@ -183,7 +185,7 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
             {isJobActive
               ? 'An asynchronous analysis job is currently processing this repository. Track stage progression in real-time.'
               : isJobCompleted
-                ? 'This repository has been verified and processed by the analysis pipeline. You can re-run analysis at any time.'
+                ? 'This repository has been verified and processed by the analysis pipeline. You can open its structured analysis or re-run analysis at any time.'
                 : 'Initiate the background analysis pipeline to scan repository structure, inspect module boundaries, and generate architecture graphs.'}
           </p>
         </div>
@@ -207,6 +209,28 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               <span>Track Progress</span>
               <ArrowRight className="w-4 h-4" />
             </button>
+          ) : isJobCompleted ? (
+            <div className="flex items-center gap-2.5">
+              <button
+                type="button"
+                onClick={onStartAnalysis}
+                disabled={isStartingAnalysis}
+                className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-full transition-all cursor-pointer disabled:opacity-60 shadow-2xs"
+                title="Re-run pipeline"
+              >
+                Re-analyze
+              </button>
+
+              <button
+                type="button"
+                onClick={onViewAnalysis}
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>View Analysis</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           ) : (
             <button
               type="button"
@@ -222,7 +246,7 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               ) : (
                 <>
                   <Cpu className="w-4 h-4" />
-                  <span>{isJobCompleted ? 'Re-analyze Repository' : 'Analyze Repository'}</span>
+                  <span>Analyze Repository</span>
                 </>
               )}
             </button>

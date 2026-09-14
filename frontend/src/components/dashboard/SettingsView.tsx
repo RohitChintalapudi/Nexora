@@ -143,7 +143,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             <p className="text-[11px] font-medium text-slate-400 mt-0.5">
               {isGitHubConnected
                 ? 'Authorized with scopes: repo, read:user, user:email'
-                : 'Grant repository permissions for codebase exploration in M3'}
+                : 'Grant repository permissions for codebase exploration and automated analysis'}
             </p>
           </div>
 
@@ -180,7 +180,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           </div>
           <div>
             <h2 className="text-base font-extrabold text-slate-900">Workspace Environment</h2>
-            <p className="text-xs font-medium text-slate-400">Security signature and runtime milestone</p>
+            <p className="text-xs font-medium text-slate-400">Security signature and runtime platform version</p>
           </div>
         </div>
 
@@ -198,11 +198,11 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
             <div>
-              <p className="text-xs font-extrabold text-slate-900">Current Milestone</p>
-              <p className="text-[11px] font-medium text-slate-400">Milestone M3 — Repository Selection & Ingestion</p>
+              <p className="text-xs font-extrabold text-slate-900">Platform Version</p>
+              <p className="text-[11px] font-medium text-slate-400">Version 1 (V1) — Codebase Intelligence & AI Architecture Platform</p>
             </div>
-            <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full">
-              NEXORA M3
+            <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full shadow-2xs">
+              Version 1 (V1)
             </span>
           </div>
         </div>

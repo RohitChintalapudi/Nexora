@@ -1,5 +1,6 @@
 import { RepositoryModel } from '../models/repositoryModel.js';
 import { GithubAccountModel } from '../models/githubAccountModel.js';
+import { RepositoryFileModel } from '../models/repositoryFileModel.js';
 
 /**
  * Fetch GitHub repository by ID using authenticated user's access token
@@ -226,6 +227,69 @@ export const repositoryController = {
       return res.status(500).json({
         success: false,
         message: 'Failed to delete repository'
+      });
+    }
+  },
+
+  /**
+   * Get file content for source reference preview
+   * GET /api/repositories/:repositoryId/file-content?path=...
+   */
+  async getFileContent(req, res) {
+    try {
+      const { repositoryId } = req.params;
+      const filePath = req.query.path;
+
+      if (!repositoryId || isNaN(Number(repositoryId))) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid repository ID parameter'
+        });
+      }
+
+      if (!filePath || typeof filePath !== 'string') {
+        return res.status(400).json({
+          success: false,
+          message: 'File path query parameter is required'
+        });
+      }
+
+      // Check repository ownership
+      const repo = await RepositoryModel.findByIdAndUserId(repositoryId, req.user.id);
+      if (!repo) {
+        return res.status(404).json({
+          success: false,
+          message: 'Repository not found or access denied'
+        });
+      }
+
+      const fileRecord = await RepositoryFileModel.findByPath(repositoryId, req.user.id, filePath);
+      if (!fileRecord) {
+        return res.status(404).json({
+          success: false,
+          message: `File "${filePath}" not found in repository index`
+        });
+      }
+
+      return res.status(200).json({
+        success: true,
+        file: {
+          id: fileRecord.id,
+          path: fileRecord.path,
+          name: fileRecord.name,
+          extension: fileRecord.extension,
+          language: fileRecord.language,
+          sizeBytes: fileRecord.size_bytes,
+          isBinary: fileRecord.is_binary,
+          content: fileRecord.content,
+          linesCount: fileRecord.content ? fileRecord.content.split('\n').length : 0
+        }
+      });
+    } catch (error) {
+      console.error('Error fetching file content:', error.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to retrieve file content'
       });
     }
   }

@@ -11,6 +11,26 @@ export type AnalysisStage =
   | 'SCANNING_FILES' 
   | 'FILTERING_FILES' 
   | 'PERSISTING_FILES' 
+  | 'PARSING_FILES'
+  | 'EXTRACTING_SYMBOLS'
+  | 'EXTRACTING_IMPORTS'
+  | 'EXTRACTING_EXPORTS'
+  | 'DETECTING_ROUTES'
+  | 'BUILDING_RELATIONSHIPS'
+  | 'EXTRACTING_PROJECT_METADATA'
+  | 'INTELLIGENCE_COMPLETE'
+  | 'CHUNKING_FILES'
+  | 'GENERATING_EMBEDDINGS'
+  | 'STORING_EMBEDDINGS'
+  | 'INDEXING_COMPLETE'
+  | 'LOADING_CODEBASE_CONTEXT'
+  | 'RETRIEVING_CONTEXT'
+  | 'ANALYZING_TECHNOLOGIES'
+  | 'ANALYZING_ARCHITECTURE'
+  | 'ANALYZING_MODULES'
+  | 'ANALYZING_APPLICATION_FLOW'
+  | 'GENERATING_SUMMARY'
+  | 'PERSISTING_ANALYSIS'
   | 'COMPLETED' 
   | 'FAILED';
 
@@ -26,6 +46,11 @@ export interface AnalysisJob {
   filesIncluded?: number;
   filesIgnored?: number;
   totalSizeBytes?: number;
+  symbolsCount?: number;
+  relationshipsCount?: number;
+  routesCount?: number;
+  chunksCount?: number;
+  embeddingsCount?: number;
   startedAt?: string | null;
   completedAt?: string | null;
   createdAt: string;

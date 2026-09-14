@@ -33,6 +33,8 @@ export interface SavedRepository {
   updatedAt: string;
 }
 
+let cachedSavedRepos: SavedRepository[] | null = null;
+
 export function useRepositories(isGitHubConnected = false) {
   const { token } = useAuth();
   
@@ -45,13 +47,13 @@ export function useRepositories(isGitHubConnected = false) {
   const [hasMore, setHasMore] = useState(false);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
   
-  // Saved Repositories (in PostgreSQL)
-  const [savedRepositories, setSavedRepositories] = useState<SavedRepository[]>([]);
+  // Saved Repositories (in PostgreSQL) - instant load from cache
+  const [savedRepositories, setSavedRepositories] = useState<SavedRepository[]>(() => cachedSavedRepos || []);
   const [activeSavedRepo, setActiveSavedRepo] = useState<SavedRepository | null>(null);
 
   // Status flags
   const [isLoadingGitHub, setIsLoadingGitHub] = useState(false);
-  const [isLoadingSaved, setIsLoadingSaved] = useState(true);
+  const [isLoadingSaved, setIsLoadingSaved] = useState(() => cachedSavedRepos === null);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [needsReauth, setNeedsReauth] = useState(false);
@@ -72,7 +74,9 @@ export function useRepositories(isGitHubConnected = false) {
     }
 
     try {
-      setIsLoadingSaved(true);
+      if (!cachedSavedRepos) {
+        setIsLoadingSaved(true);
+      }
       const res = await fetch(`${API_BASE_URL}/api/repositories`, {
         headers: {
           Authorization: `Bearer ${currentToken}`
@@ -82,6 +86,7 @@ export function useRepositories(isGitHubConnected = false) {
       if (!res.ok) throw new Error('Failed to fetch saved repositories');
       const data = await res.json();
       if (data.success) {
+        cachedSavedRepos = data.repositories || [];
         setSavedRepositories(data.repositories || []);
         // If there's an active saved repo, keep it updated
         if (activeSavedRepo) {

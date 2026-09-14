@@ -17,6 +17,9 @@ import { useAnalysisJob } from '../../hooks/useAnalysisJob';
 import { RepositoryCard } from './RepositoryCard';
 import { RepositoryDetailsView } from './RepositoryDetailsView';
 import { AnalysisProgressView } from './AnalysisProgressView';
+import { AnalysisPageView } from './analysis/AnalysisPageView';
+import { AnalysisErrorBoundary } from './analysis/AnalysisErrorBoundary';
+import { NexoraLoader } from '../common/NexoraLoader';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
@@ -25,6 +28,7 @@ interface RepositoriesViewProps {
   githubUsername?: string | null;
   isConnecting?: boolean;
   initialSelectedRepo?: SavedRepository | null;
+  initialSubView?: 'list' | 'details' | 'progress' | 'analysis';
 }
 
 export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
@@ -33,7 +37,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   isGitHubConnected = false,
   githubUsername = null,
   isConnecting = false,
-  initialSelectedRepo = null
+  initialSelectedRepo = null,
+  initialSubView = 'list'
 }) => {
   const {
     gitHubRepos,
@@ -65,16 +70,16 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     resetJob
   } = useAnalysisJob();
 
-  const [subView, setSubView] = useState<'list' | 'details' | 'progress'>('list');
+  const [subView, setSubView] = useState<'list' | 'details' | 'progress' | 'analysis'>(initialSubView);
 
   // Handle initialSelectedRepo if passed from Dashboard
   useEffect(() => {
     if (initialSelectedRepo) {
       setActiveSavedRepo(initialSelectedRepo);
-      setSubView('details');
+      setSubView(initialSubView === 'analysis' ? 'analysis' : 'details');
       fetchLatestJob(initialSelectedRepo.id);
     }
-  }, [initialSelectedRepo, setActiveSavedRepo, fetchLatestJob]);
+  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob]);
 
   // When an active saved repo is clicked
   const handleOpenDetails = (repo: SavedRepository) => {
@@ -97,6 +102,19 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     await startAnalysis(activeSavedRepo.id);
   };
 
+  // If viewing analysis page
+  if (subView === 'analysis' && activeSavedRepo) {
+    return (
+      <AnalysisErrorBoundary onReset={() => setSubView('details')}>
+        <AnalysisPageView
+          repository={activeSavedRepo}
+          onBack={() => setSubView('details')}
+          onViewProgress={() => setSubView('progress')}
+        />
+      </AnalysisErrorBoundary>
+    );
+  }
+
   // If viewing analysis progress
   if (subView === 'progress' && activeSavedRepo) {
     return (
@@ -106,6 +124,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         isStarting={isStartingAnalysis}
         onBackToDetails={() => setSubView('details')}
         onRetry={handleRetryAnalysis}
+        onViewAnalysis={() => setSubView('analysis')}
       />
     );
   }
@@ -124,6 +143,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         onStartAnalysis={handleStartAnalysis}
         isStartingAnalysis={isStartingAnalysis}
         onViewAnalysisProgress={() => setSubView('progress')}
+        onViewAnalysis={() => setSubView('analysis')}
       />
     );
   }
@@ -318,25 +338,14 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
             </div>
           )}
 
-          {/* Loading Skeleton */}
+          {/* Loading Nexora State */}
           {isLoadingGitHub && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="p-5 rounded-2xl border border-slate-200/70 bg-white space-y-3 animate-pulse">
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 w-32 bg-slate-200 rounded-md" />
-                    <div className="h-4 w-14 bg-slate-100 rounded-full" />
-                  </div>
-                  <div className="h-3 w-48 bg-slate-100 rounded-md" />
-                  <div className="h-3 w-full bg-slate-100 rounded-md" />
-                  <div className="h-3 w-2/3 bg-slate-100 rounded-md" />
-                  <div className="pt-2 flex justify-between">
-                    <div className="h-3 w-20 bg-slate-100 rounded-md" />
-                    <div className="h-5 w-16 bg-slate-200 rounded-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <NexoraLoader
+              variant="card"
+              size="md"
+              message="Fetching GitHub Repositories..."
+              subMessage="Querying GitHub API and synchronizing repository list"
+            />
           )}
 
           {/* Empty Search / No Repositories */}

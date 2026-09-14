@@ -9,6 +9,7 @@ import { RepositoriesView } from '../components/dashboard/RepositoriesView';
 import { SettingsView } from '../components/dashboard/SettingsView';
 import { ConnectRepoModal } from '../components/dashboard/ConnectRepoModal';
 import { DisconnectGithubModal } from '../components/dashboard/DisconnectGithubModal';
+import { NexoraLoader } from '../components/common/NexoraLoader';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -32,6 +33,28 @@ export const DashboardPage: React.FC = () => {
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [initialRepo, setInitialRepo] = useState<SavedRepository | null>(null);
+  const [initialSubView, setInitialSubView] = useState<'list' | 'details' | 'progress' | 'analysis'>('list');
+
+  // URL Deep-linking for /repositories/:id and /repositories/:id/analysis
+  useEffect(() => {
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    const target = path.startsWith('/repositories') ? path : hash.replace(/^#/, '');
+
+    const match = target.match(/\/repositories\/(\d+)(\/analysis)?/);
+    if (match) {
+      const repoId = parseInt(match[1], 10);
+      const isAnalysis = Boolean(match[2]);
+      const found = savedRepositories.find((r) => r.id === repoId);
+      if (found) {
+        setInitialRepo(found);
+        setActiveSavedRepo(found);
+        setActiveTab('repositories');
+        setInitialSubView(isAnalysis ? 'analysis' : 'details');
+      }
+    }
+  }, [savedRepositories, setActiveSavedRepo]);
 
   // Protected route guard: Redirect unauthenticated users
   useEffect(() => {
@@ -58,14 +81,18 @@ export const DashboardPage: React.FC = () => {
 
   const handleViewSavedRepo = (repo: SavedRepository) => {
     setActiveSavedRepo(repo);
+    setInitialRepo(repo);
+    setInitialSubView('details');
     setActiveTab('repositories');
   };
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-      </div>
+      <NexoraLoader 
+        variant="fullscreen" 
+        message="Initializing Workspace..." 
+        subMessage="Authenticating session and preparing environment" 
+      />
     );
   }
 
@@ -74,7 +101,15 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+    <DashboardLayout 
+      activeTab={activeTab} 
+      onTabChange={setActiveTab}
+      isGitHubConnected={isGitHubConnected}
+      githubUsername={githubUsername}
+      onConnectClick={handleOpenConnect}
+      onDisconnectClick={() => setIsDisconnectModalOpen(true)}
+      isConnecting={isConnecting}
+    >
       
       {/* Toast Notification for GitHub OAuth Feedback */}
       {notification && (
@@ -108,15 +143,22 @@ export const DashboardPage: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-150">
           <DashboardHeader
             onConnectClick={handleOpenConnect}
-            onDisconnectClick={() => setIsDisconnectModalOpen(true)}
-            onChooseRepoClick={() => setActiveTab('repositories')}
+            onChooseRepoClick={() => {
+              setInitialRepo(null);
+              setInitialSubView('list');
+              setActiveTab('repositories');
+            }}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
           />
           <RecentRepositories
             onConnectClick={handleOpenConnect}
-            onChooseRepoClick={() => setActiveTab('repositories')}
+            onChooseRepoClick={() => {
+              setInitialRepo(null);
+              setInitialSubView('list');
+              setActiveTab('repositories');
+            }}
             onViewRepoDetails={handleViewSavedRepo}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
@@ -135,6 +177,8 @@ export const DashboardPage: React.FC = () => {
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
+            initialSelectedRepo={initialRepo}
+            initialSubView={initialSubView}
           />
         </div>
       )}

@@ -15,12 +15,22 @@ export type DashboardTab = 'dashboard' | 'repositories' | 'settings';
 interface DashboardLayoutProps {
   activeTab: DashboardTab;
   onTabChange: (tab: DashboardTab) => void;
+  isGitHubConnected?: boolean;
+  githubUsername?: string | null;
+  onConnectClick?: () => void;
+  onDisconnectClick?: () => void;
+  isConnecting?: boolean;
   children: React.ReactNode;
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   activeTab,
   onTabChange,
+  isGitHubConnected = false,
+  githubUsername = null,
+  onConnectClick,
+  onDisconnectClick,
+  isConnecting = false,
   children,
 }) => {
   const { user, logout, navigateTo } = useAuth();
@@ -99,8 +109,45 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             })}
           </nav>
 
-          {/* Right: Profile Section */}
-          <div className="flex items-center gap-3">
+          {/* Right: GitHub Integration & Profile Section */}
+          <div className="flex items-center gap-2.5">
+            {/* GitHub Connection Status / Action */}
+            {isGitHubConnected ? (
+              <div className="flex items-center gap-1.5 p-1 pl-2.5 pr-1 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] text-xs">
+                {/* GitHub Green Pulsing Dot & Username */}
+                <div className="flex items-center gap-1.5 pr-1">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+                  <span className="font-mono font-bold text-slate-800 text-[11px] max-w-[100px] sm:max-w-[130px] truncate">
+                    @{githubUsername}
+                  </span>
+                </div>
+
+                {/* Disconnect Button */}
+                {onDisconnectClick && (
+                  <button
+                    type="button"
+                    onClick={onDisconnectClick}
+                    className="px-2.5 py-1 text-[10px] font-bold text-red-600 bg-red-50/80 hover:bg-red-100 border border-red-200/70 rounded-full transition-all cursor-pointer shadow-2xs"
+                    title="Disconnect GitHub"
+                  >
+                    Disconnect
+                  </button>
+                )}
+              </div>
+            ) : onConnectClick ? (
+              <button
+                type="button"
+                onClick={onConnectClick}
+                disabled={isConnecting}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-xs transition-all cursor-pointer disabled:opacity-60 shrink-0"
+              >
+                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+                <span>{isConnecting ? 'Connecting...' : 'Connect GitHub'}</span>
+              </button>
+            ) : null}
+
             {/* Profile Section */}
             <div className="relative" ref={userMenuRef}>
               <button
