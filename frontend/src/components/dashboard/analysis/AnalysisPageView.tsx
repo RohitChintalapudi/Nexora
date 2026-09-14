@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -20,11 +20,14 @@ import {
   BookOpen, 
   HelpCircle, 
   Check, 
-  ArrowRight,
-  Binary,
-  Compass,
-  FileText,
-  ChevronDown
+  ArrowRight, 
+  Binary, 
+  Compass, 
+  FileText, 
+  ChevronDown,
+  Search,
+  Code2,
+  X
 } from 'lucide-react';
 import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
 import { SourceReferenceModal } from './SourceReferenceModal';
@@ -120,6 +123,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   const [activeSection, setActiveSection] = useState<string>('chat');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [archTab, setArchTab] = useState<'diagram' | 'matrix'>('diagram');
+  const [apiMethodFilter, setApiMethodFilter] = useState<string>('ALL');
+  const [apiSearchQuery, setApiSearchQuery] = useState<string>('');
 
   // Source Reference Modal state
   const [selectedFileRef, setSelectedFileRef] = useState<{
@@ -415,6 +420,32 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   const apiStructureList = Array.isArray(analysis.apiStructure) ? analysis.apiStructure : [];
   const quickStartList = Array.isArray(analysis.developerQuickStart) ? analysis.developerQuickStart : [];
   const uncertaintiesList = Array.isArray(analysis.uncertainties) ? analysis.uncertainties : [];
+
+  // Compute HTTP method counts for API endpoints
+  const methodCounts = useMemo(() => {
+    const counts: Record<string, number> = { ALL: apiStructureList.length };
+    apiStructureList.forEach((r: any) => {
+      const m = safeStr(r?.method, 'GET').toUpperCase();
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    return counts;
+  }, [apiStructureList]);
+
+  // Filter API routes by selected HTTP method and search query
+  const filteredRoutes = useMemo(() => {
+    return apiStructureList.filter((r: any) => {
+      const method = safeStr(r?.method, 'GET').toUpperCase();
+      const path = safeStr(typeof r === 'object' ? r.path : r, '/').toLowerCase();
+      const handler = safeStr(r?.handler).toLowerCase();
+      const file = safeStr(r?.filePath).toLowerCase();
+
+      const matchesMethod = apiMethodFilter === 'ALL' || method === apiMethodFilter;
+      const q = apiSearchQuery.trim().toLowerCase();
+      const matchesSearch = !q || path.includes(q) || handler.includes(q) || file.includes(q) || method.toLowerCase().includes(q);
+
+      return matchesMethod && matchesSearch;
+    });
+  }, [apiStructureList, apiMethodFilter, apiSearchQuery]);
 
   // Group technologies by category safely
   const techByCategory = techList.reduce<Record<string, TechnologyItem[]>>((acc, item: any) => {
@@ -1380,10 +1411,12 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           </section>
 
           {/* ───────────────────────────────────────────────────────────── */}
-          {/* SECTION 10: API STRUCTURE */}
+          {/* SECTION 10: API STRUCTURE & ENDPOINTS */}
           {/* ───────────────────────────────────────────────────────────── */}
           <section id="api" className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6">
-            <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100">
+            
+            {/* Header with Title & Route Counter */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100 shrink-0">
                   <RouteIcon className="w-4 h-4" />
@@ -1397,59 +1430,189 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   </p>
                 </div>
               </div>
+
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono font-bold self-start sm:self-auto">
+                <span>{apiStructureList.length} Endpoints Discovered</span>
+              </span>
             </div>
 
             {apiStructureList.length === 0 ? (
               <p className="text-xs text-slate-500">No API routes detected in this repository.</p>
             ) : (
-              <div className="space-y-2">
-                {apiStructureList.map((route: any, idx: number) => {
-                  const methodColors: Record<string, string> = {
-                    GET: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-                    POST: 'bg-blue-50 text-blue-800 border-blue-200',
-                    PUT: 'bg-amber-50 text-amber-800 border-amber-200',
-                    DELETE: 'bg-red-50 text-red-800 border-red-200',
-                    PATCH: 'bg-purple-50 text-purple-800 border-purple-200'
-                  };
-                  const rMethod = safeStr(route?.method, 'GET').toUpperCase();
-                  const colorClass = methodColors[rMethod] || 'bg-slate-100 text-slate-700 border-slate-200';
-                  const rPath = safeStr(typeof route === 'object' ? route.path : route, '/');
-                  const rHandler = safeStr(route?.handler);
-                  const rFilePath = safeStr(route?.filePath);
+              <div className="space-y-4">
+                
+                {/* Search Bar & Method Filter Bar */}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 bg-slate-50/70 p-3 rounded-2xl border border-slate-200/80">
+                  
+                  {/* HTTP Method Filter Tabs */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {[
+                      { method: 'ALL', label: 'ALL' },
+                      { method: 'GET', label: 'GET' },
+                      { method: 'POST', label: 'POST' },
+                      { method: 'PUT', label: 'PUT' },
+                      { method: 'DELETE', label: 'DELETE' },
+                      { method: 'PATCH', label: 'PATCH' }
+                    ].map(({ method, label }) => {
+                      const count = methodCounts[method] || 0;
+                      // Only show method button if it's ALL or count > 0
+                      if (method !== 'ALL' && count === 0) return null;
 
-                  return (
-                    <div
-                      key={idx}
-                      className="p-3.5 rounded-2xl bg-slate-50/60 border border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <span className={`px-2.5 py-0.5 rounded-lg border font-mono font-extrabold text-[11px] shrink-0 ${colorClass}`}>
-                          {rMethod}
-                        </span>
-                        <span className="font-mono font-bold text-slate-900 truncate">
-                          {rPath}
-                        </span>
-                      </div>
+                      const isActive = apiMethodFilter === method;
 
-                      <div className="flex items-center gap-3 shrink-0 text-slate-500 text-[11px]">
-                        {rHandler && (
-                          <span className="font-mono bg-white px-2 py-0.5 rounded-md border border-slate-200 text-slate-700">
-                            {rHandler}
-                          </span>
-                        )}
-                        {rFilePath && (
-                          <button
-                            type="button"
-                            onClick={() => handleOpenFileModal(rFilePath, route.lineStart || undefined, route.lineEnd || undefined)}
-                            className="font-mono text-blue-600 hover:underline cursor-pointer"
+                      const methodStyles: Record<string, { active: string; inactive: string }> = {
+                        ALL: {
+                          active: 'bg-slate-900 text-white shadow-xs',
+                          inactive: 'bg-white text-slate-700 hover:bg-slate-100 border-slate-200'
+                        },
+                        GET: {
+                          active: 'bg-emerald-600 text-white shadow-xs',
+                          inactive: 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border-emerald-200'
+                        },
+                        POST: {
+                          active: 'bg-blue-600 text-white shadow-xs',
+                          inactive: 'bg-blue-50 text-blue-800 hover:bg-blue-100 border-blue-200'
+                        },
+                        PUT: {
+                          active: 'bg-amber-600 text-white shadow-xs',
+                          inactive: 'bg-amber-50 text-amber-800 hover:bg-amber-100 border-amber-200'
+                        },
+                        DELETE: {
+                          active: 'bg-red-600 text-white shadow-xs',
+                          inactive: 'bg-red-50 text-red-800 hover:bg-red-100 border-red-200'
+                        },
+                        PATCH: {
+                          active: 'bg-purple-600 text-white shadow-xs',
+                          inactive: 'bg-purple-50 text-purple-800 hover:bg-purple-100 border-purple-200'
+                        }
+                      };
+
+                      const currentStyle = methodStyles[method] || methodStyles.ALL;
+
+                      return (
+                        <button
+                          key={method}
+                          type="button"
+                          onClick={() => setApiMethodFilter(method)}
+                          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-mono font-bold border transition-all cursor-pointer ${
+                            isActive ? currentStyle.active : currentStyle.inactive
+                          }`}
+                        >
+                          <span>{label}</span>
+                          <span
+                            className={`text-[10px] px-1.5 py-0.2 rounded-full font-sans font-extrabold ${
+                              isActive ? 'bg-white/20 text-white' : 'bg-white text-slate-600 border border-slate-200/60'
+                            }`}
                           >
-                            {rFilePath}
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                            {count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Quick Search Input */}
+                  <div className="relative min-w-[200px] sm:min-w-[240px]">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={apiSearchQuery}
+                      onChange={(e) => setApiSearchQuery(e.target.value)}
+                      placeholder="Filter path, handler, file..."
+                      className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono"
+                    />
+                    {apiSearchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setApiSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Filtered Route Cards */}
+                {filteredRoutes.length === 0 ? (
+                  <div className="p-8 rounded-2xl bg-slate-50 border border-slate-200/80 text-center space-y-2">
+                    <p className="text-xs font-bold text-slate-700">
+                      No endpoints found matching "{apiSearchQuery}" {apiMethodFilter !== 'ALL' ? `for ${apiMethodFilter}` : ''}.
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setApiMethodFilter('ALL');
+                        setApiSearchQuery('');
+                      }}
+                      className="text-xs text-blue-600 hover:underline font-bold cursor-pointer"
+                    >
+                      Clear search filters
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {filteredRoutes.map((route: any, idx: number) => {
+                      const methodColors: Record<string, string> = {
+                        GET: 'bg-emerald-50 text-emerald-800 border-emerald-200',
+                        POST: 'bg-blue-50 text-blue-800 border-blue-200',
+                        PUT: 'bg-amber-50 text-amber-800 border-amber-200',
+                        DELETE: 'bg-red-50 text-red-800 border-red-200',
+                        PATCH: 'bg-purple-50 text-purple-800 border-purple-200'
+                      };
+                      const rMethod = safeStr(route?.method, 'GET').toUpperCase();
+                      const colorClass = methodColors[rMethod] || 'bg-slate-100 text-slate-700 border-slate-200';
+                      const rPath = safeStr(typeof route === 'object' ? route.path : route, '/');
+                      const rHandler = safeStr(route?.handler);
+                      const rFilePath = safeStr(route?.filePath || route?.file_path);
+                      const sLine = typeof route?.lineStart === 'number' ? route.lineStart : (typeof route?.line_start === 'number' ? route.line_start : undefined);
+                      const eLine = typeof route?.lineEnd === 'number' ? route.lineEnd : (typeof route?.line_end === 'number' ? route.line_end : undefined);
+
+                      return (
+                        <div
+                          key={idx}
+                          className="p-3.5 rounded-2xl bg-slate-50/60 border border-slate-200/70 hover:border-slate-300 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+                        >
+                          {/* Method Badge & Path */}
+                          <div className="flex items-center gap-2.5 min-w-0 flex-wrap sm:flex-nowrap">
+                            <span className={`px-2.5 py-1 rounded-lg border font-mono font-extrabold text-[11px] shrink-0 ${colorClass}`}>
+                              {rMethod}
+                            </span>
+                            <span className="font-mono font-bold text-slate-900 break-all text-xs sm:text-sm">
+                              {rPath}
+                            </span>
+                          </div>
+
+                          {/* Handler & File Inspection */}
+                          <div className="flex items-center gap-2.5 shrink-0 text-slate-500 text-[11px] flex-wrap justify-end">
+                            {rHandler && (
+                              <span className="inline-flex items-center gap-1 font-mono bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-slate-700">
+                                <Code2 className="w-3 h-3 text-slate-400" />
+                                <span>{rHandler}</span>
+                              </span>
+                            )}
+
+                            {rFilePath && (
+                              <button
+                                type="button"
+                                onClick={() => handleOpenFileModal(rFilePath, sLine, eLine)}
+                                className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer"
+                                title={`Inspect ${rFilePath}`}
+                              >
+                                <span className="truncate max-w-[180px]">{rFilePath}</span>
+                                {sLine && (
+                                  <span className="text-[10px] text-blue-800 font-bold bg-white/80 px-1 py-0.2 rounded-md">
+                                    L{sLine}{eLine && eLine !== sLine ? `–${eLine}` : ''}
+                                  </span>
+                                )}
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             )}
           </section>

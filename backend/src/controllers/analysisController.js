@@ -1,6 +1,7 @@
 import { AnalysisJobModel } from '../models/analysisJobModel.js';
 import { RepositoryModel } from '../models/repositoryModel.js';
 import { RepositoryAnalysisModel } from '../models/repositoryAnalysisModel.js';
+import { RouteModel } from '../models/routeModel.js';
 import { analysisWorker } from '../services/analysisWorker.js';
 import { CacheService } from '../config/redis.js';
 
@@ -329,6 +330,26 @@ export const analysisController = {
         return fallback;
       };
 
+      let apiStructure = ensureArray(analysisRecord.api_structure);
+      if (apiStructure.length === 0 || apiStructure.some(r => !r.filePath && !r.file_path)) {
+        try {
+          const dbRoutes = await RouteModel.findByRepositoryId(repositoryId, req.user.id);
+          if (dbRoutes && dbRoutes.length > 0) {
+            apiStructure = dbRoutes.map(r => ({
+              method: r.method,
+              path: r.path,
+              handler: r.handler || null,
+              framework: r.framework || null,
+              filePath: r.file_path || null,
+              lineStart: r.line_start || null,
+              lineEnd: r.line_end || null
+            }));
+          }
+        } catch (dbErr) {
+          console.warn('Could not enrich apiStructure from RouteModel:', dbErr.message);
+        }
+      }
+
       // Format clean, structured analysis JSON adhering to M10 specification
       const responsePayload = {
         success: true,
@@ -344,7 +365,7 @@ export const analysisController = {
           importantFiles: ensureArray(analysisRecord.important_files),
           dependencies: ensureArray(analysisRecord.dependencies),
           database: ensureObject(analysisRecord.database, {}),
-          apiStructure: ensureArray(analysisRecord.api_structure),
+          apiStructure,
           developerQuickStart: ensureArray(analysisRecord.developer_quick_start),
           uncertainties: ensureArray(analysisRecord.uncertainties)
         },

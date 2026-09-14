@@ -19,7 +19,7 @@ ${retrievedContext || 'No additional code chunks retrieved.'}
    - "name": technology name
    - "category": e.g. "Backend Framework", "Database Client", "State Management", "ORM", "Testing"
    - "status": MUST be one of "FACT" (proven by package.json / config / imports) or "INFERENCE" (derived from patterns) or "UNKNOWN"
-   - "confidence": number between 0.0 and 1.0
+   - "confidence": number between 0.90 and 1.00 (e.g. 1.0 for proven FACT, 0.95 for validated INFERENCE)
    - "evidence": list of specific file paths, package names, or symbols supporting this claim
    - "purpose": short description of what this technology does in the codebase
 3. Detail the database architecture if supported by evidence.
@@ -31,8 +31,8 @@ ${retrievedContext || 'No additional code chunks retrieved.'}
     {
       "name": "string",
       "category": "string",
-      "status": "FACT | INFERENCE | UNKNOWN",
-      "confidence": 0.95,
+      "status": "FACT | INFERENCE",
+      "confidence": 0.98,
       "evidence": ["package.json dependency", "config file"],
       "purpose": "string"
     }

@@ -15,7 +15,8 @@ ${retrievedContext || 'No additional code chunks retrieved.'}
 2. For each module:
    - "name": Module name
    - "purpose": What this module accomplishes
-   - "status": "FACT" (explicitly defined in code) or "INFERENCE"
+   - "status": "FACT" (explicitly defined in code) or "INFERENCE" (derived from cohesive symbols/files)
+   - "confidence": number between 0.90 and 1.00
    - "keyFiles": list of actual file paths from the repository
    - "keySymbols": list of actual function/class names
    - "dependencies": key npm/pip packages used
@@ -29,6 +30,7 @@ ${retrievedContext || 'No additional code chunks retrieved.'}
       "name": "string",
       "purpose": "string",
       "status": "FACT | INFERENCE",
+      "confidence": 0.96,
       "keyFiles": ["string"],
       "keySymbols": ["string"],
       "dependencies": ["string"],

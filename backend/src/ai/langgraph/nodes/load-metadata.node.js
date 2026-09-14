@@ -34,6 +34,8 @@ export async function loadMetadataNode(state) {
     RepositoryFileModel.findByRepositoryId(repositoryId, userId)
   ]);
 
+  const fileIdMap = new Map((files || []).map(f => [f.id, f.path]));
+
   const codebaseFacts = {
     frameworks: metadata?.frameworks || [],
     languages: metadata?.languages || {},
@@ -48,17 +50,18 @@ export async function loadMetadataNode(state) {
       type: s.type,
       language: s.language,
       isExported: s.is_exported,
-      fileId: s.file_id
+      file: fileIdMap.get(s.file_id) || s.file_id
     })),
     routes: (routes || []).map(r => ({
       method: r.method,
       path: r.path,
       handler: r.handler,
-      framework: r.framework
+      framework: r.framework,
+      file: fileIdMap.get(r.file_id) || undefined
     })),
     relationships: (relationships || []).map(rel => ({
-      sourceFileId: rel.source_file_id,
-      targetFileId: rel.target_file_id,
+      from: fileIdMap.get(rel.source_file_id) || `File #${rel.source_file_id}`,
+      to: fileIdMap.get(rel.target_file_id) || `File #${rel.target_file_id}`,
       type: rel.relationship_type,
       metadata: rel.metadata
     })),
