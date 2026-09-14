@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
 import { SourceReferenceModal } from './SourceReferenceModal';
+import { AIChatView } from './AIChatView';
 import type { 
   SavedRepository 
 } from '../../../hooks/useRepositories';
@@ -48,6 +49,7 @@ interface NavSection {
 }
 
 const NAV_SECTIONS: NavSection[] = [
+  { id: 'chat', label: 'AI Codebase Chat', icon: Sparkles },
   { id: 'overview', label: 'Project Overview', icon: FileText },
   { id: 'technology', label: 'Technology Stack', icon: Cpu },
   { id: 'architecture', label: 'Architecture', icon: Layers },
@@ -114,7 +116,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
     fetchFileContent
   } = useRepositoryAnalysis(repository.id);
 
-  const [activeSection, setActiveSection] = useState<string>('overview');
+  const [activeSection, setActiveSection] = useState<string>('chat');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Source Reference Modal state
@@ -644,6 +646,17 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
 
         {/* RIGHT COLUMN: MAIN ANALYSIS CONTENT CARDS */}
         <div className="md:col-span-9 space-y-10">
+
+          {/* ───────────────────────────────────────────────────────────── */}
+          {/* FEATURE 1: INTERACTIVE AI REPOSITORY CHAT & ASSISTANT */}
+          {/* ───────────────────────────────────────────────────────────── */}
+          <section id="chat" className="scroll-mt-28">
+            <AIChatView
+              repositoryId={repository.id}
+              repositoryName={safeStr(repo.name, 'Repository')}
+              onOpenFileModal={handleOpenFileModal}
+            />
+          </section>
 
           {/* ───────────────────────────────────────────────────────────── */}
           {/* SECTION 1: PROJECT OVERVIEW */}

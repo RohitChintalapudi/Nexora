@@ -89,6 +89,60 @@ export class GroqProvider extends BaseAIProvider {
   }
 
   /**
+   * Execute chat / conversational completion with Groq and return markdown text response
+   * @param {Object} params
+   * @param {Array<{role: string, content: string}>} params.messages - Conversation messages
+   * @param {string} [params.systemPrompt] - System instructions
+   * @param {number} [params.temperature] - Sampling temperature
+   * @param {number} [params.maxTokens] - Max tokens
+   * @returns {Promise<string>}
+   */
+  async generateChat({
+    messages = [],
+    systemPrompt = 'You are NEXORA AI, an expert codebase intelligence assistant. Answer questions accurately based strictly on the provided repository facts, symbols, code chunks, and architecture. Cite exact file paths whenever referencing code.',
+    temperature = 0.2,
+    maxTokens = 2048
+  }) {
+    const client = this.getClient();
+
+    const formattedMessages = [
+      { role: 'system', content: systemPrompt },
+      ...messages
+    ];
+
+    let lastError = null;
+    const maxRetries = 3;
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const response = await client.chat.completions.create({
+          model: this.modelName,
+          messages: formattedMessages,
+          temperature,
+          max_tokens: maxTokens
+        });
+
+        const rawContent = response.choices?.[0]?.message?.content;
+        if (!rawContent) {
+          throw new Error('Groq returned empty chat content.');
+        }
+
+        return rawContent.trim();
+      } catch (err) {
+        lastError = err;
+        console.warn(`⚠️ [GroqProvider:generateChat] Attempt ${attempt} failed: ${err.message}`);
+
+        if (attempt < maxRetries) {
+          const delay = 1000 * Math.pow(2, attempt - 1);
+          await new Promise((r) => setTimeout(r, delay));
+        }
+      }
+    }
+
+    throw new Error(`Groq chat completion failed after ${maxRetries} attempts: ${lastError?.message}`);
+  }
+
+  /**
    * Robust JSON parser with Markdown codeblock stripping and sanitization
    */
   parseAndRepairJson(rawText) {

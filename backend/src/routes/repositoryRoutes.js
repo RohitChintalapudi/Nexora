@@ -1,6 +1,7 @@
 import express from 'express';
 import { repositoryController } from '../controllers/repositoryController.js';
 import { analysisController } from '../controllers/analysisController.js';
+import { chatController } from '../controllers/chatController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
 import { analysisLimiter } from '../middlewares/rateLimitMiddleware.js';
@@ -25,7 +26,10 @@ router.get('/:repositoryId/analysis/latest', analysisController.getLatestRepoJob
 // 5. Get structured repository analysis results (M10)
 router.get('/:repositoryId/analysis', analysisController.getAnalysisByRepoId);
 
-// 6. Get source file content preview (M10 source references)
+// 6. Interactive AI Repository Chat & Q&A
+router.post('/:repositoryId/chat', analysisLimiter, chatController.askQuestion);
+
+// 7. Get source file content preview (M10 source references)
 router.get('/:repositoryId/file-content', repositoryController.getFileContent);
 
 // 7. Get single saved repository by ID (multi-tenant isolated)
