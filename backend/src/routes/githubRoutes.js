@@ -2,10 +2,12 @@ import express from 'express';
 import { githubController } from '../controllers/githubController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
+import { githubLimiter } from '../middlewares/rateLimitMiddleware.js';
+
 const router = express.Router();
 
 // 1. Start OAuth - Authenticated NEXORA user initiates GitHub authorization
-router.get('/connect', protect, githubController.connect);
+router.get('/connect', protect, githubLimiter, githubController.connect);
 
 // 2. OAuth Callback - GitHub redirects back with authorization code & state
 router.get('/callback', githubController.callback);
@@ -14,7 +16,7 @@ router.get('/callback', githubController.callback);
 router.get('/status', protect, githubController.getStatus);
 
 // 4. Repositories - Returns paginated repositories from GitHub for authenticated user
-router.get('/repositories', protect, githubController.listRepositories);
+router.get('/repositories', protect, githubLimiter, githubController.listRepositories);
 
 // 5. Disconnect - Disconnects GitHub authorization without deleting NEXORA user account
 router.delete('/disconnect', protect, githubController.disconnect);

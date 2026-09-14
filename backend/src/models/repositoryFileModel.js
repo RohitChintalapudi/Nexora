@@ -198,6 +198,46 @@ export const RepositoryFileModel = {
   },
 
   /**
+   * Find a single file record by path within a repository with user isolation
+   * @param {number|string} repositoryId
+   * @param {number|string} userId
+   * @param {string} filePath
+   * @returns {Promise<Object|null>}
+   */
+  async findByPath(repositoryId, userId, filePath) {
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please check DATABASE_URL.');
+
+    // Normalize path query
+    const normalized = filePath.startsWith('/') ? filePath.slice(1) : filePath;
+
+    const rows = await sql`
+      SELECT 
+        id,
+        repository_id,
+        user_id,
+        path,
+        name,
+        extension,
+        language,
+        size_bytes,
+        is_binary,
+        is_generated,
+        is_ignored,
+        content,
+        created_at,
+        updated_at
+      FROM repository_files
+      WHERE repository_id = ${repositoryId} 
+        AND user_id = ${userId}
+        AND (path = ${filePath} OR path = ${normalized} OR path = ${'/' + normalized})
+      LIMIT 1;
+    `;
+
+    return rows[0] || null;
+  },
+
+  /**
    * Get file statistics and language breakdown for a repository
    * @param {number|string} repositoryId
    * @param {number|string} userId

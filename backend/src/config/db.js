@@ -249,7 +249,32 @@ export const initDB = async () => {
       );
     `;
 
-    // Create performance indexes for M5, M6 & M7 queries
+    // Initialize repository_analyses table for M9 AI Analysis Engine
+    await db`
+      CREATE TABLE IF NOT EXISTS repository_analyses (
+        id SERIAL PRIMARY KEY,
+        repository_id INTEGER UNIQUE NOT NULL REFERENCES repositories(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        job_id INTEGER REFERENCES analysis_jobs(id) ON DELETE SET NULL,
+        commit_sha VARCHAR(100),
+        overview TEXT NOT NULL,
+        technology_stack JSONB NOT NULL DEFAULT '[]'::jsonb,
+        architecture JSONB NOT NULL DEFAULT '{}'::jsonb,
+        modules JSONB NOT NULL DEFAULT '[]'::jsonb,
+        application_flow JSONB NOT NULL DEFAULT '[]'::jsonb,
+        entry_points JSONB NOT NULL DEFAULT '[]'::jsonb,
+        important_files JSONB NOT NULL DEFAULT '[]'::jsonb,
+        dependencies JSONB NOT NULL DEFAULT '[]'::jsonb,
+        database JSONB NOT NULL DEFAULT '{}'::jsonb,
+        api_structure JSONB NOT NULL DEFAULT '[]'::jsonb,
+        developer_quick_start JSONB NOT NULL DEFAULT '[]'::jsonb,
+        uncertainties JSONB NOT NULL DEFAULT '[]'::jsonb,
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Create performance indexes for M5, M6, M7 & M9 queries
     try {
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_repo_id ON repository_files(repository_id);`;
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_user_id ON repository_files(user_id);`;
@@ -277,11 +302,15 @@ export const initDB = async () => {
       await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_file ON code_chunks(file_id);`;
       await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_hash ON code_chunks(repository_id, content_hash);`;
       await db`CREATE INDEX IF NOT EXISTS idx_code_chunks_embedding_cosine ON code_chunks USING hnsw (embedding vector_cosine_ops);`;
+
+      // M9 Indexes
+      await db`CREATE INDEX IF NOT EXISTS idx_repo_analyses_repo_user ON repository_analyses(repository_id, user_id);`;
+      await db`CREATE INDEX IF NOT EXISTS idx_repo_analyses_job_id ON repository_analyses(job_id);`;
     } catch {
       // Ignore index creation errors if already present
     }
 
-    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", "repository_files", "symbols", "code_relationships", "routes", "project_metadata", and "code_chunks" (pgvector) tables are ready.');
+    console.log('✅ Neon Database initialized. "users", "github_accounts", "repositories", "analysis_jobs", "repository_files", "symbols", "code_relationships", "routes", "project_metadata", "code_chunks" (pgvector), and "repository_analyses" tables are ready.');
   } catch (error) {
     console.error('❌ Failed to initialize database:', error.message);
   }

@@ -32,6 +32,28 @@ export const DashboardPage: React.FC = () => {
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+  const [initialRepo, setInitialRepo] = useState<SavedRepository | null>(null);
+  const [initialSubView, setInitialSubView] = useState<'list' | 'details' | 'progress' | 'analysis'>('list');
+
+  // URL Deep-linking for /repositories/:id and /repositories/:id/analysis
+  useEffect(() => {
+    const path = window.location.pathname;
+    const hash = window.location.hash;
+    const target = path.startsWith('/repositories') ? path : hash.replace(/^#/, '');
+
+    const match = target.match(/\/repositories\/(\d+)(\/analysis)?/);
+    if (match) {
+      const repoId = parseInt(match[1], 10);
+      const isAnalysis = Boolean(match[2]);
+      const found = savedRepositories.find((r) => r.id === repoId);
+      if (found) {
+        setInitialRepo(found);
+        setActiveSavedRepo(found);
+        setActiveTab('repositories');
+        setInitialSubView(isAnalysis ? 'analysis' : 'details');
+      }
+    }
+  }, [savedRepositories, setActiveSavedRepo]);
 
   // Protected route guard: Redirect unauthenticated users
   useEffect(() => {
@@ -58,6 +80,8 @@ export const DashboardPage: React.FC = () => {
 
   const handleViewSavedRepo = (repo: SavedRepository) => {
     setActiveSavedRepo(repo);
+    setInitialRepo(repo);
+    setInitialSubView('details');
     setActiveTab('repositories');
   };
 
@@ -109,14 +133,22 @@ export const DashboardPage: React.FC = () => {
           <DashboardHeader
             onConnectClick={handleOpenConnect}
             onDisconnectClick={() => setIsDisconnectModalOpen(true)}
-            onChooseRepoClick={() => setActiveTab('repositories')}
+            onChooseRepoClick={() => {
+              setInitialRepo(null);
+              setInitialSubView('list');
+              setActiveTab('repositories');
+            }}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
           />
           <RecentRepositories
             onConnectClick={handleOpenConnect}
-            onChooseRepoClick={() => setActiveTab('repositories')}
+            onChooseRepoClick={() => {
+              setInitialRepo(null);
+              setInitialSubView('list');
+              setActiveTab('repositories');
+            }}
             onViewRepoDetails={handleViewSavedRepo}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
@@ -135,6 +167,8 @@ export const DashboardPage: React.FC = () => {
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
+            initialSelectedRepo={initialRepo}
+            initialSubView={initialSubView}
           />
         </div>
       )}

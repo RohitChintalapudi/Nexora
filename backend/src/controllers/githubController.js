@@ -39,7 +39,7 @@ export const githubController = {
    */
   async connect(req, res) {
     try {
-      const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
+      const clientId = process.env.GITHUB_CLIENT_ID;
       const callbackUrl = process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback';
 
       if (!clientId) {
@@ -121,8 +121,8 @@ export const githubController = {
         return res.redirect(`${clientUrl}/dashboard?github_error=${encodeURIComponent('Invalid authorization state. Please try connecting again.')}`);
       }
 
-      const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
-      const clientSecret = process.env.GITHUB_CLIENT_SECRET || '5988278d28c1ea5bb7fa2f15c4856babd390df24';
+      const clientId = process.env.GITHUB_CLIENT_ID;
+      const clientSecret = process.env.GITHUB_CLIENT_SECRET;
       const callbackUrl = process.env.GITHUB_CALLBACK_URL || 'http://localhost:5000/api/auth/github/callback';
 
       if (!clientId || !clientSecret) {

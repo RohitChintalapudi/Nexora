@@ -10,6 +10,8 @@
   "dependencies": {
     "@babel/parser": "^7.29.8",
     "@babel/traverse": "^7.29.8",
+    "@langchain/core": "^1.2.11",
+    "@langchain/langgraph": "^1.4.15",
     "@lezer/common": "^1.5.2",
     "@lezer/python": "^1.1.19",
     "@neondatabase/serverless": "^0.10.4",

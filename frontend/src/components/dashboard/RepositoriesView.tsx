@@ -17,6 +17,8 @@ import { useAnalysisJob } from '../../hooks/useAnalysisJob';
 import { RepositoryCard } from './RepositoryCard';
 import { RepositoryDetailsView } from './RepositoryDetailsView';
 import { AnalysisProgressView } from './AnalysisProgressView';
+import { AnalysisPageView } from './analysis/AnalysisPageView';
+import { AnalysisErrorBoundary } from './analysis/AnalysisErrorBoundary';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
@@ -25,6 +27,7 @@ interface RepositoriesViewProps {
   githubUsername?: string | null;
   isConnecting?: boolean;
   initialSelectedRepo?: SavedRepository | null;
+  initialSubView?: 'list' | 'details' | 'progress' | 'analysis';
 }
 
 export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
@@ -33,7 +36,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   isGitHubConnected = false,
   githubUsername = null,
   isConnecting = false,
-  initialSelectedRepo = null
+  initialSelectedRepo = null,
+  initialSubView = 'list'
 }) => {
   const {
     gitHubRepos,
@@ -65,16 +69,16 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     resetJob
   } = useAnalysisJob();
 
-  const [subView, setSubView] = useState<'list' | 'details' | 'progress'>('list');
+  const [subView, setSubView] = useState<'list' | 'details' | 'progress' | 'analysis'>(initialSubView);
 
   // Handle initialSelectedRepo if passed from Dashboard
   useEffect(() => {
     if (initialSelectedRepo) {
       setActiveSavedRepo(initialSelectedRepo);
-      setSubView('details');
+      setSubView(initialSubView === 'analysis' ? 'analysis' : 'details');
       fetchLatestJob(initialSelectedRepo.id);
     }
-  }, [initialSelectedRepo, setActiveSavedRepo, fetchLatestJob]);
+  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob]);
 
   // When an active saved repo is clicked
   const handleOpenDetails = (repo: SavedRepository) => {
@@ -97,6 +101,19 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     await startAnalysis(activeSavedRepo.id);
   };
 
+  // If viewing analysis page
+  if (subView === 'analysis' && activeSavedRepo) {
+    return (
+      <AnalysisErrorBoundary onReset={() => setSubView('details')}>
+        <AnalysisPageView
+          repository={activeSavedRepo}
+          onBack={() => setSubView('details')}
+          onViewProgress={() => setSubView('progress')}
+        />
+      </AnalysisErrorBoundary>
+    );
+  }
+
   // If viewing analysis progress
   if (subView === 'progress' && activeSavedRepo) {
     return (
@@ -106,6 +123,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         isStarting={isStartingAnalysis}
         onBackToDetails={() => setSubView('details')}
         onRetry={handleRetryAnalysis}
+        onViewAnalysis={() => setSubView('analysis')}
       />
     );
   }
@@ -124,6 +142,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         onStartAnalysis={handleStartAnalysis}
         isStartingAnalysis={isStartingAnalysis}
         onViewAnalysisProgress={() => setSubView('progress')}
+        onViewAnalysis={() => setSubView('analysis')}
       />
     );
   }

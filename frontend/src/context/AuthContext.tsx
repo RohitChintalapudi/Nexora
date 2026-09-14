@@ -50,7 +50,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const getInitialPage = (): 'home' | 'signin' | 'signup' | 'dashboard' => {
     const path = window.location.pathname.toLowerCase();
     const hash = window.location.hash.toLowerCase();
-    if (path === '/dashboard' || hash === '#dashboard' || hash === '#/dashboard') return 'dashboard';
+    if (
+      path === '/dashboard' || 
+      hash === '#dashboard' || 
+      hash === '#/dashboard' || 
+      path.startsWith('/repositories') || 
+      hash.startsWith('#/repositories') ||
+      hash.startsWith('#repositories')
+    ) {
+      return 'dashboard';
+    }
     if (path === '/signin' || hash === '#signin' || hash === '#/signin') return 'signin';
     if (path === '/signup' || hash === '#signup' || hash === '#/signup') return 'signup';
     return 'home';

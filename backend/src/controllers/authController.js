@@ -4,8 +4,8 @@ import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/userModel.js';
 
 const googleClient = new OAuth2Client(
-  process.env.GOOGLE_CLIENT_ID || '247080342250-gknlddsc3icjiticu6uqjq31fjq21fq8.apps.googleusercontent.com',
-  process.env.GOOGLE_CLIENT_SECRET || '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'
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET
 );
 
 const generateToken = (id) => {
@@ -206,8 +206,12 @@ export const githubAuth = async (req, res) => {
 
     if (code && !accessToken) {
       // Exchange code for access token with GitHub
-      const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
-      const clientSecret = process.env.GITHUB_CLIENT_SECRET || '5988278d28c1ea5bb7fa2f15c4856babd390df24';
+      const clientId = process.env.GITHUB_CLIENT_ID;
+      const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+      if (!clientId || !clientSecret) {
+        throw new Error('GitHub OAuth credentials are not fully configured on the server');
+      }
 
       const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
@@ -312,8 +316,12 @@ export const githubCallback = async (req, res) => {
       return res.redirect(`${clientUrl}/signin?error=No+GitHub+code+provided`);
     }
 
-    const clientId = process.env.GITHUB_CLIENT_ID || 'Ov23liM5dNvXngFXio8t';
-    const clientSecret = process.env.GITHUB_CLIENT_SECRET || '5988278d28c1ea5bb7fa2f15c4856babd390df24';
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const clientSecret = process.env.GITHUB_CLIENT_SECRET;
+
+    if (!clientId || !clientSecret) {
+      throw new Error('GitHub OAuth credentials are not fully configured on the server');
+    }
 
     const tokenRes = await fetch('https://github.com/login/oauth/access_token', {
       method: 'POST',

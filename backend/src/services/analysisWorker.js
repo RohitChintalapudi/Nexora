@@ -5,6 +5,7 @@ import { RepositoryFetcher } from './repositoryFetcher.js';
 import { FileScanner } from './fileScanner.js';
 import { CodebaseIntelligenceService } from '../code-analysis/services/codebase-intelligence.service.js';
 import { SemanticIndexingService } from '../ai/services/semantic-indexing.service.js';
+import { runRepositoryAnalysis } from '../ai/langgraph/index.js';
 import { CacheService } from '../config/redis.js';
 
 class AnalysisWorkerService {
@@ -172,8 +173,17 @@ class AnalysisWorkerService {
         }
       });
 
-      // 8. Stage: COMPLETED (Semantic Vector Index Ready)
-      console.log(`✅ [AnalysisWorker] Job #${jobId} Pipeline complete! (${intelligenceStats.symbolsCount} symbols, ${intelligenceStats.relationshipsCount} relationships, ${indexingStats.embeddingsCount} embeddings)`);
+      // 8. M9 LangGraph + Groq AI Analysis Pipeline
+      console.log(`🤖 [AnalysisWorker] Job #${jobId} -> Entering M9 LangGraph AI Analysis`);
+      await runRepositoryAnalysis({
+        repositoryId: job.repository_id,
+        userId: job.user_id,
+        jobId,
+        commitSha
+      });
+
+      // 9. Stage: COMPLETED (M5 + M6 + M7 + M9 Complete)
+      console.log(`✅ [AnalysisWorker] Job #${jobId} Pipeline complete! (${intelligenceStats.symbolsCount} symbols, ${intelligenceStats.relationshipsCount} relationships, ${indexingStats.embeddingsCount} embeddings, AI Analysis Persisted)`);
       const completedJob = await AnalysisJobModel.updateStage({
         id: jobId,
         status: 'COMPLETED',
@@ -198,19 +208,28 @@ class AnalysisWorkerService {
     } catch (error) {
       console.error(`💥 [AnalysisWorker] Job #${jobId} failed:`, error.message);
 
-      // Secure, user-facing error message without leaking tokens or paths
+      // Secure, user-facing error message without leaking tokens, internal paths, or secrets
       let userMessage = error.message || 'Repository analysis failed. Please try again.';
-      if (userMessage.includes('fetch failed') || userMessage.includes('terminated')) {
-        userMessage = 'Network connection to GitHub was interrupted during download. Please try again.';
+      if (userMessage.includes('fetch failed') || userMessage.includes('terminated') || userMessage.includes('socket')) {
+        userMessage = 'Network connection was interrupted during analysis. Please try again.';
+      } else if (userMessage.includes('GROQ') || userMessage.includes('rate limit')) {
+        userMessage = 'AI analysis service rate limit reached. Please wait a moment and try again.';
+      } else if (userMessage.includes('ENOENT') || userMessage.includes('C:\\') || userMessage.includes('/tmp')) {
+        userMessage = 'An error occurred during repository file processing. Please try again.';
       }
 
-      await AnalysisJobModel.updateStage({
+      const failedJob = await AnalysisJobModel.updateStage({
         id: jobId,
         status: 'FAILED',
         currentStage: 'FAILED',
         completedAt: new Date(),
         errorMessage: userMessage
       });
+
+      if (job?.repository_id && job?.user_id) {
+        await CacheService.del(`nexora:repo-latest:${job.repository_id}:${job.user_id}`);
+        await CacheService.set(`nexora:job:${jobId}:${job.user_id}`, failedJob, 300);
+      }
     } finally {
       // Guaranteed temporary workspace cleanup
       if (tempWorkspaceDir) {

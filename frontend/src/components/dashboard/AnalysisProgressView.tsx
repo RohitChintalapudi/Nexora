@@ -23,7 +23,12 @@ import {
   Box,
   Binary,
   Search,
-  Zap
+  Zap,
+  Bot,
+  Workflow,
+  FileText,
+  Activity,
+  ArrowRight
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob, AnalysisStage } from '../../hooks/useAnalysisJob';
@@ -34,6 +39,7 @@ interface AnalysisProgressViewProps {
   isStarting?: boolean;
   onBackToDetails: () => void;
   onRetry: () => void;
+  onViewAnalysis?: () => void;
 }
 
 interface StageStep {
@@ -145,9 +151,58 @@ const STAGES: StageStep[] = [
   },
   {
     id: 'stage-15',
+    stageKey: 'LOADING_CODEBASE_CONTEXT',
+    title: 'Loading Codebase Intelligence',
+    description: 'Loading deterministic AST symbols, routes, relationships, and metadata facts',
+    icon: Bot
+  },
+  {
+    id: 'stage-16',
+    stageKey: 'ANALYZING_TECHNOLOGIES',
+    title: 'Analyzing Technology Stack',
+    description: 'Inferring frameworks, runtimes, package manager, and databases with evidence grounding',
+    icon: Cpu
+  },
+  {
+    id: 'stage-17',
+    stageKey: 'ANALYZING_ARCHITECTURE',
+    title: 'Analyzing Architecture & Patterns',
+    description: 'Explaining architectural style, system layers, and component relationships',
+    icon: Workflow
+  },
+  {
+    id: 'stage-18',
+    stageKey: 'ANALYZING_MODULES',
+    title: 'Analyzing Functional Domains',
+    description: 'Identifying key modules, domains, symbols, and core file responsibilities',
+    icon: Box
+  },
+  {
+    id: 'stage-19',
+    stageKey: 'ANALYZING_APPLICATION_FLOW',
+    title: 'Tracing Application Lifecycle',
+    description: 'Mapping request execution flow from entry points through system layers',
+    icon: Activity
+  },
+  {
+    id: 'stage-20',
+    stageKey: 'GENERATING_SUMMARY',
+    title: 'Generating Developer Quickstart',
+    description: 'Synthesizing executive overview, important files, and onboarding guide with Groq LLM',
+    icon: FileText
+  },
+  {
+    id: 'stage-21',
+    stageKey: 'PERSISTING_ANALYSIS',
+    title: 'Persisting Analysis to PostgreSQL',
+    description: 'Saving structured, validated analysis record in repository_analyses table',
+    icon: Database
+  },
+  {
+    id: 'stage-22',
     stageKey: 'COMPLETED',
-    title: 'Semantic Index & Intelligence Ready',
-    description: 'Codebase intelligence graph and pgvector semantic index complete and searchable',
+    title: 'Full Repository Intelligence Ready',
+    description: 'Codebase intelligence graph, vector search, and AI analysis completed successfully',
     icon: CheckCheck
   }
 ];
@@ -170,8 +225,16 @@ const STAGE_ORDER: Record<AnalysisStage, number> = {
   CHUNKING_FILES: 12,
   GENERATING_EMBEDDINGS: 13,
   STORING_EMBEDDINGS: 14,
-  INDEXING_COMPLETE: 15,
-  COMPLETED: 15,
+  INDEXING_COMPLETE: 14,
+  LOADING_CODEBASE_CONTEXT: 15,
+  RETRIEVING_CONTEXT: 15,
+  ANALYZING_TECHNOLOGIES: 16,
+  ANALYZING_ARCHITECTURE: 17,
+  ANALYZING_MODULES: 18,
+  ANALYZING_APPLICATION_FLOW: 19,
+  GENERATING_SUMMARY: 20,
+  PERSISTING_ANALYSIS: 21,
+  COMPLETED: 22,
   FAILED: -1
 };
 
@@ -180,7 +243,8 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
   job,
   isStarting = false,
   onBackToDetails,
-  onRetry
+  onRetry,
+  onViewAnalysis
 }) => {
   const currentStage = job?.currentStage || (isStarting ? 'QUEUED' : 'QUEUED');
   const isFailed = job?.status === 'FAILED';
@@ -446,13 +510,17 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
 
         {/* Completion Milestone Card */}
         {isCompleted && (
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-blue-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-blue-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 shadow-xs">
             <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-bold">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
+                <span>Analysis Complete</span>
+              </div>
               <h3 className="text-base font-extrabold text-slate-900">
-                Semantic Index & Intelligence Graph Ready
+                Codebase Intelligence & Architecture Ready
               </h3>
               <p className="text-xs text-slate-600 max-w-lg">
-                Deterministic facts and dense vector embeddings (384d) have been indexed in PostgreSQL via pgvector and HNSW. The codebase is fully prepared for semantic vector retrieval.
+                Structured repository analysis, architecture layers, technology facts, and onboarding quickstart are fully synthesized and ready for exploration.
               </p>
             </div>
 
@@ -462,15 +530,20 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 onClick={onBackToDetails}
                 className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white border border-slate-200 rounded-full transition-all cursor-pointer shadow-2xs"
               >
-                Repository Details
+                Repo Details
               </button>
 
-              <div
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-emerald-800 bg-emerald-100/80 border border-emerald-200 rounded-full shadow-2xs"
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
-                <span>M7 Vectors Indexed</span>
-              </div>
+              {onViewAnalysis && (
+                <button
+                  type="button"
+                  onClick={onViewAnalysis}
+                  className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>View Analysis</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         )}

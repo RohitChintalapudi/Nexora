@@ -135,9 +135,17 @@ export const CodeChunkModel = {
    * @param {Array<number>} params.queryEmbedding - Vector embedding array
    * @param {number} [params.limit=10]
    * @param {number} [params.minSimilarity=0.0]
+   * @param {Object} [params.filters={}] - Optional metadata filters (language, chunkType, filePath, fileId)
    * @returns {Promise<Array>}
    */
-  async searchSimilar({ repositoryId, userId, queryEmbedding, limit = 10, minSimilarity = 0.0 }) {
+  async searchSimilar({ 
+    repositoryId, 
+    userId, 
+    queryEmbedding, 
+    limit = 10, 
+    minSimilarity = 0.0,
+    filters = {}
+  }) {
     const sql = getSQL();
     if (!sql) throw new Error('Database not connected. Please check DATABASE_URL.');
 
@@ -146,6 +154,10 @@ export const CodeChunkModel = {
     }
 
     const vectorStr = `[${queryEmbedding.join(',')}]`;
+    const language = filters.language || null;
+    const chunkType = filters.chunkType || null;
+    const filePath = filters.filePath || null;
+    const fileId = filters.fileId || null;
 
     // Strictly isolated: WHERE repository_id = $1 AND user_id = $2
     const rows = await sql`
@@ -169,11 +181,55 @@ export const CodeChunkModel = {
       WHERE repository_id = ${repositoryId} 
         AND user_id = ${userId}
         AND embedding IS NOT NULL
+        AND (${language}::text IS NULL OR LOWER(language) = LOWER(${language}))
+        AND (${chunkType}::text IS NULL OR UPPER(chunk_type) = UPPER(${chunkType}))
+        AND (${filePath}::text IS NULL OR file_path ILIKE ${'%' + (filePath || '') + '%'})
+        AND (${fileId}::int IS NULL OR file_id = ${fileId})
       ORDER BY embedding <=> ${vectorStr}::vector ASC
       LIMIT ${limit};
     `;
 
     return rows.filter(r => (r.similarity || 0) >= minSimilarity);
+  },
+
+  /**
+   * Fetch neighboring chunks within the same file to provide localized surrounding context
+   * @param {Object} params
+   * @param {number|string} params.repositoryId
+   * @param {number|string} params.userId
+   * @param {number|string} params.fileId
+   * @param {number[]} params.chunkIndices
+   * @returns {Promise<Array>}
+   */
+  async fetchNeighborChunks({ repositoryId, userId, fileId, chunkIndices = [] }) {
+    if (!chunkIndices || chunkIndices.length === 0) return [];
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please check DATABASE_URL.');
+
+    const rows = await sql`
+      SELECT 
+        id,
+        repository_id,
+        user_id,
+        file_id,
+        symbol_id,
+        chunk_index,
+        content,
+        content_hash,
+        chunk_type,
+        language,
+        file_path,
+        start_line,
+        end_line,
+        metadata
+      FROM code_chunks
+      WHERE repository_id = ${repositoryId}
+        AND user_id = ${userId}
+        AND file_id = ${fileId}
+        AND chunk_index = ANY(${chunkIndices})
+      ORDER BY chunk_index ASC;
+    `;
+    return rows;
   },
 
   /**
