@@ -1,10 +1,9 @@
 import React from 'react';
-import { Sparkles, CheckCircle2, Unlink } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface DashboardHeaderProps {
   onConnectClick: () => void;
-  onDisconnectClick?: () => void;
   onChooseRepoClick?: () => void;
   isGitHubConnected?: boolean;
   githubUsername?: string | null;
@@ -13,7 +12,6 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onConnectClick,
-  onDisconnectClick,
   onChooseRepoClick,
   isGitHubConnected = false,
   githubUsername = null,
@@ -50,36 +48,14 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       <div className="flex flex-wrap items-center gap-3">
         {isGitHubConnected ? (
           <>
-            {/* GitHub Connected Pill */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
-              <span>GitHub Connected</span>
-              <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-900 font-mono text-[11px]">
-                @{githubUsername}
-              </span>
-            </div>
-
             {/* Choose Repository Action */}
             {onChooseRepoClick && (
               <button
                 type="button"
                 onClick={onChooseRepoClick}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-full transition-all cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer"
               >
                 <span>Choose Repository</span>
-              </button>
-            )}
-
-            {/* Disconnect Button */}
-            {onDisconnectClick && (
-              <button
-                type="button"
-                onClick={onDisconnectClick}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-500 hover:text-red-600 bg-white hover:bg-red-50 border border-slate-200 hover:border-red-200 rounded-full transition-all cursor-pointer shadow-2xs"
-                title="Disconnect GitHub account"
-              >
-                <Unlink className="w-3.5 h-3.5 stroke-[2.2]" />
-                <span>Disconnect</span>
               </button>
             )}
           </>

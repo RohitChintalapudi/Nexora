@@ -101,7 +101,15 @@ export const DashboardPage: React.FC = () => {
   }
 
   return (
-    <DashboardLayout activeTab={activeTab} onTabChange={setActiveTab}>
+    <DashboardLayout 
+      activeTab={activeTab} 
+      onTabChange={setActiveTab}
+      isGitHubConnected={isGitHubConnected}
+      githubUsername={githubUsername}
+      onConnectClick={handleOpenConnect}
+      onDisconnectClick={() => setIsDisconnectModalOpen(true)}
+      isConnecting={isConnecting}
+    >
       
       {/* Toast Notification for GitHub OAuth Feedback */}
       {notification && (
@@ -135,7 +143,6 @@ export const DashboardPage: React.FC = () => {
         <div className="space-y-8 animate-in fade-in duration-150">
           <DashboardHeader
             onConnectClick={handleOpenConnect}
-            onDisconnectClick={() => setIsDisconnectModalOpen(true)}
             onChooseRepoClick={() => {
               setInitialRepo(null);
               setInitialSubView('list');
