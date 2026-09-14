@@ -4,10 +4,27 @@ import type { AnalysisResponse, SourceFilePreview } from '../types/analysis';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+// In-memory cache for instant state updates when switching pages
+const analysisCache = new Map<string | number, AnalysisResponse>();
+
 export function useRepositoryAnalysis(repositoryId: number | string | null) {
   const { token } = useAuth();
-  const [data, setData] = useState<AnalysisResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  
+  // Initialize with cached data if available for instant display
+  const [data, setData] = useState<AnalysisResponse | null>(() => {
+    if (repositoryId && analysisCache.has(repositoryId)) {
+      return analysisCache.get(repositoryId)!;
+    }
+    return null;
+  });
+  
+  const [isLoading, setIsLoading] = useState<boolean>(() => {
+    if (repositoryId && analysisCache.has(repositoryId)) {
+      return false; // Instant render without skeleton flicker
+    }
+    return Boolean(repositoryId);
+  });
+  
   const [isReanalyzing, setIsReanalyzing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,7 +41,8 @@ export function useRepositoryAnalysis(repositoryId: number | string | null) {
       return null;
     }
 
-    if (!isSilent) {
+    const hasCached = analysisCache.has(repositoryId);
+    if (!isSilent && !hasCached) {
       setIsLoading(true);
       setError(null);
     }
@@ -46,6 +64,7 @@ export function useRepositoryAnalysis(repositoryId: number | string | null) {
 
       const json: AnalysisResponse = await res.json();
       if (json.success) {
+        analysisCache.set(repositoryId, json);
         setData(json);
         setError(null);
         return json;
@@ -54,19 +73,27 @@ export function useRepositoryAnalysis(repositoryId: number | string | null) {
       }
     } catch (err: any) {
       console.error('Error fetching repository analysis:', err);
-      setError(err.message || 'Could not load repository analysis');
+      if (!hasCached) {
+        setError(err.message || 'Could not load repository analysis');
+      }
       return null;
     } finally {
-      if (!isSilent) {
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   }, [repositoryId, getAuthToken]);
 
   // Initial fetch on mount or repositoryId change
   useEffect(() => {
     if (repositoryId) {
-      fetchAnalysis();
+      const cached = analysisCache.get(repositoryId);
+      if (cached) {
+        setData(cached);
+        setIsLoading(false);
+        // Background revalidation silently
+        fetchAnalysis(true);
+      } else {
+        fetchAnalysis(false);
+      }
     } else {
       setData(null);
       setIsLoading(false);
@@ -130,6 +157,8 @@ export function useRepositoryAnalysis(repositoryId: number | string | null) {
         throw new Error(resData.message || 'Failed to trigger re-analysis');
       }
 
+      // Clear cache for fresh state
+      analysisCache.delete(repositoryId);
       // Refresh analysis state to IN_PROGRESS
       await fetchAnalysis(true);
       return { success: true, message: resData.message };

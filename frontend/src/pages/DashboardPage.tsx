@@ -9,6 +9,7 @@ import { RepositoriesView } from '../components/dashboard/RepositoriesView';
 import { SettingsView } from '../components/dashboard/SettingsView';
 import { ConnectRepoModal } from '../components/dashboard/ConnectRepoModal';
 import { DisconnectGithubModal } from '../components/dashboard/DisconnectGithubModal';
+import { NexoraLoader } from '../components/common/NexoraLoader';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
@@ -87,9 +88,11 @@ export const DashboardPage: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">
-        <div className="w-6 h-6 border-2 border-slate-200 border-t-blue-600 rounded-full animate-spin" />
-      </div>
+      <NexoraLoader 
+        variant="fullscreen" 
+        message="Initializing Workspace..." 
+        subMessage="Authenticating session and preparing environment" 
+      />
     );
   }
 

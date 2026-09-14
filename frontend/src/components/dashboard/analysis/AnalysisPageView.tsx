@@ -30,6 +30,7 @@ import {
   X
 } from 'lucide-react';
 import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
+import { NexoraLoader } from '../../common/NexoraLoader';
 import { SourceReferenceModal } from './SourceReferenceModal';
 import { AIChatView } from './AIChatView';
 import { ArchitectureFlowDiagram } from './ArchitectureFlowDiagram';
@@ -282,24 +283,21 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   // 1. LOADING SKELETON STATE
   if (isLoading && !data) {
     return (
-      <div className="space-y-6 max-w-6xl mx-auto animate-pulse">
-        <div className="h-10 w-40 bg-slate-200 rounded-full" />
-        <div className="bg-white rounded-[2rem] border border-slate-200/80 p-8 space-y-4">
-          <div className="h-5 w-48 bg-slate-200 rounded-full" />
-          <div className="h-8 w-80 bg-slate-200 rounded-lg" />
-          <div className="h-4 w-96 bg-slate-100 rounded-md" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="hidden md:block h-96 bg-white rounded-3xl border border-slate-200/80 p-6 space-y-3">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="h-6 w-full bg-slate-100 rounded-md" />
-            ))}
-          </div>
-          <div className="md:col-span-3 space-y-6">
-            <div className="h-64 bg-white rounded-3xl border border-slate-200/80 p-6" />
-            <div className="h-64 bg-white rounded-3xl border border-slate-200/80 p-6" />
-          </div>
-        </div>
+      <div className="space-y-6 max-w-6xl mx-auto">
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-full transition-all cursor-pointer shadow-2xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Repositories</span>
+        </button>
+        <NexoraLoader 
+          variant="card" 
+          size="lg"
+          message="Loading Repository Intelligence..." 
+          subMessage="Parsing AST symbols, dependency graphs, and architecture topology" 
+        />
       </div>
     );
   }

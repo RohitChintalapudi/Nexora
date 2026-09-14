@@ -3,6 +3,8 @@ import { useAuth } from '../context/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
+const chatCacheMap = new Map<string | number, ChatMessage[]>();
+
 export interface ChatCitation {
   filePath: string;
   chunkType?: string;
@@ -26,7 +28,12 @@ export interface ChatMessage {
 
 export function useRepositoryChat(repositoryId: number | string | null) {
   const { token } = useAuth();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    if (repositoryId && chatCacheMap.has(repositoryId)) {
+      return chatCacheMap.get(repositoryId)!;
+    }
+    return [];
+  });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -53,7 +60,9 @@ export function useRepositoryChat(repositoryId: number | string | null) {
     };
 
     // Append user message immediately
-    setMessages((prev) => [...prev, userMsg]);
+    const updatedWithUser = [...messages, userMsg];
+    setMessages(updatedWithUser);
+    if (repositoryId) chatCacheMap.set(repositoryId, updatedWithUser);
     setIsLoading(true);
     setError(null);
 
@@ -92,7 +101,11 @@ export function useRepositoryChat(repositoryId: number | string | null) {
         createdAt: new Date()
       };
 
-      setMessages((prev) => [...prev, assistantMsg]);
+      setMessages((prev) => {
+        const next = [...prev, assistantMsg];
+        if (repositoryId) chatCacheMap.set(repositoryId, next);
+        return next;
+      });
       return true;
     } catch (err: any) {
       console.error('AI chat error:', err);
@@ -104,9 +117,10 @@ export function useRepositoryChat(repositoryId: number | string | null) {
   };
 
   const clearHistory = useCallback(() => {
+    if (repositoryId) chatCacheMap.delete(repositoryId);
     setMessages([]);
     setError(null);
-  }, []);
+  }, [repositoryId]);
 
   return {
     messages,

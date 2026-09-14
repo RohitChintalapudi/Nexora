@@ -19,6 +19,7 @@ import { RepositoryDetailsView } from './RepositoryDetailsView';
 import { AnalysisProgressView } from './AnalysisProgressView';
 import { AnalysisPageView } from './analysis/AnalysisPageView';
 import { AnalysisErrorBoundary } from './analysis/AnalysisErrorBoundary';
+import { NexoraLoader } from '../common/NexoraLoader';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
@@ -337,25 +338,14 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
             </div>
           )}
 
-          {/* Loading Skeleton */}
+          {/* Loading Nexora State */}
           {isLoadingGitHub && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {[1, 2, 3, 4].map((n) => (
-                <div key={n} className="p-5 rounded-2xl border border-slate-200/70 bg-white space-y-3 animate-pulse">
-                  <div className="flex items-center justify-between">
-                    <div className="h-4 w-32 bg-slate-200 rounded-md" />
-                    <div className="h-4 w-14 bg-slate-100 rounded-full" />
-                  </div>
-                  <div className="h-3 w-48 bg-slate-100 rounded-md" />
-                  <div className="h-3 w-full bg-slate-100 rounded-md" />
-                  <div className="h-3 w-2/3 bg-slate-100 rounded-md" />
-                  <div className="pt-2 flex justify-between">
-                    <div className="h-3 w-20 bg-slate-100 rounded-md" />
-                    <div className="h-5 w-16 bg-slate-200 rounded-full" />
-                  </div>
-                </div>
-              ))}
-            </div>
+            <NexoraLoader
+              variant="card"
+              size="md"
+              message="Fetching GitHub Repositories..."
+              subMessage="Querying GitHub API and synchronizing repository list"
+            />
           )}
 
           {/* Empty Search / No Repositories */}
