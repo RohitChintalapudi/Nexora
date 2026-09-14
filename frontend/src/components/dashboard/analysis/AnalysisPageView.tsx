@@ -218,6 +218,67 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
     );
   };
 
+  // Safe data extraction & normalized collections unconditionally at top level
+  const analysis = (data?.analysis || {}) as any;
+  const metadata = (data?.metadata || {}) as any;
+  const repo = data?.repository || repository;
+
+  const techList = Array.isArray(analysis.technologyStack) ? analysis.technologyStack : [];
+  const modulesList = Array.isArray(analysis.modules) ? analysis.modules : [];
+  const flowList = Array.isArray(analysis.applicationFlow) ? analysis.applicationFlow : [];
+  const entryPointsList = Array.isArray(analysis.entryPoints) ? analysis.entryPoints : [];
+  const importantFilesList = Array.isArray(analysis.importantFiles) ? analysis.importantFiles : [];
+  const dependenciesList = Array.isArray(analysis.dependencies) ? analysis.dependencies : [];
+  const apiStructureList = Array.isArray(analysis.apiStructure) ? analysis.apiStructure : [];
+  const quickStartList = Array.isArray(analysis.developerQuickStart) ? analysis.developerQuickStart : [];
+  const uncertaintiesList = Array.isArray(analysis.uncertainties) ? analysis.uncertainties : [];
+
+  // Compute HTTP method counts for API endpoints
+  const methodCounts = useMemo(() => {
+    const counts: Record<string, number> = { ALL: apiStructureList.length };
+    apiStructureList.forEach((r: any) => {
+      const m = safeStr(r?.method, 'GET').toUpperCase();
+      counts[m] = (counts[m] || 0) + 1;
+    });
+    return counts;
+  }, [apiStructureList]);
+
+  // Filter API routes by selected HTTP method and search query
+  const filteredRoutes = useMemo(() => {
+    return apiStructureList.filter((r: any) => {
+      const method = safeStr(r?.method, 'GET').toUpperCase();
+      const path = safeStr(typeof r === 'object' ? r.path : r, '/').toLowerCase();
+      const handler = safeStr(r?.handler).toLowerCase();
+      const file = safeStr(r?.filePath || r?.file_path).toLowerCase();
+
+      const matchesMethod = apiMethodFilter === 'ALL' || method === apiMethodFilter;
+      const q = apiSearchQuery.trim().toLowerCase();
+      const matchesSearch = !q || path.includes(q) || handler.includes(q) || file.includes(q) || method.toLowerCase().includes(q);
+
+      return matchesMethod && matchesSearch;
+    });
+  }, [apiStructureList, apiMethodFilter, apiSearchQuery]);
+
+  // Group technologies by category safely
+  const techByCategory = useMemo<Record<string, TechnologyItem[]>>(() => {
+    const list: any[] = Array.isArray(techList) ? techList : [];
+    return list.reduce((acc: Record<string, TechnologyItem[]>, item: any) => {
+      if (!item) return acc;
+      const cat = typeof item === 'object' && item !== null && typeof item.category === 'string' ? item.category : 'Other';
+      if (!acc[cat]) acc[cat] = [];
+      const normalizedItem: TechnologyItem = {
+        name: safeStr(typeof item === 'object' ? item.name : item, 'Unknown Library'),
+        category: cat,
+        status: item?.status === 'FACT' ? 'FACT' : (item?.status === 'INFERENCE' ? 'INFERENCE' : 'UNKNOWN'),
+        confidence: typeof item?.confidence === 'number' ? item.confidence : undefined,
+        evidence: safeStrArray(item?.evidence),
+        purpose: safeStr(item?.purpose)
+      };
+      acc[cat].push(normalizedItem);
+      return acc;
+    }, {} as Record<string, TechnologyItem[]>);
+  }, [techList]);
+
   // 1. LOADING SKELETON STATE
   if (isLoading && !data) {
     return (
@@ -406,64 +467,6 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   }
 
   // 6. COMPLETED ANALYSIS RESULT UI
-  const analysis = data.analysis || ({} as any);
-  const metadata = (data.metadata || {}) as any;
-  const repo = data.repository || repository;
-
-  // Normalized safe collections
-  const techList = Array.isArray(analysis.technologyStack) ? analysis.technologyStack : [];
-  const modulesList = Array.isArray(analysis.modules) ? analysis.modules : [];
-  const flowList = Array.isArray(analysis.applicationFlow) ? analysis.applicationFlow : [];
-  const entryPointsList = Array.isArray(analysis.entryPoints) ? analysis.entryPoints : [];
-  const importantFilesList = Array.isArray(analysis.importantFiles) ? analysis.importantFiles : [];
-  const dependenciesList = Array.isArray(analysis.dependencies) ? analysis.dependencies : [];
-  const apiStructureList = Array.isArray(analysis.apiStructure) ? analysis.apiStructure : [];
-  const quickStartList = Array.isArray(analysis.developerQuickStart) ? analysis.developerQuickStart : [];
-  const uncertaintiesList = Array.isArray(analysis.uncertainties) ? analysis.uncertainties : [];
-
-  // Compute HTTP method counts for API endpoints
-  const methodCounts = useMemo(() => {
-    const counts: Record<string, number> = { ALL: apiStructureList.length };
-    apiStructureList.forEach((r: any) => {
-      const m = safeStr(r?.method, 'GET').toUpperCase();
-      counts[m] = (counts[m] || 0) + 1;
-    });
-    return counts;
-  }, [apiStructureList]);
-
-  // Filter API routes by selected HTTP method and search query
-  const filteredRoutes = useMemo(() => {
-    return apiStructureList.filter((r: any) => {
-      const method = safeStr(r?.method, 'GET').toUpperCase();
-      const path = safeStr(typeof r === 'object' ? r.path : r, '/').toLowerCase();
-      const handler = safeStr(r?.handler).toLowerCase();
-      const file = safeStr(r?.filePath).toLowerCase();
-
-      const matchesMethod = apiMethodFilter === 'ALL' || method === apiMethodFilter;
-      const q = apiSearchQuery.trim().toLowerCase();
-      const matchesSearch = !q || path.includes(q) || handler.includes(q) || file.includes(q) || method.toLowerCase().includes(q);
-
-      return matchesMethod && matchesSearch;
-    });
-  }, [apiStructureList, apiMethodFilter, apiSearchQuery]);
-
-  // Group technologies by category safely
-  const techByCategory = techList.reduce<Record<string, TechnologyItem[]>>((acc, item: any) => {
-    if (!item) return acc;
-    const cat = typeof item === 'object' && item !== null && typeof item.category === 'string' ? item.category : 'Other';
-    if (!acc[cat]) acc[cat] = [];
-    const normalizedItem: TechnologyItem = {
-      name: safeStr(typeof item === 'object' ? item.name : item, 'Unknown Library'),
-      category: cat,
-      status: item?.status === 'FACT' ? 'FACT' : (item?.status === 'INFERENCE' ? 'INFERENCE' : 'UNKNOWN'),
-      confidence: typeof item?.confidence === 'number' ? item.confidence : undefined,
-      evidence: safeStrArray(item?.evidence),
-      purpose: safeStr(item?.purpose)
-    };
-    acc[cat].push(normalizedItem);
-    return acc;
-  }, {});
-
   return (
     <div className="space-y-8 max-w-6xl mx-auto animate-in fade-in duration-150 pb-20">
       
