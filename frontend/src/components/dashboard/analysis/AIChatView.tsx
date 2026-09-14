@@ -10,7 +10,12 @@ import {
   Check, 
   FileCode2, 
   HelpCircle,
-  Clock
+  Clock,
+  Layers,
+  Shield,
+  Database,
+  Route as RouteIcon,
+  Compass
 } from 'lucide-react';
 import { useRepositoryChat } from '../../../hooks/useRepositoryChat';
 
@@ -20,43 +25,143 @@ interface AIChatViewProps {
   onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void;
 }
 
-const SUGGESTED_PROMPTS = [
-  'How does authentication and session handling work?',
-  'Explain the overall architecture and data flow.',
-  'Where is the database configured and what are the main models?',
-  'What are the primary API routes and their handlers?',
-  'Where are the main entry points and how does startup work?'
+interface QuickTopic {
+  label: string;
+  prompt: string;
+  icon: React.ElementType;
+}
+
+const QUICK_TOPICS: QuickTopic[] = [
+  { 
+    label: 'Architecture Table', 
+    prompt: 'Provide a structured markdown table breaking down the architectural layers, key responsibilities, and main files in this repository.',
+    icon: Layers
+  },
+  { 
+    label: 'Auth & Security', 
+    prompt: 'Explain how authentication, authorization, token validation, and password security work in this codebase.',
+    icon: Shield
+  },
+  { 
+    label: 'Database Models', 
+    prompt: 'List all database tables, models, ORM relationships, and configuration files in a clean markdown table.',
+    icon: Database
+  },
+  { 
+    label: 'API Endpoints', 
+    prompt: 'Summarize the primary API routes, HTTP methods, controllers, and their file locations in a markdown table.',
+    icon: RouteIcon
+  },
+  { 
+    label: 'Lifecycle & Flow', 
+    prompt: 'Explain the step-by-step application lifecycle flow from request ingestion through business services to database persistence.',
+    icon: Compass
+  }
 ];
 
 /**
- * Clean markdown formatter for AI chat responses
+ * Clean markdown table renderer with cell formatting and file links
+ */
+const MarkdownTableRenderer: React.FC<{
+  tableLines: string[];
+  onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void;
+}> = ({ tableLines, onOpenFileModal }) => {
+  if (tableLines.length < 2) return null;
+
+  // Split line into cells
+  const parseRow = (line: string): string[] => {
+    return line
+      .trim()
+      .replace(/^\|/, '')
+      .replace(/\|$/, '')
+      .split('|')
+      .map(c => c.trim());
+  };
+
+  const headerCells = parseRow(tableLines[0]);
+  
+  // Find data rows (ignoring separator like |---|---|)
+  const dataRows = tableLines.slice(1).filter(line => {
+    const trimmed = line.trim();
+    return trimmed && !/^\|?[\s-:]+\|?[\s-:]*\|?$/.test(trimmed);
+  }).map(parseRow);
+
+  return (
+    <div className="my-3 overflow-hidden rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] bg-white">
+      <div className="overflow-x-auto select-text">
+        <table className="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr className="bg-slate-100/80 border-b border-slate-200">
+              {headerCells.map((h, i) => (
+                <th 
+                  key={i} 
+                  className="px-4 py-3 font-extrabold text-slate-800 uppercase tracking-wider text-[11px] whitespace-nowrap"
+                >
+                  {renderInlineMarkdown(h, onOpenFileModal)}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-100 font-sans text-slate-700">
+            {dataRows.map((row, rIdx) => (
+              <tr 
+                key={rIdx} 
+                className="hover:bg-blue-50/30 transition-colors even:bg-slate-50/40"
+              >
+                {headerCells.map((_, cIdx) => (
+                  <td 
+                    key={cIdx} 
+                    className="px-4 py-3 leading-relaxed align-top"
+                  >
+                    {renderInlineMarkdown(row[cIdx] || '', onOpenFileModal)}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Full Markdown message formatter (Tables, Code Blocks, Lists, Blockquotes, Headings)
  */
 const FormattedMessageContent: React.FC<{ 
   content: string; 
   onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void 
 }> = ({ content, onOpenFileModal }) => {
-  // Parse code blocks vs regular text
-  const parts = content.split(/(```[\s\S]*?```)/g);
+  // 1. Separate code blocks first
+  const codeParts = content.split(/(```[\s\S]*?```)/g);
 
   return (
-    <div className="space-y-3 text-xs sm:text-sm leading-relaxed text-slate-800">
-      {parts.map((part, index) => {
-        if (part.startsWith('```') && part.endsWith('```')) {
-          const lines = part.slice(3, -3).trim().split('\n');
+    <div className="space-y-3.5 text-xs sm:text-sm leading-relaxed text-slate-800">
+      {codeParts.map((codePart, partIdx) => {
+        // Code Block
+        if (codePart.startsWith('```') && codePart.endsWith('```')) {
+          const lines = codePart.slice(3, -3).trim().split('\n');
           const language = lines[0]?.match(/^[a-zA-Z0-9_-]+$/) ? lines[0] : '';
           const code = language ? lines.slice(1).join('\n') : lines.join('\n');
 
           return (
-            <div key={index} className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md my-2">
-              <div className="flex items-center justify-between px-4 py-2 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
-                <span>{language || 'code'}</span>
+            <div key={partIdx} className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md my-3">
+              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
+                  </div>
+                  <span className="font-semibold text-slate-300 ml-2">{language || 'code'}</span>
+                </div>
                 <button
                   type="button"
                   onClick={() => navigator.clipboard.writeText(code)}
                   className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
                   title="Copy code"
                 >
-                  <Copy className="w-3 h-3" />
+                  <Copy className="w-3.5 h-3.5" />
                   <span>Copy</span>
                 </button>
               </div>
@@ -67,20 +172,45 @@ const FormattedMessageContent: React.FC<{
           );
         }
 
-        // Format normal markdown text (paragraphs, bullet lists, bold text, inline code)
-        const paragraphs = part.split(/\n\n+/);
+        // 2. Parse paragraphs, tables, lists, and callouts
+        const blocks = codePart.split(/\n\n+/);
 
         return (
-          <div key={index} className="space-y-2">
-            {paragraphs.map((p, pIdx) => {
-              const trimmed = p.trim();
+          <div key={partIdx} className="space-y-3">
+            {blocks.map((block, bIdx) => {
+              const trimmed = block.trim();
               if (!trimmed) return null;
+
+              // Check if block is a Markdown Table
+              const lines = trimmed.split('\n');
+              const isTable = lines.length >= 2 && lines.every(l => l.trim().startsWith('|') || l.trim().includes('|'));
+              if (isTable) {
+                return (
+                  <MarkdownTableRenderer 
+                    key={bIdx} 
+                    tableLines={lines} 
+                    onOpenFileModal={onOpenFileModal} 
+                  />
+                );
+              }
+
+              // Blockquotes / Callout notes
+              if (trimmed.startsWith('>')) {
+                const quoteText = trimmed.replace(/^>\s?/gm, '');
+                return (
+                  <div key={bIdx} className="p-4 rounded-2xl bg-blue-50/50 border-l-4 border-blue-500 text-slate-800 my-2 space-y-1">
+                    <p className="font-sans leading-relaxed">
+                      {renderInlineMarkdown(quoteText, onOpenFileModal)}
+                    </p>
+                  </div>
+                );
+              }
 
               // Bullet points
               if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
                 const items = trimmed.split(/\n[-*]\s+/).filter(Boolean);
                 return (
-                  <ul key={pIdx} className="space-y-1.5 pl-4 list-disc text-slate-700">
+                  <ul key={bIdx} className="space-y-2 pl-4 list-disc text-slate-700">
                     {items.map((item, iIdx) => (
                       <li key={iIdx} className="leading-relaxed">
                         {renderInlineMarkdown(item.replace(/^[-*]\s+/, ''), onOpenFileModal)}
@@ -94,7 +224,7 @@ const FormattedMessageContent: React.FC<{
               if (/^\d+\.\s+/.test(trimmed)) {
                 const items = trimmed.split(/\n\d+\.\s+/).filter(Boolean);
                 return (
-                  <ol key={pIdx} className="space-y-1.5 pl-4 list-decimal text-slate-700">
+                  <ol key={bIdx} className="space-y-2 pl-4 list-decimal text-slate-700">
                     {items.map((item, iIdx) => (
                       <li key={iIdx} className="leading-relaxed">
                         {renderInlineMarkdown(item.replace(/^\d+\.\s+/, ''), onOpenFileModal)}
@@ -104,24 +234,32 @@ const FormattedMessageContent: React.FC<{
                 );
               }
 
-              // Headings
+              // Section Headings
               if (trimmed.startsWith('### ')) {
                 return (
-                  <h4 key={pIdx} className="text-sm font-extrabold text-slate-900 pt-2 pb-0.5">
+                  <h4 key={bIdx} className="text-sm sm:text-base font-extrabold text-slate-900 pt-3 pb-1 tracking-tight">
                     {renderInlineMarkdown(trimmed.replace(/^###\s+/, ''), onOpenFileModal)}
                   </h4>
                 );
               }
               if (trimmed.startsWith('## ')) {
                 return (
-                  <h3 key={pIdx} className="text-base font-extrabold text-slate-900 pt-3 pb-1 border-b border-slate-100">
+                  <h3 key={bIdx} className="text-base sm:text-lg font-extrabold text-slate-900 pt-4 pb-1.5 border-b border-slate-200/80 tracking-tight">
                     {renderInlineMarkdown(trimmed.replace(/^##\s+/, ''), onOpenFileModal)}
                   </h3>
                 );
               }
+              if (trimmed.startsWith('# ')) {
+                return (
+                  <h2 key={bIdx} className="text-lg sm:text-xl font-extrabold text-slate-900 pt-4 pb-2 border-b border-slate-200/80 tracking-tight">
+                    {renderInlineMarkdown(trimmed.replace(/^#\s+/, ''), onOpenFileModal)}
+                  </h2>
+                );
+              }
 
+              // Standard text paragraph
               return (
-                <p key={pIdx} className="leading-relaxed whitespace-pre-line text-slate-700">
+                <p key={bIdx} className="leading-relaxed whitespace-pre-line text-slate-700">
                   {renderInlineMarkdown(trimmed, onOpenFileModal)}
                 </p>
               );
@@ -134,13 +272,12 @@ const FormattedMessageContent: React.FC<{
 };
 
 /**
- * Parse inline bold, italics, and backtick inline code
+ * Parse inline bold, italics, and backtick file citations
  */
 function renderInlineMarkdown(
   text: string, 
   onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void
 ): React.ReactNode {
-  // Regex splitting by backticks and bold
   const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
 
   return tokens.map((token, i) => {
@@ -159,10 +296,10 @@ function renderInlineMarkdown(
             key={i}
             type="button"
             onClick={() => onOpenFileModal(cleanPath, start, end)}
-            className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors mx-0.5 cursor-pointer align-baseline"
+            className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-blue-200 transition-colors mx-0.5 cursor-pointer align-baseline shadow-2xs"
             title={`Inspect ${val}`}
           >
-            <FileCode2 className="w-3 h-3 text-blue-500 shrink-0" />
+            <FileCode2 className="w-3 h-3 text-blue-600 shrink-0" />
             <span>{val}</span>
           </button>
         );
@@ -195,13 +332,19 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
   const { messages, isLoading, error, sendMessage, clearHistory } = useRepositoryChat(repositoryId);
   const [inputQuestion, setInputQuestion] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // CONTAINER REF (Strictly scroll inside the chat box only, NEVER moving window scroll position)
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Auto-scroll to bottom on new messages
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [messages.length, isLoading]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -231,25 +374,25 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] overflow-hidden flex flex-col divide-y divide-slate-100">
+    <div className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_32px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col divide-y divide-slate-100">
       
       {/* 1. Header Bar */}
-      <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-50/70 via-indigo-50/40 to-slate-50/70 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-md shadow-blue-500/20 shrink-0">
+      <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0 ring-4 ring-blue-100">
             <Sparkles className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
                 AI Repository Assistant
               </h3>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200">
-                RAG Grounded
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs">
+                RAG Vector Grounded
               </span>
             </div>
-            <p className="text-xs text-slate-600">
-              Ask anything about <strong className="text-slate-800">{repositoryName}</strong> architecture, code logic, database, or APIs.
+            <p className="text-xs text-slate-600 mt-0.5">
+              Ask anything about <strong className="text-slate-900">{repositoryName}</strong> architecture, code logic, database, or APIs.
             </p>
           </div>
         </div>
@@ -258,7 +401,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
           <button
             type="button"
             onClick={clearHistory}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-full border border-slate-200 transition-colors cursor-pointer shrink-0 self-start sm:self-center"
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-bold text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-full border border-slate-200 transition-all cursor-pointer shrink-0 self-start sm:self-center shadow-2xs"
             title="Clear chat history"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -267,38 +410,62 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
         )}
       </div>
 
-      {/* 2. Message History Container */}
-      <div className="p-5 sm:p-6 min-h-[280px] max-h-[540px] overflow-y-auto space-y-6 bg-slate-50/30">
-        
+      {/* 2. Quick Filter Mode Pills */}
+      <div className="px-5 py-3 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2 overflow-x-auto no-scrollbar">
+        <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 shrink-0 mr-1">
+          Quick Insights:
+        </span>
+        {QUICK_TOPICS.map((topic, idx) => {
+          const Icon = topic.icon;
+          return (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => handlePromptClick(topic.prompt)}
+              disabled={isLoading}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-bold shadow-2xs transition-all cursor-pointer shrink-0 active:scale-95 disabled:opacity-50"
+            >
+              <Icon className="w-3.5 h-3.5 text-blue-600" />
+              <span>{topic.label}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Message History Container */}
+      <div 
+        ref={chatContainerRef}
+        className="p-5 sm:p-6 min-h-[300px] max-h-[580px] overflow-y-auto space-y-6 bg-slate-50/40"
+      >
         {messages.length === 0 ? (
           /* Empty State & Prompt Starters */
-          <div className="py-8 text-center space-y-5 max-w-xl mx-auto">
-            <div className="w-14 h-14 rounded-3xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-2xs">
-              <Bot className="w-7 h-7 stroke-[2]" />
+          <div className="py-10 text-center space-y-5 max-w-xl mx-auto">
+            <div className="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-xs">
+              <Bot className="w-8 h-8 stroke-[2]" />
             </div>
 
             <div className="space-y-1.5">
-              <h4 className="text-base font-extrabold text-slate-900">
-                What would you like to know about {repositoryName}?
+              <h4 className="text-base sm:text-lg font-extrabold text-slate-900">
+                Explore {repositoryName} with AI
               </h4>
               <p className="text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-                NEXORA references your indexed vector embeddings, symbols, AST syntax trees, and architecture models to answer with pinpoint accuracy.
+                NEXORA references your indexed vector embeddings, symbols, AST syntax trees, and architecture models to answer with pinpoint accuracy and structured tables.
               </p>
             </div>
 
             <div className="pt-2">
               <p className="text-[11px] font-extrabold uppercase tracking-wider text-slate-400 mb-2.5">
-                Suggested Questions
+                Popular Questions
               </p>
               <div className="flex flex-wrap gap-2 justify-center">
-                {SUGGESTED_PROMPTS.map((prompt, idx) => (
+                {QUICK_TOPICS.map((topic, idx) => (
                   <button
                     key={idx}
                     type="button"
-                    onClick={() => handlePromptClick(prompt)}
-                    className="text-xs font-medium text-slate-700 hover:text-blue-700 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-3.5 py-2 rounded-2xl shadow-2xs transition-all text-left cursor-pointer active:scale-95"
+                    onClick={() => handlePromptClick(topic.prompt)}
+                    className="text-xs font-medium text-slate-700 hover:text-blue-700 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-4 py-2.5 rounded-2xl shadow-2xs transition-all text-left cursor-pointer active:scale-95"
                   >
-                    "{prompt}"
+                    "{topic.prompt}"
                   </button>
                 ))}
               </div>
@@ -321,10 +488,10 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                 )}
 
                 <div
-                  className={`max-w-3xl rounded-3xl p-4 sm:p-5 space-y-3 ${
+                  className={`max-w-3xl rounded-3xl p-4 sm:p-6 space-y-3.5 ${
                     isUser
                       ? 'bg-blue-600 text-white rounded-br-xs shadow-md shadow-blue-600/10'
-                      : 'bg-white border border-slate-200/80 rounded-tl-xs shadow-[0_2px_12px_rgba(0,0,0,0.03)]'
+                      : 'bg-white border border-slate-200/80 rounded-tl-xs shadow-[0_2px_16px_rgba(0,0,0,0.03)]'
                   }`}
                 >
                   {isUser ? (
@@ -345,12 +512,12 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                             <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
                               Referenced Files:
                             </span>
-                            {msg.citations.slice(0, 4).map((cit, cIdx) => (
+                            {msg.citations.slice(0, 5).map((cit, cIdx) => (
                               <button
                                 key={cIdx}
                                 type="button"
                                 onClick={() => onOpenFileModal && onOpenFileModal(cit.filePath, cit.startLine, cit.endLine)}
-                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-200 transition-colors cursor-pointer"
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-200 transition-colors cursor-pointer shadow-2xs"
                                 title={`Inspect ${cit.filePath}`}
                               >
                                 <FileCode2 className="w-3 h-3 text-slate-400" />
@@ -365,7 +532,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                           <div />
                         )}
 
-                        <div className="flex items-center gap-3 shrink-0">
+                        <div className="flex items-center gap-3 shrink-0 self-end sm:self-center">
                           {msg.stats && (
                             <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
                               <Clock className="w-3 h-3" />
@@ -381,12 +548,12 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                           >
                             {copiedId === msg.id ? (
                               <>
-                                <Check className="w-3 h-3 text-emerald-600" />
+                                <Check className="w-3.5 h-3.5 text-emerald-600" />
                                 <span className="text-emerald-700">Copied</span>
                               </>
                             ) : (
                               <>
-                                <Copy className="w-3 h-3 text-slate-400" />
+                                <Copy className="w-3.5 h-3.5 text-slate-400" />
                                 <span>Copy</span>
                               </>
                             )}
@@ -415,7 +582,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
             </div>
             <div className="p-4 rounded-3xl rounded-tl-xs bg-white border border-slate-200/80 shadow-xs flex items-center gap-3 text-xs text-slate-600">
               <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
-              <span>Analyzing code chunks and synthesizing answer...</span>
+              <span>Analyzing code chunks, symbols, and synthesizing response...</span>
             </div>
           </div>
         )}
@@ -427,11 +594,9 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
             <span>{error}</span>
           </div>
         )}
-
-        <div ref={messagesEndRef} />
       </div>
 
-      {/* 3. Question Input Bar */}
+      {/* 4. Question Input Bar */}
       <div className="p-4 sm:p-5 bg-white">
         <form onSubmit={handleSubmit} className="flex items-end gap-3">
           <div className="flex-1 relative">
@@ -441,9 +606,9 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
               value={inputQuestion}
               onChange={(e) => setInputQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder={`Ask any question about ${repositoryName}... (Press Enter to send)`}
+              placeholder={`Ask any question about ${repositoryName}... (Press Enter to send, Shift+Enter for new line)`}
               disabled={isLoading}
-              className="w-full resize-none p-3.5 text-xs sm:text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 font-sans"
+              className="w-full resize-none p-3.5 text-xs sm:text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 font-sans leading-normal"
             />
           </div>
 
@@ -465,3 +630,5 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
     </div>
   );
 };
+
+export default AIChatView;
