@@ -45,7 +45,6 @@ export const Navbar: React.FC = () => {
     { name: 'Product', href: '#product' },
     { name: 'Intelligence', href: '#intelligence' },
     { name: 'Collaboration', href: '#collaboration' },
-    { name: 'Pricing', href: '#pricing' },
   ];
 
   const handleGetStarted = () => {
