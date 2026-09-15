@@ -153,92 +153,51 @@ export const ProblemSection: React.FC = () => {
             <circle cx="480" cy="270" r="150" fill="none" stroke="rgba(0, 0, 0, 0.04)" strokeWidth="1" strokeDasharray="5, 6" />
             <circle cx="480" cy="270" r="215" fill="none" stroke="rgba(0, 0, 0, 0.03)" strokeWidth="1" strokeDasharray="6, 8" />
 
-            {/* 6 Connected Energy Conduits */}
-            {tools.map((tool, idx) => {
-              const isDirectHovered = hoveredIdx === idx;
-              const isHoveredState = isDirectHovered || isCoreHovered;
-              const particleDuration = isHoveredState ? tool.speed * 0.5 : tool.speed;
+            {/* 6 Connected Network Conduits */}
+            {tools.map((tool) => (
+              <g key={tool.id}>
+                {/* Crisp Clean Base Track Line */}
+                <path
+                  d={tool.pathD}
+                  stroke="rgba(0, 0, 0, 0.08)"
+                  strokeWidth="1.5"
+                  strokeDasharray="4, 4"
+                  fill="none"
+                />
 
-              return (
-                <g key={tool.id}>
-                  {/* Outer Glow Path on Active Hover */}
-                  {isHoveredState && (
-                    <path
-                      d={tool.pathD}
-                      stroke="rgba(37,99,235,0.2)"
-                      strokeWidth="8"
-                      strokeLinecap="round"
-                      fill="none"
-                    />
-                  )}
+                {/* Subtle Flowing Network Stream */}
+                <motion.path
+                  d={tool.pathD}
+                  stroke="rgba(37, 99, 235, 0.55)"
+                  strokeWidth="1.5"
+                  strokeDasharray="10, 16"
+                  strokeLinecap="round"
+                  fill="none"
+                  animate={{ strokeDashoffset: [0, -52] }}
+                  transition={{ repeat: Infinity, duration: tool.speed * 0.7, ease: 'linear' }}
+                />
 
-                  {/* Crisp Base Track Line */}
-                  <path
-                    d={tool.pathD}
-                    stroke={isHoveredState ? '#2563EB' : 'rgba(37,99,235,0.22)'}
-                    strokeWidth={isHoveredState ? '2' : '1.5'}
-                    strokeDasharray={isHoveredState ? 'none' : '4, 4'}
-                    fill="none"
-                    className="transition-all duration-300"
-                  />
-
-                  {/* Clean Flowing Stream Dash Animation */}
-                  <motion.path
-                    d={tool.pathD}
-                    stroke={isHoveredState ? '#2563EB' : 'rgba(37,99,235,0.7)'}
-                    strokeWidth={isHoveredState ? '2.8' : '2'}
-                    strokeDasharray="14, 18"
-                    strokeLinecap="round"
-                    fill="none"
-                    animate={{ strokeDashoffset: [0, -64] }}
-                    transition={{ repeat: Infinity, duration: isHoveredState ? 0.9 : 1.4, ease: 'linear' }}
-                  />
-
-                  {/* Leading Photon Dot 1 */}
-                  <motion.circle
-                    r={isHoveredState ? '4.5' : '3.5'}
-                    fill="#2563EB"
-                    stroke="#FFFFFF"
-                    strokeWidth="1.5"
-                    className="transition-all duration-200"
-                    style={{
-                      offsetPath: `path("${tool.pathD}")`,
-                    }}
-                    animate={{
-                      offsetDistance: ['0%', '100%'],
-                      opacity: [0, 1, 1, 0]
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: particleDuration,
-                      ease: 'easeInOut'
-                    }}
-                  />
-
-                  {/* Trailing Photon Dot 2 */}
-                  <motion.circle
-                    r={isHoveredState ? '3.5' : '2.5'}
-                    fill="#60A5FA"
-                    stroke="#FFFFFF"
-                    strokeWidth="1"
-                    className="transition-all duration-200"
-                    style={{
-                      offsetPath: `path("${tool.pathD}")`,
-                    }}
-                    animate={{
-                      offsetDistance: ['0%', '100%'],
-                      opacity: [0, 0.9, 0.9, 0]
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: particleDuration,
-                      delay: particleDuration * 0.45,
-                      ease: 'easeInOut'
-                    }}
-                  />
-                </g>
-              );
-            })}
+                {/* Clean Moving Network Signal Dot */}
+                <motion.circle
+                  r="3"
+                  fill="#2563EB"
+                  stroke="#FFFFFF"
+                  strokeWidth="1"
+                  style={{
+                    offsetPath: `path("${tool.pathD}")`,
+                  }}
+                  animate={{
+                    offsetDistance: ['0%', '100%'],
+                    opacity: [0, 0.9, 0.9, 0]
+                  }}
+                  transition={{
+                    repeat: Infinity,
+                    duration: tool.speed,
+                    ease: 'linear'
+                  }}
+                />
+              </g>
+            ))}
           </svg>
 
           {/* ========================================================= */}
@@ -246,16 +205,16 @@ export const ProblemSection: React.FC = () => {
           {/* ========================================================= */}
           <motion.div
             animate={{
-              scale: isCoreHovered ? 1.05 : hoveredIdx !== null ? 1.02 : 1,
-              borderColor: (isCoreHovered || hoveredIdx !== null) ? 'rgba(0,0,0,0.18)' : 'rgba(0,0,0,0.08)',
-              boxShadow: (isCoreHovered || hoveredIdx !== null)
-                ? '0 12px 36px rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0,0,0,0.04)'
-                : '0 4px 20px rgba(0, 0, 0, 0.04)'
+              scale: isCoreHovered ? 1.06 : 1,
+              borderColor: isCoreHovered ? 'rgba(0,0,0,0.16)' : 'rgba(0,0,0,0.08)',
+              boxShadow: isCoreHovered
+                ? '0 12px 30px rgba(0, 0, 0, 0.07), 0 2px 8px rgba(0,0,0,0.03)'
+                : '0 4px 18px rgba(0, 0, 0, 0.03)'
             }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
             onMouseEnter={() => setIsCoreHovered(true)}
             onMouseLeave={() => setIsCoreHovered(false)}
-            className="absolute z-20 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white flex flex-col items-center justify-center border border-black/[0.08] cursor-pointer shadow-sm select-none gap-1"
+            className="absolute z-20 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white flex flex-col items-center justify-center border border-black/[0.08] cursor-pointer select-none gap-1"
           >
             {/* Medium Black Nexora N Logo */}
             <svg
@@ -291,7 +250,6 @@ export const ProblemSection: React.FC = () => {
           {/* ========================================================= */}
           {tools.map((tool, idx) => {
             const isHovered = hoveredIdx === idx;
-            const isActive = isHovered || isCoreHovered;
 
             // Positioning layout
             const isLeft = idx < 3;
@@ -308,22 +266,22 @@ export const ProblemSection: React.FC = () => {
               >
                 <motion.div
                   animate={{
-                    y: isActive ? -4 : 0,
-                    scale: isActive ? 1.03 : 1,
-                    borderColor: isActive ? '#2563EB' : 'rgba(0,0,0,0.06)',
-                    boxShadow: isActive 
-                      ? '0 16px 36px rgba(37,99,235,0.12), 0 4px 12px rgba(37,99,235,0.06)'
-                      : '0 4px 16px rgba(0,0,0,0.025), 0 1px 3px rgba(0,0,0,0.015)'
+                    y: isHovered ? -3 : 0,
+                    scale: isHovered ? 1.04 : 1,
+                    borderColor: isHovered ? 'rgba(0,0,0,0.14)' : 'rgba(0,0,0,0.06)',
+                    boxShadow: isHovered 
+                      ? '0 12px 28px rgba(0,0,0,0.06), 0 2px 6px rgba(0,0,0,0.02)'
+                      : '0 2px 10px rgba(0,0,0,0.02)'
                   }}
-                  transition={{ type: 'spring', damping: 24, stiffness: 260 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
                   onMouseEnter={() => setHoveredIdx(idx)}
                   onMouseLeave={() => setHoveredIdx(null)}
-                  className="w-56 sm:w-60 p-4 rounded-2xl bg-white/95 backdrop-blur-md border cursor-pointer flex flex-col items-start gap-2.5 transition-all duration-300 group"
+                  className="w-56 sm:w-60 p-4 rounded-2xl bg-white border cursor-pointer flex flex-col items-start gap-2.5 group select-none"
                 >
                   {/* Card Header Row: Icon Badge + Category + Status Dot */}
                   <div className="flex items-center justify-between w-full">
                     <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-200/80 flex items-center justify-center shadow-2xs text-blue-600">
+                      <div className="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600">
                         {tool.icon}
                       </div>
                       <div>
@@ -336,7 +294,7 @@ export const ProblemSection: React.FC = () => {
                       </div>
                     </div>
 
-                    <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-blue-600 animate-ping' : 'bg-neutral-300'}`} />
+                    <span className="w-2 h-2 rounded-full bg-neutral-200 group-hover:bg-blue-600 transition-colors" />
                   </div>
 
                   {/* Card Body: Description */}
