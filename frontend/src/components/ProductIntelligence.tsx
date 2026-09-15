@@ -10,6 +10,15 @@ import {
   ArrowRight,
   Activity,
   FileCode2,
+  Sparkles,
+  Cpu,
+  Database,
+  Boxes,
+  Workflow,
+  Route,
+  Package,
+  FileText,
+  Terminal,
 } from 'lucide-react';
 
 interface NodeItem {
@@ -74,7 +83,7 @@ export const ProductIntelligence: React.FC = () => {
   };
 
   return (
-    <div id="product" className="relative bg-[#F7F7F5] content-layer pt-8 pb-12 md:pt-10 md:pb-16 border-t border-black/[0.04]">
+    <div id="product" className="relative bg-[#F7F7F5] content-layer pt-8 pb-4 md:pt-10 md:pb-6 border-t border-black/[0.04]">
       <div className="max-w-7xl mx-auto px-6">
 
         {/* Section Header with tighter padding */}
@@ -490,36 +499,36 @@ export const ProductIntelligence: React.FC = () => {
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.06]" />
 
-        {/* Pillar 03 — PREDICT */}
-        <section className="relative py-8 md:py-10">
+        {/* Pillar 03 — ARCHITECTURE */}
+        <section className="relative py-6 md:py-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
             
             <div className="lg:col-span-5 flex flex-col justify-center space-y-3.5">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-black/[0.04] border border-black/[0.07] text-neutral-800 text-xs font-serif font-semibold tracking-wider uppercase w-fit">
-                <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-                <span>03 — PREDICT</span>
+                <Layers className="w-3.5 h-3.5 text-blue-600" />
+                <span>03 — ARCHITECTURE</span>
               </div>
 
               <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
-                Understand impact before code changes.
+                See how the system is built.
               </h3>
               
               <p className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light">
-                NEXORA traces downstream blast radius across files, routes, services, and consumer contracts to forecast what will break before you merge.
+                NEXORA turns an unfamiliar repository into a structured mental model — revealing the technologies, architecture, components, application flow, APIs, important files, and relationships that make the system work.
               </p>
               
               <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0" />
-                  <span>Automated PR mutation & blast-radius forecasting</span>
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <span>Codebase structure & relationships</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0" />
-                  <span>Consumer contract & API breaking change warnings</span>
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <span>Architecture, modules & application flow</span>
                 </li>
                 <li className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-red-600 flex-shrink-0" />
-                  <span>Proactive risk calculation before merging code</span>
+                  <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <span>Evidence-backed analysis from your actual repository</span>
                 </li>
               </ul>
             </div>
@@ -529,132 +538,155 @@ export const ProductIntelligence: React.FC = () => {
                 {/* Header */}
                 <div className="h-11 flex items-center justify-between border-b border-black/[0.06] px-5 sm:px-6 bg-neutral-50/70 select-none">
                   <div className="flex items-center gap-2">
-                    <ShieldAlert className="w-4 h-4 text-red-600" />
-                    <span className="font-serif text-xs font-semibold text-neutral-800 tracking-wide uppercase">AST MUTATION RADAR</span>
+                    <Activity className="w-4 h-4 text-blue-600" />
+                    <span className="font-serif text-xs font-semibold text-neutral-800 tracking-wide uppercase">SYSTEM MENTAL MODEL ENGINE</span>
                   </div>
-                  <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-red-50 border border-red-200 text-red-700 tracking-wide select-none flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                    Breaking Change Forecasted
+                  <span className="text-xs font-mono font-medium px-2.5 py-0.5 rounded-full bg-blue-50 border border-blue-200 text-blue-700 tracking-wide select-none flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse" />
+                    AST + RAG Pipeline
                   </span>
                 </div>
 
-                <div className="p-4 sm:p-5 space-y-3.5 select-none">
-                  {/* Code Diff Inspection Box */}
-                  <div className="rounded-xl border border-red-200/80 bg-red-50/30 overflow-hidden font-mono text-[11px] leading-relaxed">
-                    <div className="flex items-center justify-between px-3.5 py-1.5 bg-red-100/40 border-b border-red-200/60 text-neutral-700">
-                      <div className="flex items-center gap-2">
-                        <GitBranch className="w-3.5 h-3.5 text-red-600" />
-                        <span className="font-semibold text-neutral-900">src/services/AuthService.ts:42</span>
+                <div className="p-5 sm:p-6 space-y-3 select-none">
+                  
+                  {/* Step 1: GitHub Repository */}
+                  <div className="flex items-center justify-between p-3 rounded-xl bg-neutral-900 text-white shadow-2xs">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-7 h-7 rounded-lg bg-neutral-800 flex items-center justify-center text-white">
+                        <GitBranch className="w-4 h-4 text-blue-400" />
                       </div>
-                      <span className="text-[10px] text-red-700 font-bold bg-white px-2 py-0.5 rounded border border-red-200">
-                        MUTATION ORIGIN
+                      <div>
+                        <div className="font-mono font-bold text-xs">GitHub Repository</div>
+                        <div className="text-[10px] text-neutral-400 font-mono">Source files, commits & dependency manifests</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-2 py-0.5 rounded-md">
+                      CONNECTED
+                    </span>
+                  </div>
+
+                  {/* Flow Arrow 1 */}
+                  <div className="flex flex-col items-center justify-center -my-1 text-blue-600">
+                    <span className="text-xs font-mono">↓</span>
+                  </div>
+
+                  {/* Step 2: Code Intelligence */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl border border-black/[0.08] bg-neutral-50">
+                    <div className="flex items-center gap-2.5">
+                      <Cpu className="w-4 h-4 text-blue-600" />
+                      <div>
+                        <div className="font-mono font-bold text-neutral-900 text-xs">Code Intelligence</div>
+                        <div className="text-[10px] text-neutral-500 font-sans">AST Parsing, Tree-sitter & Semantic Graph Extraction</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                      PARSER
+                    </span>
+                  </div>
+
+                  {/* Flow Arrow 2 */}
+                  <div className="flex flex-col items-center justify-center -my-1 text-blue-600">
+                    <span className="text-xs font-mono">↓</span>
+                  </div>
+
+                  {/* Step 3: Extracted Graph Atoms (4 Chips) */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-blue-900 font-mono text-[11px] font-semibold justify-center shadow-2xs">
+                      <span>Symbols</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-blue-900 font-mono text-[11px] font-semibold justify-center shadow-2xs">
+                      <span>Imports / Exports</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-blue-900 font-mono text-[11px] font-semibold justify-center shadow-2xs">
+                      <span>Routes</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 p-2 rounded-lg bg-blue-50/70 border border-blue-200/80 text-blue-900 font-mono text-[11px] font-semibold justify-center shadow-2xs">
+                      <span>Relationships</span>
+                    </div>
+                  </div>
+
+                  {/* Flow Arrow 3 */}
+                  <div className="flex flex-col items-center justify-center -my-1 text-blue-600">
+                    <span className="text-xs font-mono">↓</span>
+                  </div>
+
+                  {/* Step 4: RAG + AI */}
+                  <div className="flex items-center justify-between p-2.5 rounded-xl border border-blue-200 bg-blue-50/40">
+                    <div className="flex items-center gap-2.5">
+                      <Sparkles className="w-4 h-4 text-blue-600" />
+                      <div>
+                        <div className="font-mono font-bold text-neutral-900 text-xs">RAG + AI</div>
+                        <div className="text-[10px] text-neutral-500 font-sans">Semantic Grounding, Code Synthesis & Architectural Reasoning</div>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                      SYNTHESIS
+                    </span>
+                  </div>
+
+                  {/* Flow Arrow 4 */}
+                  <div className="flex flex-col items-center justify-center -my-1 text-blue-600">
+                    <span className="text-xs font-mono">↓</span>
+                  </div>
+
+                  {/* Step 5: The Structured Mental Model Output Box */}
+                  <div className="rounded-xl border-2 border-blue-600/30 bg-white p-3.5 shadow-sm space-y-2.5">
+                    <div className="flex items-center justify-between border-b border-black/[0.06] pb-2">
+                      <div className="flex items-center gap-2 font-mono font-bold text-neutral-900 text-xs uppercase tracking-wider">
+                        <Boxes className="w-3.5 h-3.5 text-blue-600" />
+                        <span>Structured Mental Model</span>
+                      </div>
+                      <span className="text-[10px] font-mono text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">
+                        8 System Dimensions
                       </span>
                     </div>
 
-                    <div className="p-2.5 sm:p-3 space-y-1 bg-white">
-                      <div className="flex items-center gap-2 text-neutral-400">
-                        <span className="w-5 text-right select-none text-[10px]">41</span>
-                        <span className="text-neutral-600">export class AuthService {'{'}</span>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] font-mono text-neutral-800">
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Layers className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Architecture</span>
                       </div>
-                      <div className="flex items-center gap-2 text-red-700 bg-red-50/90 -mx-2.5 sm:-mx-3 px-2.5 sm:px-3 py-0.5 border-l-2 border-red-600 font-medium">
-                        <span className="w-5 text-right select-none text-[10px] text-red-400">42 -</span>
-                        <span>  async verifyToken(token: string) {'{'}</span>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Cpu className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Technology Stack</span>
                       </div>
-                      <div className="flex items-center gap-2 text-emerald-800 bg-emerald-50/90 -mx-2.5 sm:-mx-3 px-2.5 sm:px-3 py-0.5 border-l-2 border-emerald-600 font-medium">
-                        <span className="w-5 text-right select-none text-[10px] text-emerald-500">42 +</span>
-                        <span>  async verifyToken(token: string, options: AuthOptions) {'{'}</span>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Boxes className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Components</span>
                       </div>
-                    </div>
-                  </div>
-
-                  {/* Ripple Blast Propagation Cascade */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-[11px] font-bold text-neutral-500 font-serif uppercase tracking-wider">
-                      <span>Cascading Downstream Breakages (3 Detected)</span>
-                      <span className="text-red-600 font-mono font-semibold">100% Certainty</span>
-                    </div>
-
-                    <div className="space-y-2">
-                      {/* Breakage 1: Controller */}
-                      <div className="p-2.5 sm:p-3 rounded-xl border border-red-200 bg-white hover:border-red-300 transition-colors shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-start sm:items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center flex-shrink-0 text-red-600 font-bold text-[10px]">
-                            1
-                          </div>
-                          <div>
-                            <div className="font-mono font-bold text-neutral-900 text-xs flex items-center gap-2">
-                              <span>AuthController.ts:18</span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.2 bg-red-100 text-red-800 rounded font-bold">
-                                SIGNATURE MISMATCH
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-neutral-500 font-sans mt-0.5">
-                              Callsite <code className="font-mono text-red-700 bg-red-50 px-1 rounded">verifyToken(req.token)</code> is missing mandatory 2nd argument.
-                            </div>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-red-700 bg-red-50 px-2 py-1 rounded border border-red-200 self-start sm:self-center">
-                          Direct Failure
-                        </span>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Workflow className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Application Flow</span>
                       </div>
-
-                      {/* Breakage 2: JWTMiddleware */}
-                      <div className="p-2.5 sm:p-3 rounded-xl border border-red-200 bg-white hover:border-red-300 transition-colors shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-start sm:items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center flex-shrink-0 text-red-600 font-bold text-[10px]">
-                            2
-                          </div>
-                          <div>
-                            <div className="font-mono font-bold text-neutral-900 text-xs flex items-center gap-2">
-                              <span>JWTMiddleware.ts:29</span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.2 bg-amber-100 text-amber-900 rounded font-bold">
-                                AUTH GUARD BROKEN
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-neutral-500 font-sans mt-0.5">
-                              Session token validator missing required <code className="font-mono text-neutral-800 bg-neutral-100 px-1 rounded">jwtAudience</code> config.
-                            </div>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-amber-800 bg-amber-50 px-2 py-1 rounded border border-amber-200 self-start sm:self-center">
-                          Security Gate
-                        </span>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Route className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">APIs</span>
                       </div>
-
-                      {/* Breakage 3: Endpoint */}
-                      <div className="p-2.5 sm:p-3 rounded-xl border border-red-200 bg-white hover:border-red-300 transition-colors shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                        <div className="flex items-start sm:items-center gap-2.5">
-                          <div className="w-6 h-6 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center flex-shrink-0 text-red-600 font-bold text-[10px]">
-                            3
-                          </div>
-                          <div>
-                            <div className="font-mono font-bold text-neutral-900 text-xs flex items-center gap-2">
-                              <span>POST /api/v1/auth/login</span>
-                              <span className="text-[9px] font-mono px-1.5 py-0.2 bg-red-100 text-red-800 rounded font-bold">
-                                500 SERVER CRASH
-                              </span>
-                            </div>
-                            <div className="text-[11px] text-neutral-500 font-sans mt-0.5">
-                              Runtime exception thrown before token validation handshake completes.
-                            </div>
-                          </div>
-                        </div>
-                        <span className="text-[10px] font-mono font-bold text-red-700 bg-red-50 px-2 py-1 rounded border border-red-200 self-start sm:self-center">
-                          API Broken
-                        </span>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <FileText className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Important Files</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Package className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Dependencies</span>
+                      </div>
+                      <div className="p-2 rounded-lg bg-neutral-50 border border-black/[0.05] flex items-center gap-2 hover:border-blue-400 transition-colors">
+                        <Database className="w-3.5 h-3.5 text-blue-600 flex-shrink-0" />
+                        <span className="font-semibold">Database</span>
                       </div>
                     </div>
                   </div>
+
                 </div>
 
                 {/* Footer Bar */}
                 <div className="border-t border-black/[0.06] px-5 sm:px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs font-serif text-neutral-600 select-none">
                   <span className="flex items-center gap-1.5 text-neutral-600">
-                    <span className="w-2 h-2 rounded-full bg-red-500" />
-                    <span>12 downstream files & 4 routes impacted</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                    <span>Evidence-backed from actual repository source code</span>
                   </span>
-                  <span className="text-red-700 font-semibold font-mono text-[11px] flex items-center gap-1">
-                    Severity: High (Risk 3)
+                  <span className="text-blue-700 font-semibold font-mono text-[11px] flex items-center gap-1">
+                    Zero Hallucinations
                   </span>
                 </div>
               </div>

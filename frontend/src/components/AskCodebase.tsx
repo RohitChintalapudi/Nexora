@@ -121,18 +121,18 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
   const activeData = mockData[selectedQuestion];
 
   return (
-    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="intelligence">
+    <section className="relative py-8 md:py-12 bg-[#F7F7F5] content-layer" id="intelligence">
       <div className="max-w-7xl mx-auto px-6">
         
         {/* Section Header */}
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-8 md:mb-12">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             AI Codebase Intelligence
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-6">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-3">
             Ask questions. Get answers from your actual code.
           </h2>
-          <p className="text-neutral-500 text-sm leading-relaxed">
+          <p className="text-neutral-500 text-sm leading-relaxed max-w-xl mx-auto">
             NEXORA reads files, traces definitions, and tracks dependencies so that every answer is grounded in the structural context of your actual repository.
           </p>
         </div>
