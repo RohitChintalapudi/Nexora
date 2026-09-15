@@ -105,7 +105,7 @@ function MainContent() {
           <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-8 mb-8 md:mb-10">
             <div className="md:col-span-6 flex flex-col items-start">
               <div className="flex items-center gap-2 mb-3 font-bold text-white text-lg sm:text-xl select-none">
-                <img src="/favicon.png" alt="NEXORA Logo" className="w-5 h-5 object-contain rounded-full border border-white/20" />
+                <img src="/favicon.svg" alt="NEXORA Logo" className="w-5 h-5 object-contain rounded-full border border-white/20" />
                 <span className="tracking-wide">NEXORA</span>
               </div>
               <p className="text-neutral-300 text-sm sm:text-base max-w-sm leading-relaxed mb-3">

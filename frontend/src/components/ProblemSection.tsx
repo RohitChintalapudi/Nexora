@@ -255,12 +255,12 @@ export const ProblemSection: React.FC = () => {
             transition={{ duration: 0.25, ease: 'easeOut' }}
             onMouseEnter={() => setIsCoreHovered(true)}
             onMouseLeave={() => setIsCoreHovered(false)}
-            className="absolute z-20 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white flex items-center justify-center border border-black/[0.08] cursor-pointer shadow-sm select-none"
+            className="absolute z-20 w-36 h-36 sm:w-40 sm:h-40 rounded-full bg-white flex flex-col items-center justify-center border border-black/[0.08] cursor-pointer shadow-sm select-none gap-1"
           >
-            {/* Big Black Nexora N Logo */}
+            {/* Medium Black Nexora N Logo */}
             <svg
-              width="72"
-              height="72"
+              width="44"
+              height="44"
               viewBox="0 0 40 40"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
@@ -279,6 +279,11 @@ export const ProblemSection: React.FC = () => {
               <circle cx="29" cy="10" r="3.5" fill="#000000" />
               <circle cx="29" cy="30" r="3.5" fill="#000000" />
             </svg>
+
+            {/* Nexora text at bottom of logo */}
+            <span className="text-xs font-mono font-extrabold uppercase tracking-[0.18em] text-neutral-950 mt-0.5">
+              NEXORA
+            </span>
           </motion.div>
 
           {/* ========================================================= */}
@@ -393,10 +398,10 @@ export const ProblemSection: React.FC = () => {
           <div className="flex flex-col items-center justify-center my-3">
             <div className="h-6 w-[1.5px] bg-neutral-300" />
             
-            <div className="w-20 h-20 rounded-full bg-white border border-black/[0.08] shadow-sm flex items-center justify-center select-none">
+            <div className="w-24 h-24 rounded-full bg-white border border-black/[0.08] shadow-sm flex flex-col items-center justify-center select-none gap-0.5">
               <svg
-                width="40"
-                height="40"
+                width="34"
+                height="34"
                 viewBox="0 0 40 40"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -414,6 +419,9 @@ export const ProblemSection: React.FC = () => {
                 <circle cx="29" cy="10" r="3" fill="#000000" />
                 <circle cx="29" cy="30" r="3" fill="#000000" />
               </svg>
+              <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-neutral-950">
+                NEXORA
+              </span>
             </div>
 
             <div className="h-6 w-[1.5px] bg-neutral-300" />
