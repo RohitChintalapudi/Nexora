@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface FAQItem {
   question: string;
@@ -39,21 +40,35 @@ export const FAQSection: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] content-layer" id="faq">
       <div className="max-w-4xl mx-auto px-6">
         
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-2xl mx-auto mb-16 md:mb-20"
+        >
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             FAQ
           </span>
           <h2 className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
             Frequently Asked Questions
           </h2>
-        </div>
+        </motion.div>
 
         <div className="space-y-4 max-w-2xl mx-auto">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{
+                  duration: 0.45,
+                  delay: idx * 0.07,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
                 className="bg-white border border-black/[0.045] rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.005)]"
               >
                 <button
@@ -75,7 +90,7 @@ export const FAQSection: React.FC = () => {
                     {faq.answer}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

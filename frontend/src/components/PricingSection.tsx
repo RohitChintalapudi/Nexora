@@ -38,7 +38,13 @@ export const PricingSection: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto items-stretch">
           
-          <div className="flex flex-col rounded-3xl bg-white border border-black/[0.045] p-8 sm:p-9 shadow-[0_2px_12px_rgba(0,0,0,0.01)]">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col rounded-3xl bg-white border border-black/[0.045] p-8 sm:p-9 shadow-[0_2px_12px_rgba(0,0,0,0.01)]"
+          >
             <div className="mb-6">
               <h3 className="text-neutral-500 font-serif font-bold uppercase tracking-wider text-xs sm:text-sm mb-2">Basic</h3>
               <div className="flex items-baseline gap-1.5">
@@ -68,9 +74,15 @@ export const PricingSection: React.FC = () => {
             >
               Start with Basic
             </motion.button>
-          </div>
+          </motion.div>
 
-          <div className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 sm:p-9 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.55, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col rounded-3xl bg-white border-2 border-blue-600/30 p-8 sm:p-9 shadow-[0_12px_36px_rgba(37,99,235,0.035),_0_2px_6px_rgba(37,99,235,0.015)] relative"
+          >
             <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-3.5 py-1 rounded-full bg-blue-600 text-xs font-serif font-bold uppercase tracking-wider text-white select-none shadow-sm">
               Most Popular
             </div>
@@ -104,7 +116,7 @@ export const PricingSection: React.FC = () => {
             >
               Start with Premium
             </motion.button>
-          </div>
+          </motion.div>
 
         </div>
 

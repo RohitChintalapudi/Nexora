@@ -92,8 +92,16 @@ export const HowItWorks: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
             {steps.map((step, idx) => (
-              <div
+              <motion.div
                 key={step.num}
+                initial={{ opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.55,
+                  delay: idx * 0.12,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
                 <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-black/[0.06] shadow-sm flex items-center justify-center font-serif font-bold text-base sm:text-lg text-neutral-900 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
@@ -144,7 +152,7 @@ export const HowItWorks: React.FC = () => {
                   </motion.span>
                 </div>
 
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
