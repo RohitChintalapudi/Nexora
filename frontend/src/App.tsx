@@ -71,9 +71,8 @@ function MainContent() {
 
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
-        <ScrollReveal>
-          <TechnicalFoundation />
-        </ScrollReveal>
+        <TechnicalFoundation />
+
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
         <ScrollReveal>
