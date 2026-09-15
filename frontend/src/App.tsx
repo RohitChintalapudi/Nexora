@@ -93,9 +93,7 @@ function MainContent() {
         </ScrollReveal>
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
-        <ScrollReveal>
-          <FinalCTA />
-        </ScrollReveal>
+        <FinalCTA />
       </div>
 
       <ScrollReveal amount={0.05}>
