@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion } from 'framer-motion';
 
 interface FAQItem {
   question: string;
@@ -8,24 +9,24 @@ interface FAQItem {
 export const FAQSection: React.FC = () => {
   const faqs: FAQItem[] = [
     {
-      question: 'What is NEXORA?',
-      answer: 'NEXORA is an AI-powered workspace that helps developers understand their entire software project, instead of just behaving like a generic chatbot console.',
+      question: "01 — How long would it take you to understand a codebase you didn't build?",
+      answer: "NEXORA gives you an instant structured starting point — mapping technologies, component connections, entry points, and request flows so you start with the system's mental model instead of reading files blindly.",
     },
     {
-      question: 'Can NEXORA analyze my GitHub repository?',
-      answer: 'Yes. Connecting your GitHub repositories and indexing codebase trees, logic structures, and dependency connections are core parts of the platform.',
+      question: "02 — Does NEXORA just throw my code into an AI model?",
+      answer: "No. NEXORA first performs deterministic structural analysis — extracting AST symbols, routes, and dependency relationships — and retrieves verified context before asking AI to interpret it.",
     },
     {
-      question: 'Is NEXORA another AI coding assistant?',
-      answer: 'No. Traditional assistants help you write inline code snippets or answer generic syntax questions. NEXORA focuses on understanding code architecture, relationships, API boundaries, and database dependencies system-wide.',
+      question: "03 — What happens when the codebase has thousands of files?",
+      answer: "NEXORA filters noise, extracts structural patterns, and chunks meaningful semantic boundaries so you can understand large multi-service architectures without reading thousands of files.",
     },
     {
-      question: 'What can I ask NEXORA?',
-      answer: 'You can ask questions about system architecture design, dependencies routes, token credentials paths, JWT structures, API connections, database queries, and impact forecasts before modifying files.',
+      question: "04 — Can I trust what NEXORA tells me about my code?",
+      answer: "Deterministic facts come directly from the code's AST structure, while AI interpretations are grounded in retrieved source context. When evidence isn't strong enough, NEXORA surfaces that uncertainty directly.",
     },
     {
-      question: 'Can my team use NEXORA?',
-      answer: 'Team collaboration is a major milestone on our roadmap. Shared workspace diagrams and synchronized codebase graphs will be introduced as collaboration features mature.',
+      question: "05 — What if I join a project tomorrow that I've never seen before?",
+      answer: "Connect the repository and NEXORA immediately maps the architecture, APIs, data flows, entry points, and important files — giving you a clear onboarding roadmap from day one.",
     },
   ];
 
@@ -39,21 +40,35 @@ export const FAQSection: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] content-layer" id="faq">
       <div className="max-w-4xl mx-auto px-6">
         
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-2xl mx-auto mb-16 md:mb-20"
+        >
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             FAQ
           </span>
           <h2 className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
             Frequently Asked Questions
           </h2>
-        </div>
+        </motion.div>
 
         <div className="space-y-4 max-w-2xl mx-auto">
           {faqs.map((faq, idx) => {
             const isOpen = openIndex === idx;
             return (
-              <div
+              <motion.div
                 key={idx}
+                initial={{ opacity: 0, y: 18 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.1 }}
+                transition={{
+                  duration: 0.45,
+                  delay: idx * 0.07,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
                 className="bg-white border border-black/[0.045] rounded-2xl overflow-hidden transition-all duration-300 shadow-[0_1px_3px_rgba(0,0,0,0.005)]"
               >
                 <button
@@ -71,11 +86,11 @@ export const FAQSection: React.FC = () => {
                     isOpen ? 'open py-5' : ''
                   }`}
                 >
-                  <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-serif">
+                  <p className="text-neutral-600 text-sm sm:text-base leading-relaxed font-serif whitespace-pre-line">
                     {faq.answer}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>

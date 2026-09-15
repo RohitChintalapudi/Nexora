@@ -46,34 +46,24 @@ export const Logo: React.FC<LogoProps> = ({ className = '', size = 32, theme = '
       >
         {/* Connection pathways forming a stylized N-network */}
         <motion.path
-          d="M 10 30 L 10 10 L 20 20 L 30 10 L 30 30"
-          strokeWidth="2.5"
+          d="M 11 30 L 11 10 L 29 30 L 29 10"
+          strokeWidth="2.8"
           strokeLinecap="round"
           strokeLinejoin="round"
           variants={pathVariants}
         />
-        
-        <motion.path
-          d="M 10 10 L 30 30"
-          strokeWidth="1.5"
-          strokeDasharray="4, 4"
-          variants={{
-            initial: { opacity: 0.35, stroke: isDark ? '#A1A1AA' : '#64748B' },
-            hover: { opacity: 0.7, stroke: isDark ? '#E4E4E7' : '#334155', transition: { duration: 0.25 } }
-          }}
-        />
 
         {/* Nodes */}
         {/* Top Left Node */}
-        <motion.circle cx="10" cy="10" r="3.5" variants={nodeVariants} />
+        <motion.circle cx="11" cy="10" r="3.5" variants={nodeVariants} />
         {/* Bottom Left Node */}
-        <motion.circle cx="10" cy="30" r="3.5" variants={nodeVariants} />
+        <motion.circle cx="11" cy="30" r="3.5" variants={nodeVariants} />
         {/* Center Node */}
-        <motion.circle cx="20" cy="20" r="4.5" variants={nodeVariants} />
+        <motion.circle cx="20" cy="20" r="3.5" variants={nodeVariants} />
         {/* Top Right Node */}
-        <motion.circle cx="30" cy="10" r="3.5" variants={nodeVariants} />
+        <motion.circle cx="29" cy="10" r="3.5" variants={nodeVariants} />
         {/* Bottom Right Node */}
-        <motion.circle cx="30" cy="30" r="3.5" variants={nodeVariants} />
+        <motion.circle cx="29" cy="30" r="3.5" variants={nodeVariants} />
       </svg>
       <span className={`font-semibold ${isDark ? 'text-white' : 'text-neutral-950'} font-sans tracking-tight text-xl`}>
         NEXORA

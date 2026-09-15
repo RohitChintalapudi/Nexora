@@ -67,7 +67,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
           >
             {/* Pulsing Inter-Node Pathways */}
             <motion.path
-              d="M 10 30 L 10 10 L 20 20 L 30 10 L 30 30"
+              d="M 11 30 L 11 10 L 29 30 L 29 10"
               stroke="#000000"
               strokeWidth="2.8"
               strokeLinecap="round"
@@ -83,24 +83,9 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
               }}
             />
 
-            <motion.path
-              d="M 10 10 L 30 30"
-              stroke="#64748b"
-              strokeWidth="1.5"
-              strokeDasharray="4, 4"
-              animate={{
-                opacity: [0.3, 0.8, 0.3]
-              }}
-              transition={{
-                duration: 1.6,
-                repeat: Infinity,
-                ease: 'easeInOut'
-              }}
-            />
-
             {/* Glowing Nodes */}
             <motion.circle 
-              cx="10" 
+              cx="11" 
               cy="10" 
               r="3.5" 
               fill="#000000"
@@ -108,7 +93,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
               transition={{ duration: 1.8, repeat: Infinity, delay: 0.1 }}
             />
             <motion.circle 
-              cx="10" 
+              cx="11" 
               cy="30" 
               r="3.5" 
               fill="#000000"

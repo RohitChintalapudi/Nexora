@@ -54,11 +54,11 @@ export const HowItWorks: React.FC = () => {
   ];
 
   return (
-    <section className="relative py-12 md:py-16 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="howitworks">
+    <section className="relative py-10 md:py-14 bg-[#F7F7F5] border-t border-black/[0.035] content-layer" id="howitworks">
       <div className="max-w-7xl mx-auto px-6">
         
-        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
+        <div className="text-center max-w-2xl mx-auto mb-10 md:mb-12">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             How It Works
           </span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
@@ -90,61 +90,43 @@ export const HowItWorks: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-6 relative z-10">
             {steps.map((step, idx) => (
-              <div
+              <motion.div
                 key={step.num}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{
+                  duration: 0.5,
+                  delay: idx * 0.1,
+                  ease: [0.16, 1, 0.3, 1]
+                }}
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white border border-black/[0.06] shadow-sm flex items-center justify-center font-serif font-bold text-base sm:text-lg text-neutral-900 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-6 relative bg-white select-none z-10">
+                <div className="w-14 h-14 rounded-full bg-white border border-black/[0.06] shadow-sm flex items-center justify-center font-serif font-bold text-base text-neutral-900 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-4 relative select-none z-10">
                   {step.num}
                   <span className="absolute -inset-1 rounded-full border border-blue-500/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-105" />
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-serif font-semibold text-neutral-900 mb-3 group-hover:text-blue-600 transition-colors duration-300">
+                <h3 className="text-lg sm:text-xl font-serif font-semibold text-neutral-900 mb-2 group-hover:text-blue-600 transition-colors duration-300">
                   {step.title}
                 </h3>
                 
-                <p className="text-neutral-600 text-sm sm:text-base font-serif leading-relaxed max-w-[280px] md:max-w-none mb-4">
+                <p className="text-neutral-600 text-xs sm:text-sm font-serif leading-relaxed max-w-[280px] md:max-w-none mb-3">
                   {step.desc}
                 </p>
 
-                <ul className="space-y-2.5 text-xs sm:text-sm font-serif text-neutral-600 text-left w-full max-w-[280px] md:max-w-none flex flex-col items-center md:items-start">
+                <ul className="space-y-2 text-xs sm:text-sm font-serif text-neutral-600 text-left w-full max-w-[280px] md:max-w-none flex flex-col items-center md:items-start">
                   {step.points.map((p) => (
-                    <li key={p} className="flex items-center gap-2.5">
+                    <li key={p} className="flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500 flex-shrink-0" />
                       <span>{p}</span>
                     </li>
                   ))}
                 </ul>
 
-                <div className="flex flex-col items-center gap-1.5 mt-8 w-full select-none">
-                  <motion.div 
-                    animate={{ 
-                      scale: [1, 1.35, 1],
-                      backgroundColor: ['#E5E5E5', '#2563EB', '#E5E5E5']
-                    }}
-                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0, ease: "easeInOut" }}
-                    className="w-1.5 h-1.5 rounded-full"
-                  />
-                  <motion.div 
-                    animate={{ 
-                      scale: [1, 1.35, 1],
-                      backgroundColor: ['#E5E5E5', '#2563EB', '#E5E5E5']
-                    }}
-                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0 + 0.2, ease: "easeInOut" }}
-                    className="w-1.5 h-1.5 rounded-full"
-                  />
-                  <motion.span 
-                    animate={{ color: ['#D4D4D4', '#2563EB', '#D4D4D4'] }}
-                    transition={{ repeat: Infinity, duration: 4, delay: idx * 1.0 + 0.35, ease: "easeInOut" }}
-                    className="text-[10px] font-sans"
-                  >
-                    ↓
-                  </motion.span>
-                </div>
-
-              </div>
+              </motion.div>
             ))}
           </div>
         </div>
