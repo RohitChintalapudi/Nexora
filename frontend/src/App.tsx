@@ -39,7 +39,7 @@ function MainContent() {
   }
 
   return (
-    <div className="landing-page relative min-h-screen bg-[#F7F7F5] overflow-x-hidden">
+    <div className="landing-page relative min-h-screen bg-[#F7F7F5] overflow-x-clip">
       <Navbar />
       <AuthModal />
 
@@ -67,9 +67,8 @@ function MainContent() {
         </ScrollReveal>
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
-        <ScrollReveal>
-          <ComplexSystems />
-        </ScrollReveal>
+        <ComplexSystems />
+
 
         <div className="max-w-6xl mx-auto h-[1px] bg-black/[0.08]" />
         <ScrollReveal>
