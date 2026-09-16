@@ -305,29 +305,6 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <div className="border-t border-black/[0.08] flex-1" />
               </div>
 
-              {/* Authentication In Progress Banner Inside Card */}
-              <AnimatePresence>
-                {isLoading && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0, y: -4 }}
-                    animate={{ opacity: 1, height: 'auto', y: 0 }}
-                    exit={{ opacity: 0, height: 0, y: -4 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden mb-3.5"
-                  >
-                    <div className="p-3 rounded-xl bg-neutral-900 text-white border border-neutral-800 shadow-md flex items-center justify-center gap-2.5 text-xs sm:text-sm font-serif">
-                      <div className="relative flex items-center justify-center">
-                        <Loader2 className="w-4 h-4 animate-spin text-blue-400 flex-shrink-0" />
-                        <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
-                      </div>
-                      <span className="text-neutral-100 font-medium">
-                        {authStatusMessage || 'Authenticating in progress...'}
-                      </span>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
               {/* Error Message */}
               <AnimatePresence>
                 {errorMessage && !isLoading && (

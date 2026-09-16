@@ -212,29 +212,6 @@ export const AuthModal: React.FC = () => {
               </button>
             </div>
 
-            {/* Authentication In Progress Banner Inside Modal */}
-            <AnimatePresence>
-              {isLoading && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, y: -4 }}
-                  animate={{ opacity: 1, height: 'auto', y: 0 }}
-                  exit={{ opacity: 0, height: 0, y: -4 }}
-                  transition={{ duration: 0.2 }}
-                  className="overflow-hidden mb-3.5"
-                >
-                  <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center gap-2.5 text-blue-300 text-xs font-sans shadow-inner">
-                    <div className="relative flex items-center justify-center">
-                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400 flex-shrink-0" />
-                      <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
-                    </div>
-                    <span className="font-medium tracking-wide">
-                      {authStatusMessage || 'Authenticating in progress...'}
-                    </span>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
             {/* Error Message */}
             {errorMessage && !isLoading && (
               <motion.div
@@ -373,6 +350,32 @@ export const AuthModal: React.FC = () => {
               )}
             </div>
           </motion.div>
+
+          {/* Floating Bottom Authentication Progress Bar */}
+          <AnimatePresence>
+            {isLoading && (
+              <motion.div
+                initial={{ opacity: 0, y: 30, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 30, scale: 0.94 }}
+                transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+                className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-2.5 rounded-full bg-neutral-950/95 text-white border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl pointer-events-none select-none"
+              >
+                <div className="relative flex items-center justify-center">
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-400 flex-shrink-0" />
+                  <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
+                </div>
+                <div className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-100 font-serif">
+                  <span>{authStatusMessage || 'Authenticating in progress...'}</span>
+                  <span className="inline-flex gap-1 ml-0.5">
+                    <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                    <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                    <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+                  </span>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       )}
     </AnimatePresence>
