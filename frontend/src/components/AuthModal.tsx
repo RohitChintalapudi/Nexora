@@ -5,7 +5,7 @@ import { Logo } from './Logo';
 import { Eye, EyeOff, Lock, Mail, User as UserIcon, X, Loader2, ArrowRight } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
-  const { isAuthModalOpen, authModalTab, closeAuthModal, openAuthModal, login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading } = useAuth();
+  const { isAuthModalOpen, authModalTab, closeAuthModal, openAuthModal, login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authAction, authStatusMessage } = useAuth();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -113,39 +113,59 @@ export const AuthModal: React.FC = () => {
               <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
+                  disabled={isLoading}
                   onClick={() => triggerGoogleSignIn()}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 text-xs sm:text-sm font-medium text-neutral-900 transition-all cursor-pointer shadow-sm active:scale-98"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white hover:bg-neutral-100 text-xs sm:text-sm font-medium text-neutral-900 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path
-                      fill="#EA4335"
-                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
-                    />
-                    <path
-                      fill="#4285F4"
-                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
-                    />
-                  </svg>
-                  <span>Google</span>
+                  {isLoading && authAction === 'google' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-neutral-900" />
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path
+                          fill="#EA4335"
+                          d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
+                        />
+                        <path
+                          fill="#4285F4"
+                          d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
+                        />
+                      </svg>
+                      <span>Google</span>
+                    </>
+                  )}
                 </button>
 
                 <button
                   type="button"
+                  disabled={isLoading}
                   onClick={() => triggerGithubSignIn()}
-                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/[0.1] text-xs sm:text-sm font-medium text-white transition-all cursor-pointer shadow-sm active:scale-98"
+                  className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] border border-white/[0.1] text-xs sm:text-sm font-medium text-white transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                  </svg>
-                  <span>GitHub</span>
+                  {isLoading && authAction === 'github' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 fill-white" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                      </svg>
+                      <span>GitHub</span>
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -162,11 +182,12 @@ export const AuthModal: React.FC = () => {
             <div className="flex p-1 bg-white/[0.06] border border-white/[0.08] rounded-xl mb-4">
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={() => {
                   setErrorMessage(null);
                   openAuthModal('login');
                 }}
-                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer disabled:opacity-50 ${
                   authModalTab === 'login'
                     ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.4)]'
                     : 'text-neutral-400 hover:text-white'
@@ -176,11 +197,12 @@ export const AuthModal: React.FC = () => {
               </button>
               <button
                 type="button"
+                disabled={isLoading}
                 onClick={() => {
                   setErrorMessage(null);
                   openAuthModal('register');
                 }}
-                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer ${
+                className={`flex-1 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all cursor-pointer disabled:opacity-50 ${
                   authModalTab === 'register'
                     ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.4)]'
                     : 'text-neutral-400 hover:text-white'
@@ -190,8 +212,31 @@ export const AuthModal: React.FC = () => {
               </button>
             </div>
 
+            {/* Authentication In Progress Banner Inside Modal */}
+            <AnimatePresence>
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0, y: -4 }}
+                  animate={{ opacity: 1, height: 'auto', y: 0 }}
+                  exit={{ opacity: 0, height: 0, y: -4 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden mb-3.5"
+                >
+                  <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/25 flex items-center justify-center gap-2.5 text-blue-300 text-xs font-sans shadow-inner">
+                    <div className="relative flex items-center justify-center">
+                      <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-400 flex-shrink-0" />
+                      <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
+                    </div>
+                    <span className="font-medium tracking-wide">
+                      {authStatusMessage || 'Authenticating in progress...'}
+                    </span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
             {/* Error Message */}
-            {errorMessage && (
+            {errorMessage && !isLoading && (
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -215,10 +260,11 @@ export const AuthModal: React.FC = () => {
                     <input
                       type="text"
                       value={name}
+                      disabled={isLoading}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Mercer"
                       required
-                      className="w-full pl-10 pr-4 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans"
+                      className="w-full pl-10 pr-4 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -235,10 +281,11 @@ export const AuthModal: React.FC = () => {
                   <input
                     type="email"
                     value={email}
+                    disabled={isLoading}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
                     required
-                    className="w-full pl-10 pr-4 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -254,15 +301,17 @@ export const AuthModal: React.FC = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
+                    disabled={isLoading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={authModalTab === 'register' ? 'At least 6 characters' : '••••••••'}
                     required
-                    className="w-full pl-10 pr-10 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans"
+                    className="w-full pl-10 pr-10 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans disabled:opacity-60 disabled:cursor-not-allowed"
                   />
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-white transition-colors cursor-pointer"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -278,7 +327,7 @@ export const AuthModal: React.FC = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Processing...</span>
+                    <span>{authStatusMessage || 'Processing...'}</span>
                   </>
                 ) : (
                   <>
@@ -296,11 +345,12 @@ export const AuthModal: React.FC = () => {
                   Already have an account?{' '}
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => {
                       setErrorMessage(null);
                       openAuthModal('login');
                     }}
-                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer"
+                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer disabled:opacity-50"
                   >
                     Sign in
                   </button>
@@ -310,11 +360,12 @@ export const AuthModal: React.FC = () => {
                   Don't have an account yet?{' '}
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => {
                       setErrorMessage(null);
                       openAuthModal('register');
                     }}
-                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer"
+                    className="text-blue-400 hover:text-blue-300 font-medium transition-colors cursor-pointer disabled:opacity-50"
                   >
                     Create one
                   </button>

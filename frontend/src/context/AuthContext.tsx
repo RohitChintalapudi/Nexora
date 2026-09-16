@@ -8,11 +8,15 @@ export interface User {
   createdAt?: string;
 }
 
+export type AuthActionType = 'google' | 'github' | 'login' | 'register' | 'verifying' | null;
+
 interface AuthContextType {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  authAction: AuthActionType;
+  authStatusMessage: string | null;
   currentPage: 'home' | 'signin' | 'signup' | 'dashboard';
   navigateTo: (page: 'home' | 'signin' | 'signup' | 'dashboard') => void;
   isAuthModalOpen: boolean;
@@ -44,6 +48,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('nexora_token'));
   const [isLoading, setIsLoading] = useState(true);
+  const [authAction, setAuthAction] = useState<AuthActionType>('verifying');
+  const [authStatusMessage, setAuthStatusMessage] = useState<string | null>('Authenticating in progress...');
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authModalTab, setAuthModalTab] = useState<'login' | 'register'>('login');
 
@@ -104,6 +110,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const code = params.get('code');
 
     if (tokenFromUrl) {
+      setIsLoading(true);
+      setAuthAction('verifying');
+      setAuthStatusMessage('Authenticating in progress...');
       localStorage.setItem('nexora_token', tokenFromUrl);
       setToken(tokenFromUrl);
       const cleanUrl = window.location.pathname === '/dashboard' ? '/dashboard' : '/dashboard';
@@ -120,11 +129,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           }
         })
         .catch(console.error)
-        .finally(() => setIsLoading(false));
+        .finally(() => {
+          setIsLoading(false);
+          setAuthAction(null);
+          setAuthStatusMessage(null);
+        });
       return;
     }
 
     if (code) {
+      setIsLoading(true);
+      setAuthAction('github');
+      setAuthStatusMessage('Authenticating in progress...');
       const cleanUrl = window.location.pathname;
       window.history.replaceState({}, document.title, cleanUrl);
       loginWithGithub({ code });
@@ -135,6 +151,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const storedToken = localStorage.getItem('nexora_token');
       if (!storedToken) {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
         return;
       }
 
@@ -158,6 +176,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.error('Failed to verify token:', err);
       } finally {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
       }
     };
 
@@ -166,6 +186,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
+    setAuthAction('login');
+    setAuthStatusMessage('Authenticating in progress...');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
@@ -176,6 +198,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await res.json();
       if (!res.ok || !data.success) {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
         return { success: false, message: data.message || 'Login failed' };
       }
 
@@ -183,17 +207,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(data.token);
       setUser(data.user);
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       closeAuthModal();
       navigateTo('dashboard');
       return { success: true };
     } catch (err: any) {
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       return { success: false, message: err.message || 'Network error connecting to auth server' };
     }
   };
 
   const register = async (name: string, email: string, password: string) => {
     setIsLoading(true);
+    setAuthAction('register');
+    setAuthStatusMessage('Authenticating in progress...');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
         method: 'POST',
@@ -204,6 +234,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await res.json();
       if (!res.ok || !data.success) {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
         return { success: false, message: data.message || 'Registration failed' };
       }
 
@@ -211,17 +243,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(data.token);
       setUser(data.user);
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       closeAuthModal();
       navigateTo('dashboard');
       return { success: true };
     } catch (err: any) {
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       return { success: false, message: err.message || 'Network error connecting to auth server' };
     }
   };
 
   const loginWithGoogle = async (payload: { credential?: string; accessToken?: string }) => {
     setIsLoading(true);
+    setAuthAction('google');
+    setAuthStatusMessage('Authenticating in progress...');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/google`, {
         method: 'POST',
@@ -232,6 +270,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await res.json();
       if (!res.ok || !data.success) {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
         return { success: false, message: data.message || 'Google authentication failed' };
       }
 
@@ -239,17 +279,25 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(data.token);
       setUser(data.user);
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       closeAuthModal();
       navigateTo('dashboard');
       return { success: true };
     } catch (err: any) {
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       return { success: false, message: err.message || 'Network error connecting to Google auth server' };
     }
   };
 
   const triggerGoogleSignIn = () => {
     if (typeof window === 'undefined') return;
+
+    setIsLoading(true);
+    setAuthAction('google');
+    setAuthStatusMessage('Authenticating in progress...');
 
     const googleObj = (window as any).google;
 
@@ -262,14 +310,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           callback: async (tokenResponse: any) => {
             if (tokenResponse?.error) {
               console.error('Google OAuth token error:', tokenResponse);
+              setIsLoading(false);
+              setAuthAction(null);
+              setAuthStatusMessage(null);
               return;
             }
             if (tokenResponse?.access_token) {
               await loginWithGoogle({ accessToken: tokenResponse.access_token });
+            } else {
+              setIsLoading(false);
+              setAuthAction(null);
+              setAuthStatusMessage(null);
             }
           },
           error_callback: (err: any) => {
             console.error('Google OAuth error:', err);
+            setIsLoading(false);
+            setAuthAction(null);
+            setAuthStatusMessage(null);
           },
         });
         tokenClient.requestAccessToken({ prompt: 'select_account' });
@@ -281,16 +339,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Second preference: Google Identity Services ID token prompt
     if (googleObj?.accounts?.id) {
-      googleObj.accounts.id.initialize({
-        client_id: GOOGLE_CLIENT_ID,
-        callback: async (response: any) => {
-          if (response?.credential) {
-            await loginWithGoogle({ credential: response.credential });
+      try {
+        googleObj.accounts.id.initialize({
+          client_id: GOOGLE_CLIENT_ID,
+          callback: async (response: any) => {
+            if (response?.credential) {
+              await loginWithGoogle({ credential: response.credential });
+            } else {
+              setIsLoading(false);
+              setAuthAction(null);
+              setAuthStatusMessage(null);
+            }
+          },
+        });
+        googleObj.accounts.id.prompt((notification: any) => {
+          if (notification?.isNotDisplayed?.() || notification?.isSkippedMoment?.()) {
+            // If prompt was skipped or not displayed, fallback cleanly
           }
-        },
-      });
-      googleObj.accounts.id.prompt();
-      return;
+        });
+        return;
+      } catch (e) {
+        console.warn('Google accounts.id init failed:', e);
+      }
     }
 
     // Fallback: Redirect to server-side Google OAuth endpoint
@@ -299,6 +369,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithGithub = async (payload: { code?: string; accessToken?: string }) => {
     setIsLoading(true);
+    setAuthAction('github');
+    setAuthStatusMessage('Authenticating in progress...');
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/github`, {
         method: 'POST',
@@ -309,6 +381,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await res.json();
       if (!res.ok || !data.success) {
         setIsLoading(false);
+        setAuthAction(null);
+        setAuthStatusMessage(null);
         return { success: false, message: data.message || 'GitHub authentication failed' };
       }
 
@@ -316,17 +390,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setToken(data.token);
       setUser(data.user);
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       closeAuthModal();
       navigateTo('dashboard');
       return { success: true };
     } catch (err: any) {
       setIsLoading(false);
+      setAuthAction(null);
+      setAuthStatusMessage(null);
       return { success: false, message: err.message || 'Network error connecting to GitHub auth server' };
     }
   };
 
   const triggerGithubSignIn = () => {
     if (typeof window === 'undefined') return;
+    setIsLoading(true);
+    setAuthAction('github');
+    setAuthStatusMessage('Authenticating in progress...');
     const redirectUri = 'http://localhost:5000/api/auth/github/callback';
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = githubAuthUrl;
@@ -336,6 +417,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('nexora_token');
     setToken(null);
     setUser(null);
+    setAuthAction(null);
+    setAuthStatusMessage(null);
     navigateTo('home');
   };
 
@@ -346,6 +429,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         token,
         isAuthenticated: !!user,
         isLoading,
+        authAction,
+        authStatusMessage,
         currentPage,
         navigateTo,
         isAuthModalOpen,
