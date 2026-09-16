@@ -35,11 +35,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, navigateTo } = useAuth();
+  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authAction, authStatusMessage, navigateTo } = useAuth();
 
   useEffect(() => {
     setMode(initialMode);
   }, [initialMode]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const errorParam = params.get('error');
+    if (errorParam) {
+      setErrorMessage(decodeURIComponent(errorParam));
+    }
+  }, []);
 
   const handleModeChange = (newMode: 'signin' | 'signup') => {
     setMode(newMode);
@@ -232,39 +240,59 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               <div className="grid grid-cols-2 gap-2.5 mb-3.5">
                 <button
                   type="button"
+                  disabled={isLoading}
                   onClick={() => triggerGoogleSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-4 h-4" viewBox="0 0 24 24">
-                    <path
-                      fill="#EA4335"
-                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
-                    />
-                    <path
-                      fill="#4285F4"
-                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-                    />
-                    <path
-                      fill="#FBBC05"
-                      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
-                    />
-                    <path
-                      fill="#34A853"
-                      d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
-                    />
-                  </svg>
-                  <span>Google</span>
+                  {isLoading && authAction === 'google' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-neutral-800" />
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path
+                          fill="#EA4335"
+                          d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
+                        />
+                        <path
+                          fill="#4285F4"
+                          d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
+                        />
+                      </svg>
+                      <span>Google</span>
+                    </>
+                  )}
                 </button>
 
                 <button
                   type="button"
+                  disabled={isLoading}
                   onClick={() => triggerGithubSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                  </svg>
-                  <span>GitHub</span>
+                  {isLoading && authAction === 'github' ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin text-neutral-800" />
+                      <span>Authenticating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                      </svg>
+                      <span>GitHub</span>
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -279,7 +307,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
               {/* Error Message */}
               <AnimatePresence>
-                {errorMessage && (
+                {errorMessage && !isLoading && (
                   <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
@@ -312,10 +340,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <input
                           type="text"
                           value={name}
+                          disabled={isLoading}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Rohit"
                           required={mode === 'signup'}
-                          className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif"
+                          className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
                         />
                       </div>
                     </motion.div>
@@ -333,10 +362,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <input
                       type="email"
                       value={email}
+                      disabled={isLoading}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="rohit@nexora.io"
                       required
-                      className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif"
+                      className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -363,15 +393,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
+                      disabled={isLoading}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={mode === 'signup' ? 'At least 6 characters' : '••••••••'}
                       required
-                      className="w-full pl-10 pr-10 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif"
+                      className="w-full pl-10 pr-10 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
                     />
                     <button
                       type="button"
+                      disabled={isLoading}
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-black transition-colors cursor-pointer"
+                      className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-black transition-colors cursor-pointer disabled:opacity-50"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -389,7 +421,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   {isLoading ? (
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Processing...</span>
+                      <span>{authStatusMessage || 'Processing...'}</span>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -417,8 +449,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     Already have an account?{' '}
                     <button
                       type="button"
+                      disabled={isLoading}
                       onClick={() => handleModeChange('signin')}
-                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer"
+                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
                     >
                       Sign In
                     </button>
@@ -428,8 +461,9 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     Don't have an account yet?{' '}
                     <button
                       type="button"
+                      disabled={isLoading}
                       onClick={() => handleModeChange('signup')}
-                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer"
+                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
                     >
                       Create Account
                     </button>
@@ -442,6 +476,32 @@ export const AuthPage: React.FC<AuthPageProps> = ({
 
         </div>
       </main>
+
+      {/* Floating Bottom Authentication Progress Bar */}
+      <AnimatePresence>
+        {isLoading && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.94 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 30, scale: 0.94 }}
+            transition={{ type: 'spring', stiffness: 450, damping: 32 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-2.5 rounded-full bg-neutral-950/95 text-white border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl pointer-events-none select-none"
+          >
+            <div className="relative flex items-center justify-center">
+              <Loader2 className="w-4 h-4 animate-spin text-blue-400 flex-shrink-0" />
+              <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
+            </div>
+            <div className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-100 font-serif">
+              <span>{authStatusMessage || 'Authenticating in progress...'}</span>
+              <span className="inline-flex gap-1 ml-0.5">
+                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
+                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
+                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
+              </span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer (Compact Apple Minimalist Light) */}
       <footer className="relative z-20 w-full max-w-7xl mx-auto px-6 py-3 text-center text-xs font-serif text-neutral-400 flex-shrink-0">

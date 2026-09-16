@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Times New Roman', Times, Georgia, serif;
-  --font-serif: 'Times New Roman', Times, Georgia, serif;
+  --font-sans: 'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif;
+  --font-serif: 'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif;
   --color-blue-600: #2563EB;
   --color-blue-700: #1D4ED8;
   --color-background: #09090b;
@@ -17,10 +17,10 @@ html {
   font-size: 17.5px;
 }
 
-html, body {
+html, body, #root {
   background-color: #F7F7F5;
   color: #111111;
-  font-family: 'Times New Roman', Times, Georgia, serif;
+  font-family: 'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif !important;
   font-size: 1.05rem;
   line-height: 1.6;
   letter-spacing: 0.005em;
@@ -52,17 +52,15 @@ html.lenis, html.lenis body {
   pointer-events: none;
 }
 
-/* Ensure landing page and auth pages preserve their typography, while dashboard uses Plus Jakarta Sans / Outfit */
+/* Force Times New Roman across the entire application and all pages/components */
+*, *::before, *::after,
 .landing-page,
 .landing-page *,
 .auth-page,
-.auth-page * {
-  font-family: 'Times New Roman', Times, Georgia, serif !important;
-}
-
+.auth-page *,
 .dashboard-workspace,
 .dashboard-workspace * {
-  font-family: 'Plus Jakarta Sans', 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: 'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif !important;
 }
 
 button:not(:disabled), [role="button"] {

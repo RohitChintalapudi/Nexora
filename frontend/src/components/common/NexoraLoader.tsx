@@ -25,7 +25,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
   const content = (
     <div 
       className="flex flex-col items-center justify-center text-center space-y-5 select-none"
-      style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+      style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
     >
       
       {/* Animated Glowing Nexora Logo Glyphs */}
@@ -133,7 +133,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
         <div className="flex items-center justify-center gap-1.5">
           <span 
             className={`font-black tracking-[0.22em] text-black dark:text-black ${textSize}`}
-            style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+            style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
           >
             NEXORA
           </span>
@@ -160,7 +160,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
         {message && (
           <p 
             className="text-xs font-bold text-slate-800"
-            style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+            style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
           >
             {message}
           </p>
@@ -169,7 +169,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
         {subMessage && (
           <p 
             className="text-[11px] font-medium text-slate-500 leading-relaxed"
-            style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+            style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
           >
             {subMessage}
           </p>
@@ -232,7 +232,7 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
         </svg>
         <span 
           className="text-xs font-bold text-slate-900"
-          style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" }}
+          style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
         >
           {message}
         </span>
