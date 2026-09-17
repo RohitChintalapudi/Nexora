@@ -29,6 +29,7 @@ interface RepositoriesViewProps {
   isConnecting?: boolean;
   initialSelectedRepo?: SavedRepository | null;
   initialSubView?: 'list' | 'details' | 'progress' | 'analysis';
+  onBackToList?: () => void;
 }
 
 export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
@@ -38,7 +39,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   githubUsername = null,
   isConnecting = false,
   initialSelectedRepo = null,
-  initialSubView = 'list'
+  initialSubView = 'list',
+  onBackToList
 }) => {
   const {
     gitHubRepos,
@@ -64,6 +66,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
 
   const {
     job,
+    isLoadingJob,
     isStarting: isStartingAnalysis,
     startAnalysis,
     fetchLatestJob,
@@ -71,21 +74,46 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   } = useAnalysisJob();
 
   const [subView, setSubView] = useState<'list' | 'details' | 'progress' | 'analysis'>(initialSubView);
+  const handledInitialRepoIdRef = React.useRef<number | null>(null);
 
   // Handle initialSelectedRepo if passed from Dashboard
   useEffect(() => {
     if (initialSelectedRepo) {
-      setActiveSavedRepo(initialSelectedRepo);
-      setSubView(initialSubView === 'analysis' ? 'analysis' : 'details');
-      fetchLatestJob(initialSelectedRepo.id);
+      if (handledInitialRepoIdRef.current !== initialSelectedRepo.id) {
+        handledInitialRepoIdRef.current = initialSelectedRepo.id;
+        resetJob();
+        setActiveSavedRepo(initialSelectedRepo);
+        setSubView(initialSubView === 'analysis' ? 'analysis' : 'details');
+        fetchLatestJob(initialSelectedRepo.id);
+      }
+    } else {
+      handledInitialRepoIdRef.current = null;
     }
-  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob]);
+  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob, resetJob]);
 
-  // When an active saved repo is clicked
+  // Clean back-to-list navigation handler
+  const handleBackToSelection = () => {
+    handledInitialRepoIdRef.current = null;
+    setActiveSavedRepo(null);
+    setSelectedRepo(null);
+    setSubView('list');
+    resetJob();
+    if (onBackToList) {
+      onBackToList();
+    }
+    if (window.location.pathname.startsWith('/repositories') || window.location.hash.includes('/repositories')) {
+      window.history.pushState(null, '', '/dashboard');
+    }
+  };
+
+  // When an active saved repo is clicked from the list
   const handleOpenDetails = (repo: SavedRepository) => {
+    handledInitialRepoIdRef.current = repo.id;
+    resetJob();
     setActiveSavedRepo(repo);
     setSubView('details');
     fetchLatestJob(repo.id);
+    window.history.pushState(null, '', `/repositories/${repo.id}`);
   };
 
   const handleStartAnalysis = async () => {
@@ -135,11 +163,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
       <RepositoryDetailsView
         repository={activeSavedRepo}
         latestJob={job}
-        onBackToSelection={() => {
-          setActiveSavedRepo(null);
-          setSubView('list');
-          resetJob();
-        }}
+        isLoadingJob={isLoadingJob}
+        onBackToSelection={handleBackToSelection}
         onStartAnalysis={handleStartAnalysis}
         isStartingAnalysis={isStartingAnalysis}
         onViewAnalysisProgress={() => setSubView('progress')}
@@ -150,10 +175,13 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
 
   const handleContinue = async () => {
     if (!selectedRepo) return;
+    resetJob();
     const saved = await saveSelectedRepository();
     if (saved) {
+      handledInitialRepoIdRef.current = saved.id;
       setSubView('details');
       fetchLatestJob(saved.id);
+      window.history.pushState(null, '', `/repositories/${saved.id}`);
     }
   };
 

@@ -3,7 +3,7 @@ import os from 'os';
 import path from 'path';
 import crypto from 'crypto';
 import AdmZip from 'adm-zip';
-import { GithubAccountModel } from '../models/githubAccountModel.js';
+import { githubTokenService } from './githubTokenService.js';
 import { INGESTION_CONFIG } from '../config/ingestionConfig.js';
 
 export class RepositoryFetcher {
@@ -43,25 +43,25 @@ export class RepositoryFetcher {
    * @returns {Promise<{ commitSha: string, extractedRoot: string }>}
    */
   static async fetchAndExtract({ userId, owner, repoName, defaultBranch = 'main', tempWorkspaceDir }) {
-    // 1. Retrieve authorized GitHub OAuth token
-    const githubAccount = await GithubAccountModel.findByUserId(userId);
-    if (!githubAccount || !githubAccount.access_token) {
+    // 1. Retrieve authorized and validated GitHub OAuth token
+    const tokenResult = await githubTokenService.getValidToken(userId);
+    if (!tokenResult || !tokenResult.token) {
       throw new Error('GitHub account is not connected. Please authorize GitHub in settings.');
     }
 
-    const token = githubAccount.access_token;
-    const headers = {
-      Authorization: `Bearer ${token}`,
+    let { account, token } = tokenResult;
+    const getHeaders = (t) => ({
+      Authorization: `Bearer ${t}`,
       'User-Agent': 'Nexora-App',
       Accept: 'application/vnd.github.v3+json'
-    };
+    });
 
     // 2. Fetch latest commit SHA for the branch
     let commitSha = null;
     try {
       const commitRes = await fetch(
         `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repoName)}/commits/${encodeURIComponent(defaultBranch)}`,
-        { headers }
+        { headers: getHeaders(token) }
       );
       if (commitRes.ok) {
         const commitData = await commitRes.json();
@@ -74,14 +74,29 @@ export class RepositoryFetcher {
     // 3. Fetch zip archive from GitHub
     const zipUrl = `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repoName)}/zipball/${encodeURIComponent(defaultBranch)}`;
 
-    const response = await fetch(zipUrl, {
-      headers,
+    let response = await fetch(zipUrl, {
+      headers: getHeaders(token),
       redirect: 'follow'
     });
 
+    // Handle 401: Refresh token and retry download once
+    if (response.status === 401) {
+      const refreshed = await githubTokenService.refreshAccessToken(account);
+      if (refreshed) {
+        token = refreshed.access_token;
+        response = await fetch(zipUrl, {
+          headers: getHeaders(token),
+          redirect: 'follow'
+        });
+      }
+    }
+
     if (!response.ok) {
-      if (response.status === 401 || response.status === 403) {
+      if (response.status === 401) {
         throw new Error('GitHub authorization was revoked or expired. Please reconnect your GitHub account.');
+      }
+      if (response.status === 403) {
+        throw new Error('GitHub API rate limit or permission restriction. Please wait a moment or check repo permissions.');
       }
       if (response.status === 404) {
         throw new Error(`Repository '${owner}/${repoName}' was not found or is no longer accessible.`);

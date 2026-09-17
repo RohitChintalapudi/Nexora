@@ -59,6 +59,7 @@ export interface AnalysisJob {
 export function useAnalysisJob() {
   const { token } = useAuth();
   const [job, setJob] = useState<AnalysisJob | null>(null);
+  const [isLoadingJob, setIsLoadingJob] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +105,9 @@ export function useAnalysisJob() {
     const currentToken = getAuthToken();
     if (!currentToken || !repositoryId) return null;
 
+    // Immediately clear stale job data if switching to a different repository
+    setJob(prev => (prev && prev.repositoryId === repositoryId ? prev : null));
+    setIsLoadingJob(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/repositories/${repositoryId}/analysis/latest`, {
         headers: {
@@ -112,22 +116,30 @@ export function useAnalysisJob() {
         }
       });
 
-      if (!res.ok) return null;
+      if (!res.ok) {
+        setJob(null);
+        return null;
+      }
 
       const data = await res.json();
       if (data.success && data.job) {
         setJob(data.job);
         return data.job;
+      } else {
+        setJob(null);
       }
       return null;
     } catch (err: any) {
       console.error('Error fetching latest repository job:', err);
+      setJob(null);
       return null;
+    } finally {
+      setIsLoadingJob(false);
     }
   }, [getAuthToken]);
 
   // Start analysis for a repository
-  const startAnalysis = async (repositoryId: number): Promise<AnalysisJob | null> => {
+  const startAnalysis = useCallback(async (repositoryId: number): Promise<AnalysisJob | null> => {
     const currentToken = getAuthToken();
     if (!currentToken) {
       setError('Authentication required to start analysis.');
@@ -169,7 +181,7 @@ export function useAnalysisJob() {
     } finally {
       setIsStarting(false);
     }
-  };
+  }, [getAuthToken]);
 
   // Automated polling effect
   useEffect(() => {
@@ -208,7 +220,7 @@ export function useAnalysisJob() {
     };
   }, [job?.id, job?.status, fetchJobStatus]);
 
-  const resetJob = () => {
+  const resetJob = useCallback(() => {
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
       pollIntervalRef.current = null;
@@ -216,10 +228,11 @@ export function useAnalysisJob() {
     setJob(null);
     setError(null);
     setIsPolling(false);
-  };
+  }, []);
 
   return {
     job,
+    isLoadingJob,
     isStarting,
     isPolling,
     error,

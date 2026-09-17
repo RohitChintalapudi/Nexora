@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { GithubAccountModel } from '../models/githubAccountModel.js';
+import { githubTokenService } from '../services/githubTokenService.js';
 
 const GITHUB_AUTH_URL = 'https://github.com/login/oauth/authorize';
 const GITHUB_TOKEN_URL = 'https://github.com/login/oauth/access_token';
@@ -206,9 +207,9 @@ export const githubController = {
    */
   async listRepositories(req, res) {
     try {
-      const account = await GithubAccountModel.findByUserId(req.user.id);
+      const tokenResult = await githubTokenService.getValidToken(req.user.id);
 
-      if (!account || !account.access_token) {
+      if (!tokenResult || !tokenResult.token) {
         return res.status(200).json({
           success: true,
           connected: false,
@@ -221,6 +222,7 @@ export const githubController = {
         });
       }
 
+      let { account, token } = tokenResult;
       const page = Math.max(1, parseInt(req.query.page, 10) || 1);
       const perPage = Math.min(100, Math.max(1, parseInt(req.query.per_page, 10) || 20));
       const search = req.query.search ? String(req.query.search).trim() : '';
@@ -234,16 +236,33 @@ export const githubController = {
         ghUrl = `https://api.github.com/user/repos?page=${page}&per_page=${perPage}&sort=updated&affiliation=owner,collaborator,organization_member`;
       }
 
-      const response = await fetchWithRetry(ghUrl, {
+      let response = await fetchWithRetry(ghUrl, {
         headers: {
-          Authorization: `Bearer ${account.access_token}`,
+          Authorization: `Bearer ${token}`,
           'User-Agent': 'Nexora-App',
           Accept: 'application/vnd.github.v3+json'
         }
       });
 
+      // Handle 401 Unauthorized: Attempt automatic token refresh and retry
+      if (response.status === 401) {
+        console.log(`⚠️ GitHub 401 Unauthorized encountered. Attempting token refresh for user #${req.user.id}...`);
+        const refreshed = await githubTokenService.refreshAccessToken(account);
+        if (refreshed) {
+          token = refreshed.access_token;
+          account = refreshed;
+          response = await fetchWithRetry(ghUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'User-Agent': 'Nexora-App',
+              Accept: 'application/vnd.github.v3+json'
+            }
+          });
+        }
+      }
+
       if (!response.ok) {
-        if (response.status === 401 || response.status === 403) {
+        if (response.status === 401) {
           return res.status(200).json({
             success: true,
             connected: true,
@@ -256,6 +275,23 @@ export const githubController = {
             message: 'GitHub authorization has expired or was revoked. Please reconnect your account.'
           });
         }
+
+        if (response.status === 403) {
+          const remaining = response.headers.get('x-ratelimit-remaining');
+          if (remaining === '0') {
+            return res.status(200).json({
+              success: false,
+              rate_limited: true,
+              repositories: [],
+              totalCount: 0,
+              page,
+              perPage,
+              hasMore: false,
+              message: 'GitHub API rate limit reached. Please wait a minute before searching again.'
+            });
+          }
+        }
+
         throw new Error(`GitHub API error (${response.status})`);
       }
 

@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/userModel.js';
+import { GithubAccountModel } from '../models/githubAccountModel.js';
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -14,6 +15,44 @@ const generateToken = (id) => {
     process.env.JWT_SECRET || 'nexora_default_jwt_secret_key',
     { expiresIn: '30d' }
   );
+};
+
+/**
+ * Format user response object with integrated GitHub connection status
+ */
+const getUserProfile = async (user) => {
+  let githubConnected = false;
+  let githubUsername = null;
+
+  try {
+    const ghAcc = await GithubAccountModel.findByUserId(user.id);
+    if (ghAcc && ghAcc.access_token) {
+      githubConnected = true;
+      githubUsername = ghAcc.username || null;
+    }
+  } catch (err) {
+    console.warn('Could not query GitHub account status for user:', err.message);
+  }
+
+  const hasPassword = Boolean(user.password && user.password.length > 0);
+  let authProvider = 'email';
+  if (!hasPassword) {
+    if (user.google_id) authProvider = 'google';
+    else if (user.github_id) authProvider = 'github';
+    else authProvider = 'oauth';
+  }
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    avatarUrl: user.avatar_url,
+    createdAt: user.created_at,
+    githubConnected,
+    githubUsername,
+    hasPassword,
+    authProvider
+  };
 };
 
 export const register = async (req, res) => {
@@ -55,16 +94,12 @@ export const register = async (req, res) => {
     });
 
     const token = generateToken(user.id);
+    const userProfile = await getUserProfile({ ...user, password: hashedPassword });
 
     return res.status(201).json({
       success: true,
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.created_at
-      }
+      user: userProfile
     });
   } catch (error) {
     console.error('Register error:', error);
@@ -105,16 +140,12 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user.id);
+    const userProfile = await getUserProfile(user);
 
     return res.status(200).json({
       success: true,
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        createdAt: user.created_at
-      }
+      user: userProfile
     });
   } catch (error) {
     console.error('Login error:', error);
@@ -172,17 +203,12 @@ export const googleAuth = async (req, res) => {
     });
 
     const token = generateToken(user.id);
+    const userProfile = await getUserProfile(user);
 
     return res.status(200).json({
       success: true,
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatarUrl: user.avatar_url,
-        createdAt: user.created_at
-      }
+      user: userProfile
     });
   } catch (error) {
     console.error('Google Auth error:', error);
@@ -279,18 +305,27 @@ export const githubAuth = async (req, res) => {
       avatarUrl: ghUser.avatar_url
     });
 
+    // Auto-link GitHub account credentials in github_accounts table
+    try {
+      await GithubAccountModel.upsert({
+        userId: user.id,
+        githubUserId: ghUser.id,
+        username: ghUser.login,
+        accessToken,
+        scopes: 'repo,read:user,user:email'
+      });
+      console.log(`✅ Auto-linked GitHub @${ghUser.login} for user #${user.id} during GitHub login`);
+    } catch (ghAccErr) {
+      console.warn('Could not auto-link github_accounts on GitHub login:', ghAccErr.message);
+    }
+
     const token = generateToken(user.id);
+    const userProfile = await getUserProfile(user);
 
     return res.status(200).json({
       success: true,
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        avatarUrl: user.avatar_url,
-        createdAt: user.created_at
-      }
+      user: userProfile
     });
   } catch (error) {
     console.error('GitHub Auth error:', error);
@@ -387,9 +422,23 @@ export const githubCallback = async (req, res) => {
       avatarUrl: ghUser.avatar_url
     });
 
+    // Auto-link GitHub account credentials in github_accounts table
+    try {
+      await GithubAccountModel.upsert({
+        userId: user.id,
+        githubUserId: ghUser.id,
+        username: ghUser.login,
+        accessToken,
+        scopes: 'repo,read:user,user:email'
+      });
+      console.log(`✅ Auto-linked GitHub @${ghUser.login} for user #${user.id} during GitHub callback`);
+    } catch (ghAccErr) {
+      console.warn('Could not auto-link github_accounts on GitHub callback:', ghAccErr.message);
+    }
+
     const token = generateToken(user.id);
 
-    return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}`);
+    return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}&github_connected=true&github_username=${encodeURIComponent(ghUser.login)}`);
   } catch (error) {
     console.error('GitHub callback error:', error);
     return res.redirect(`${clientUrl}/signin?error=${encodeURIComponent(error.message || 'GitHub authentication failed')}`);
@@ -449,15 +498,10 @@ export const googleCallback = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
+    const userProfile = await getUserProfile(req.user);
     return res.status(200).json({
       success: true,
-      user: {
-        id: req.user.id,
-        name: req.user.name,
-        email: req.user.email,
-        avatarUrl: req.user.avatar_url,
-        createdAt: req.user.created_at
-      }
+      user: userProfile
     });
   } catch (error) {
     console.error('GetMe error:', error);
@@ -468,3 +512,79 @@ export const getMe = async (req, res) => {
   }
 };
 
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.user.id;
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found'
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: 'This account was authenticated using OAuth (Google/GitHub) and does not have an active password.'
+      });
+    }
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both your current password and new password'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    if (confirmPassword && newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password and confirmation password do not match'
+      });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Check if new password is identical to current password
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be different from current password'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await UserModel.updatePassword(userId, hashedPassword);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error while updating password'
+    });
+  }
+};

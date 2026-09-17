@@ -6,7 +6,7 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
     
     const rows = await sql`
-      SELECT id, name, email, password, created_at
+      SELECT id, name, email, password, google_id, github_id, avatar_url, created_at
       FROM users
       WHERE LOWER(email) = LOWER(${email.trim()})
       LIMIT 1;
@@ -19,10 +19,23 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
 
     const rows = await sql`
-      SELECT id, name, email, created_at
+      SELECT id, name, email, password, google_id, github_id, avatar_url, created_at
       FROM users
       WHERE id = ${id}
       LIMIT 1;
+    `;
+    return rows[0] || null;
+  },
+
+  async updatePassword(id, hashedPassword) {
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
+
+    const rows = await sql`
+      UPDATE users
+      SET password = ${hashedPassword}, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING id, name, email, google_id, github_id, avatar_url, created_at;
     `;
     return rows[0] || null;
   },

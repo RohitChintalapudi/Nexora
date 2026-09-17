@@ -21,6 +21,7 @@ interface RepositoryDetailsViewProps {
   onBackToSelection: () => void;
   onStartAnalysis: () => void;
   isStartingAnalysis?: boolean;
+  isLoadingJob?: boolean;
   latestJob?: AnalysisJob | null;
   onViewAnalysisProgress?: () => void;
   onViewAnalysis?: () => void;
@@ -31,12 +32,23 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
   onBackToSelection,
   onStartAnalysis,
   isStartingAnalysis = false,
+  isLoadingJob = false,
   latestJob = null,
   onViewAnalysisProgress,
   onViewAnalysis
 }) => {
-  const isJobActive = latestJob && (latestJob.status === 'QUEUED' || latestJob.status === 'PROCESSING');
-  const isJobCompleted = latestJob && latestJob.status === 'COMPLETED';
+  // Ensure latestJob strictly belongs to this repository to prevent stale job state from a previous repo
+  const relevantJob = latestJob && latestJob.repositoryId === repository.id ? latestJob : null;
+
+  const isJobActive = relevantJob
+    ? (relevantJob.status === 'QUEUED' || relevantJob.status === 'PROCESSING')
+    : (repository.latestJobStatus === 'QUEUED' || repository.latestJobStatus === 'PROCESSING');
+
+  const isJobCompleted = relevantJob
+    ? (relevantJob.status === 'COMPLETED')
+    : Boolean(repository.isAnalyzed || repository.latestJobStatus === 'COMPLETED');
+
+  const isCheckingStatus = isLoadingJob && !relevantJob && !repository.latestJobStatus && repository.isAnalyzed === undefined;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
@@ -169,89 +181,123 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
 
       {/* Analysis Initiation Card */}
       <div className="bg-gradient-to-br from-blue-50/50 via-white to-slate-50/80 rounded-[2rem] border border-blue-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
-        <div className="space-y-1.5 max-w-xl">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-            <span>Codebase Intelligence</span>
-          </div>
-          <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
-            {isJobActive 
-              ? 'Analysis Job in Progress'
-              : isJobCompleted 
-                ? 'Repository Analyzed' 
-                : 'Ready for Codebase Analysis'}
-          </h2>
-          <p className="text-xs font-medium text-slate-600 leading-relaxed">
-            {isJobActive
-              ? 'An asynchronous analysis job is currently processing this repository. Track stage progression in real-time.'
-              : isJobCompleted
-                ? 'This repository has been verified and processed by the analysis pipeline. You can open its structured analysis or re-run analysis at any time.'
-                : 'Initiate the background analysis pipeline to scan repository structure, inspect module boundaries, and generate architecture graphs.'}
-          </p>
-        </div>
-
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
-          <button
-            type="button"
-            onClick={onBackToSelection}
-            className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-full transition-all cursor-pointer shadow-2xs text-center"
-          >
-            Choose Different Repo
-          </button>
-
-          {isJobActive ? (
-            <button
-              type="button"
-              onClick={onViewAnalysisProgress}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
-            >
-              <Loader2 className="w-4 h-4 animate-spin" />
-              <span>Track Progress</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          ) : isJobCompleted ? (
-            <div className="flex items-center gap-2.5">
-              <button
-                type="button"
-                onClick={onStartAnalysis}
-                disabled={isStartingAnalysis}
-                className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-full transition-all cursor-pointer disabled:opacity-60 shadow-2xs"
-                title="Re-run pipeline"
-              >
-                Re-analyze
-              </button>
-
-              <button
-                type="button"
-                onClick={onViewAnalysis}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>View Analysis</span>
-                <ArrowRight className="w-4 h-4" />
-              </button>
+        {isCheckingStatus ? (
+          <>
+            <div className="space-y-1.5 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
+                <span>Checking Analysis Status...</span>
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                Verifying Repository Intelligence
+              </h2>
+              <p className="text-xs font-medium text-slate-500 leading-relaxed">
+                Checking existing AST analysis jobs, symbols, and architecture data for this repository...
+              </p>
             </div>
-          ) : (
-            <button
-              type="button"
-              onClick={onStartAnalysis}
-              disabled={isStartingAnalysis}
-              className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
-            >
-              {isStartingAnalysis ? (
-                <>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={onBackToSelection}
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-full transition-all cursor-pointer shadow-2xs text-center"
+              >
+                Choose Different Repo
+              </button>
+
+              <div className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-bold text-slate-400 bg-slate-100 rounded-full cursor-not-allowed">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
+                <span>Loading...</span>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="space-y-1.5 max-w-xl">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+                <span>Codebase Intelligence</span>
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
+                {isJobActive 
+                  ? 'Analysis Job in Progress'
+                  : isJobCompleted 
+                    ? 'Repository Analyzed' 
+                    : 'Ready for Codebase Analysis'}
+              </h2>
+              <p className="text-xs font-medium text-slate-600 leading-relaxed">
+                {isJobActive
+                  ? 'An asynchronous analysis job is currently processing this repository. Track stage progression in real-time.'
+                  : isJobCompleted
+                    ? 'This repository has been verified and processed by the analysis pipeline. You can open its structured analysis or re-run analysis at any time.'
+                    : 'Initiate the background analysis pipeline to scan repository structure, inspect module boundaries, and generate architecture graphs.'}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <button
+                type="button"
+                onClick={onBackToSelection}
+                className="px-5 py-2.5 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 rounded-full transition-all cursor-pointer shadow-2xs text-center"
+              >
+                Choose Different Repo
+              </button>
+
+              {isJobActive ? (
+                <button
+                  type="button"
+                  onClick={onViewAnalysisProgress}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
+                >
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Initiating...</span>
-                </>
+                  <span>Track Progress</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ) : isJobCompleted ? (
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={onStartAnalysis}
+                    disabled={isStartingAnalysis}
+                    className="px-4 py-2.5 text-xs font-bold text-slate-700 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200 rounded-full transition-all cursor-pointer disabled:opacity-60 shadow-2xs"
+                    title="Re-run pipeline"
+                  >
+                    Re-analyze
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={onViewAnalysis}
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>View Analysis</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
               ) : (
-                <>
-                  <Cpu className="w-4 h-4" />
-                  <span>Analyze Repository</span>
-                </>
+                <button
+                  type="button"
+                  onClick={onStartAnalysis}
+                  disabled={isStartingAnalysis}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
+                >
+                  {isStartingAnalysis ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Initiating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Cpu className="w-4 h-4" />
+                      <span>Analyze Repository</span>
+                    </>
+                  )}
+                </button>
               )}
-            </button>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

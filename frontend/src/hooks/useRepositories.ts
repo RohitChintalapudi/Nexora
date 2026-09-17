@@ -29,6 +29,16 @@ export interface SavedRepository {
   language: string | null;
   htmlUrl: string;
   githubUpdatedAt: string;
+  commitSha?: string | null;
+  fileCount?: number;
+  sourceFileCount?: number;
+  ignoredFileCount?: number;
+  totalSourceSizeBytes?: number;
+  ingestedAt?: string | null;
+  latestJobId?: number | null;
+  latestJobStatus?: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | null;
+  latestJobStage?: string | null;
+  isAnalyzed?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,6 +70,8 @@ export function useRepositories(isGitHubConnected = false) {
 
   // Debounce search reference
   const searchTimeoutRef = useRef<any>(null);
+  const activeSavedRepoRef = useRef(activeSavedRepo);
+  activeSavedRepoRef.current = activeSavedRepo;
 
   const getAuthToken = useCallback(() => {
     return token || localStorage.getItem('nexora_token');
@@ -89,8 +101,9 @@ export function useRepositories(isGitHubConnected = false) {
         cachedSavedRepos = data.repositories || [];
         setSavedRepositories(data.repositories || []);
         // If there's an active saved repo, keep it updated
-        if (activeSavedRepo) {
-          const updated = data.repositories.find((r: SavedRepository) => r.id === activeSavedRepo.id);
+        if (activeSavedRepoRef.current) {
+          const currentActive = activeSavedRepoRef.current;
+          const updated = (data.repositories || []).find((r: SavedRepository) => r.id === currentActive.id);
           if (updated) setActiveSavedRepo(updated);
         }
       }
@@ -99,7 +112,7 @@ export function useRepositories(isGitHubConnected = false) {
     } finally {
       setIsLoadingSaved(false);
     }
-  }, [getAuthToken, activeSavedRepo]);
+  }, [getAuthToken]);
 
   // Fetch repositories from GitHub API via NEXORA backend
   const fetchGitHubRepos = useCallback(async (query = searchQuery, pageNum = page) => {
@@ -130,6 +143,11 @@ export function useRepositories(isGitHubConnected = false) {
       }
 
       const data = await res.json();
+
+      if (data.rate_limited) {
+        setError(data.message || 'GitHub rate limit temporarily reached. Please wait a moment.');
+        return;
+      }
 
       if (data.needs_reauth) {
         setNeedsReauth(true);

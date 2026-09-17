@@ -1,6 +1,7 @@
 import { RepositoryModel } from '../models/repositoryModel.js';
 import { GithubAccountModel } from '../models/githubAccountModel.js';
 import { RepositoryFileModel } from '../models/repositoryFileModel.js';
+import { githubTokenService } from '../services/githubTokenService.js';
 
 /**
  * Fetch GitHub repository by ID using authenticated user's access token
@@ -42,16 +43,18 @@ export const repositoryController = {
       }
 
       // Verify authenticated user has an active GitHub connection
-      const account = await GithubAccountModel.findByUserId(req.user.id);
-      if (!account || !account.access_token) {
+      const tokenResult = await githubTokenService.getValidToken(req.user.id);
+      if (!tokenResult || !tokenResult.token) {
         return res.status(403).json({
           success: false,
           message: 'Active GitHub connection required. Please connect GitHub first.'
         });
       }
 
+      const { account, token } = tokenResult;
+
       // Verify that this repository is accessible via the user's GitHub authorization
-      const ghRepo = await fetchGithubRepoById(githubRepositoryId, account.access_token);
+      const ghRepo = await fetchGithubRepoById(githubRepositoryId, token);
       if (!ghRepo) {
         return res.status(403).json({
           success: false,
@@ -124,6 +127,16 @@ export const repositoryController = {
         language: repo.language,
         htmlUrl: repo.html_url,
         githubUpdatedAt: repo.github_updated_at,
+        commitSha: repo.commit_sha,
+        fileCount: repo.file_count,
+        sourceFileCount: repo.source_file_count,
+        ignoredFileCount: repo.ignored_file_count,
+        totalSourceSizeBytes: repo.total_source_size_bytes,
+        ingestedAt: repo.ingested_at,
+        latestJobId: repo.latest_job_id || null,
+        latestJobStatus: repo.latest_job_status || null,
+        latestJobStage: repo.latest_job_stage || null,
+        isAnalyzed: Boolean(repo.is_analyzed),
         createdAt: repo.created_at,
         updatedAt: repo.updated_at
       }));
@@ -181,6 +194,16 @@ export const repositoryController = {
           language: repo.language,
           htmlUrl: repo.html_url,
           githubUpdatedAt: repo.github_updated_at,
+          commitSha: repo.commit_sha,
+          fileCount: repo.file_count,
+          sourceFileCount: repo.source_file_count,
+          ignoredFileCount: repo.ignored_file_count,
+          totalSourceSizeBytes: repo.total_source_size_bytes,
+          ingestedAt: repo.ingested_at,
+          latestJobId: repo.latest_job_id || null,
+          latestJobStatus: repo.latest_job_status || null,
+          latestJobStage: repo.latest_job_stage || null,
+          isAnalyzed: Boolean(repo.is_analyzed),
           createdAt: repo.created_at,
           updatedAt: repo.updated_at
         }

@@ -12,29 +12,41 @@ export const RepositoryModel = {
 
     const rows = await sql`
       SELECT 
-        id,
-        user_id,
-        github_repository_id,
-        name,
-        full_name,
-        owner,
-        description,
-        private,
-        default_branch,
-        language,
-        html_url,
-        github_updated_at,
-        commit_sha,
-        file_count,
-        source_file_count,
-        ignored_file_count,
-        total_source_size_bytes,
-        ingested_at,
-        created_at,
-        updated_at
-      FROM repositories
-      WHERE user_id = ${userId}
-      ORDER BY updated_at DESC;
+        r.id,
+        r.user_id,
+        r.github_repository_id,
+        r.name,
+        r.full_name,
+        r.owner,
+        r.description,
+        r.private,
+        r.default_branch,
+        r.language,
+        r.html_url,
+        r.github_updated_at,
+        r.commit_sha,
+        r.file_count,
+        r.source_file_count,
+        r.ignored_file_count,
+        r.total_source_size_bytes,
+        r.ingested_at,
+        r.created_at,
+        r.updated_at,
+        aj.id AS latest_job_id,
+        aj.status AS latest_job_status,
+        aj.current_stage AS latest_job_stage,
+        CASE WHEN ra.id IS NOT NULL THEN true ELSE false END AS is_analyzed
+      FROM repositories r
+      LEFT JOIN LATERAL (
+        SELECT id, status, current_stage
+        FROM analysis_jobs
+        WHERE repository_id = r.id AND user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 1
+      ) aj ON true
+      LEFT JOIN repository_analyses ra ON ra.repository_id = r.id AND ra.user_id = ${userId}
+      WHERE r.user_id = ${userId}
+      ORDER BY r.updated_at DESC;
     `;
     return rows;
   },
@@ -51,28 +63,40 @@ export const RepositoryModel = {
 
     const rows = await sql`
       SELECT 
-        id,
-        user_id,
-        github_repository_id,
-        name,
-        full_name,
-        owner,
-        description,
-        private,
-        default_branch,
-        language,
-        html_url,
-        github_updated_at,
-        commit_sha,
-        file_count,
-        source_file_count,
-        ignored_file_count,
-        total_source_size_bytes,
-        ingested_at,
-        created_at,
-        updated_at
-      FROM repositories
-      WHERE id = ${id} AND user_id = ${userId}
+        r.id,
+        r.user_id,
+        r.github_repository_id,
+        r.name,
+        r.full_name,
+        r.owner,
+        r.description,
+        r.private,
+        r.default_branch,
+        r.language,
+        r.html_url,
+        r.github_updated_at,
+        r.commit_sha,
+        r.file_count,
+        r.source_file_count,
+        r.ignored_file_count,
+        r.total_source_size_bytes,
+        r.ingested_at,
+        r.created_at,
+        r.updated_at,
+        aj.id AS latest_job_id,
+        aj.status AS latest_job_status,
+        aj.current_stage AS latest_job_stage,
+        CASE WHEN ra.id IS NOT NULL THEN true ELSE false END AS is_analyzed
+      FROM repositories r
+      LEFT JOIN LATERAL (
+        SELECT id, status, current_stage
+        FROM analysis_jobs
+        WHERE repository_id = r.id AND user_id = ${userId}
+        ORDER BY created_at DESC
+        LIMIT 1
+      ) aj ON true
+      LEFT JOIN repository_analyses ra ON ra.repository_id = r.id AND ra.user_id = ${userId}
+      WHERE r.id = ${id} AND r.user_id = ${userId}
       LIMIT 1;
     `;
     return rows[0] || null;
