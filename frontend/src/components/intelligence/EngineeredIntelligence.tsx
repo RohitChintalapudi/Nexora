@@ -1,19 +1,14 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, useSpring, useReducedMotion, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { 
   FileCode2, 
   Search, 
-  GitBranch, 
-  FileText, 
   Layers, 
   CheckCircle2, 
-  ArrowRight, 
   Database, 
   Server, 
-  ShieldCheck, 
   Sparkles,
-  Cpu,
-  Code2
+  Cpu
 } from 'lucide-react';
 
 interface StageData {
@@ -71,7 +66,6 @@ const STAGES: StageData[] = [
 export const EngineeredIntelligence: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeStageIndex, setActiveStageIndex] = useState(0);
-  const shouldReduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: containerRef,

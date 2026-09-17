@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Terminal, CheckCircle2, FileCode2, Sparkles, Code2, ArrowRight } from 'lucide-react';
+import { FileCode2, Sparkles, ArrowRight } from 'lucide-react';
 
 interface MockResponse {
   question: string;
