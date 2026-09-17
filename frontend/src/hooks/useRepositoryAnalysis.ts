@@ -92,6 +92,8 @@ export function useRepositoryAnalysis(repositoryId: number | string | null) {
         // Background revalidation silently
         fetchAnalysis(true);
       } else {
+        setData(null);
+        setIsLoading(true);
         fetchAnalysis(false);
       }
     } else {

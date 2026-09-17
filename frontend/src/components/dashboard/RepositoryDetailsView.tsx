@@ -37,15 +37,18 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
   onViewAnalysisProgress,
   onViewAnalysis
 }) => {
-  const isJobActive = latestJob
-    ? (latestJob.status === 'QUEUED' || latestJob.status === 'PROCESSING')
+  // Ensure latestJob strictly belongs to this repository to prevent stale job state from a previous repo
+  const relevantJob = latestJob && latestJob.repositoryId === repository.id ? latestJob : null;
+
+  const isJobActive = relevantJob
+    ? (relevantJob.status === 'QUEUED' || relevantJob.status === 'PROCESSING')
     : (repository.latestJobStatus === 'QUEUED' || repository.latestJobStatus === 'PROCESSING');
 
-  const isJobCompleted = latestJob
-    ? (latestJob.status === 'COMPLETED')
+  const isJobCompleted = relevantJob
+    ? (relevantJob.status === 'COMPLETED')
     : Boolean(repository.isAnalyzed || repository.latestJobStatus === 'COMPLETED');
 
-  const isCheckingStatus = isLoadingJob && !latestJob && !repository.latestJobStatus && repository.isAnalyzed === undefined;
+  const isCheckingStatus = isLoadingJob && !relevantJob && !repository.latestJobStatus && repository.isAnalyzed === undefined;
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">

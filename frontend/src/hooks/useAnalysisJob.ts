@@ -105,6 +105,8 @@ export function useAnalysisJob() {
     const currentToken = getAuthToken();
     if (!currentToken || !repositoryId) return null;
 
+    // Immediately clear stale job data if switching to a different repository
+    setJob(prev => (prev && prev.repositoryId === repositoryId ? prev : null));
     setIsLoadingJob(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/repositories/${repositoryId}/analysis/latest`, {

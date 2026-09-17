@@ -76,14 +76,16 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
   // Handle initialSelectedRepo if passed from Dashboard
   useEffect(() => {
     if (initialSelectedRepo) {
+      resetJob();
       setActiveSavedRepo(initialSelectedRepo);
       setSubView(initialSubView === 'analysis' ? 'analysis' : 'details');
       fetchLatestJob(initialSelectedRepo.id);
     }
-  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob]);
+  }, [initialSelectedRepo, initialSubView, setActiveSavedRepo, fetchLatestJob, resetJob]);
 
   // When an active saved repo is clicked
   const handleOpenDetails = (repo: SavedRepository) => {
+    resetJob();
     setActiveSavedRepo(repo);
     setSubView('details');
     fetchLatestJob(repo.id);
@@ -152,6 +154,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
 
   const handleContinue = async () => {
     if (!selectedRepo) return;
+    resetJob();
     const saved = await saveSelectedRepository();
     if (saved) {
       setSubView('details');
