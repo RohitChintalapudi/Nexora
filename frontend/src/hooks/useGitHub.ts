@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
@@ -10,50 +10,141 @@ export interface GitHubStatus {
   connectedAt?: string | null;
 }
 
-export function useGitHub() {
-  const { token, isAuthenticated } = useAuth();
-  const [status, setStatus] = useState<GitHubStatus>({
+const getCachedGitHubStatus = (): GitHubStatus => {
+  try {
+    const raw = localStorage.getItem('nexora_github_status');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (parsed && typeof parsed.connected === 'boolean') {
+        return {
+          connected: parsed.connected,
+          githubUsername: parsed.githubUsername || null,
+          scopes: parsed.scopes || null,
+          connectedAt: parsed.connectedAt || null
+        };
+      }
+    }
+  } catch {
+    // Ignore JSON parse error
+  }
+  return {
     connected: false,
-    githubUsername: null,
+    githubUsername: null
+  };
+};
+
+export function useGitHub() {
+  const { token, user, isAuthenticated } = useAuth();
+  
+  // Instant synchronous initialization from cached status
+  const [status, setStatus] = useState<GitHubStatus>(() => {
+    if (user?.githubConnected !== undefined) {
+      return {
+        connected: !!user.githubConnected,
+        githubUsername: user.githubUsername || null
+      };
+    }
+    return getCachedGitHubStatus();
   });
-  const [isLoading, setIsLoading] = useState(true);
+
+  const [isLoading, setIsLoading] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const fetchStatus = useCallback(async () => {
+  // Synchronize when auth user object updates
+  useEffect(() => {
+    if (user?.githubConnected !== undefined) {
+      setStatus(prev => ({
+        ...prev,
+        connected: !!user.githubConnected,
+        githubUsername: user.githubUsername || null
+      }));
+    }
+  }, [user]);
+
+  // Listen to cross-component and storage change events
+  useEffect(() => {
+    const handleStatusChanged = (event: Event) => {
+      const customEvent = event as CustomEvent<{ connected: boolean; githubUsername: string | null }>;
+      if (customEvent.detail) {
+        setStatus(prev => ({
+          ...prev,
+          connected: customEvent.detail.connected,
+          githubUsername: customEvent.detail.githubUsername
+        }));
+      } else {
+        setStatus(getCachedGitHubStatus());
+      }
+    };
+
+    window.addEventListener('nexora:github-status-changed', handleStatusChanged);
+    window.addEventListener('storage', handleStatusChanged);
+
+    return () => {
+      window.removeEventListener('nexora:github-status-changed', handleStatusChanged);
+      window.removeEventListener('storage', handleStatusChanged);
+    };
+  }, []);
+
+  const fetchStatus = useCallback(async (silent = false) => {
     const currentToken = token || localStorage.getItem('nexora_token');
     if (!currentToken) {
-      setIsLoading(false);
+      setStatus({ connected: false, githubUsername: null });
+      localStorage.removeItem('nexora_github_status');
       return;
     }
+
+    if (!silent) {
+      setIsLoading(true);
+    }
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
 
     try {
       const res = await fetch(`${API_BASE_URL}/api/github/status`, {
         headers: {
           Authorization: `Bearer ${currentToken}`
-        }
+        },
+        signal: controller.signal
       });
 
       if (!res.ok) {
         if (res.status === 401) {
           setStatus({ connected: false, githubUsername: null });
+          localStorage.removeItem('nexora_github_status');
         }
         return;
       }
 
       const data = await res.json();
       if (data.success) {
-        setStatus({
+        const updatedStatus: GitHubStatus = {
           connected: !!data.connected,
           githubUsername: data.githubUsername || null,
           scopes: data.scopes || null,
           connectedAt: data.connectedAt || null
-        });
+        };
+        setStatus(updatedStatus);
+
+        if (updatedStatus.connected) {
+          localStorage.setItem('nexora_github_status', JSON.stringify(updatedStatus));
+        } else {
+          localStorage.removeItem('nexora_github_status');
+        }
       }
-    } catch (err) {
-      console.error('Failed to fetch GitHub connection status:', err);
+    } catch (err: any) {
+      if (err.name !== 'AbortError') {
+        console.error('Failed to fetch GitHub connection status:', err);
+      }
     } finally {
-      setIsLoading(false);
+      if (!silent) {
+        setIsLoading(false);
+      }
     }
   }, [token]);
 
@@ -67,6 +158,13 @@ export function useGitHub() {
     const username = params.get('github_username');
 
     if (githubConnected === 'true') {
+      const updatedStatus: GitHubStatus = {
+        connected: true,
+        githubUsername: username || null
+      };
+      setStatus(updatedStatus);
+      localStorage.setItem('nexora_github_status', JSON.stringify(updatedStatus));
+
       setNotification({
         type: 'success',
         message: username 
@@ -75,7 +173,7 @@ export function useGitHub() {
       });
       // Clean query params from URL
       window.history.replaceState({}, document.title, window.location.pathname);
-      fetchStatus();
+      fetchStatus(true);
     } else if (githubError) {
       const decoded = decodeURIComponent(githubError);
       const displayMsg = decoded.toLowerCase().includes('terminated')
@@ -89,7 +187,7 @@ export function useGitHub() {
       });
       window.history.replaceState({}, document.title, window.location.pathname);
     } else {
-      fetchStatus();
+      fetchStatus(true);
     }
   }, [isAuthenticated, fetchStatus]);
 
@@ -141,6 +239,10 @@ export function useGitHub() {
       const data = await res.json();
       if (res.ok && data.success) {
         setStatus({ connected: false, githubUsername: null });
+        localStorage.removeItem('nexora_github_status');
+        window.dispatchEvent(new CustomEvent('nexora:github-status-changed', {
+          detail: { connected: false, githubUsername: null }
+        }));
         setNotification({
           type: 'success',
           message: 'GitHub account disconnected successfully'

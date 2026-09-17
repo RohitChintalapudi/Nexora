@@ -6,6 +6,8 @@ export interface User {
   email: string;
   avatarUrl?: string;
   createdAt?: string;
+  githubConnected?: boolean;
+  githubUsername?: string | null;
 }
 
 export type AuthActionType = 'google' | 'github' | 'login' | 'register' | 'verifying' | null;
@@ -43,6 +45,24 @@ export const GITHUB_CLIENT_ID =
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const syncGitHubLocalCache = (connected: boolean, username: string | null = null) => {
+  try {
+    if (connected) {
+      localStorage.setItem('nexora_github_status', JSON.stringify({
+        connected: true,
+        githubUsername: username || null
+      }));
+    } else {
+      localStorage.removeItem('nexora_github_status');
+    }
+    window.dispatchEvent(new CustomEvent('nexora:github-status-changed', {
+      detail: { connected, githubUsername: username || null }
+    }));
+  } catch (e) {
+    // Ignore storage errors
+  }
+};
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -103,11 +123,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsAuthModalOpen(false);
   };
 
+  const applyUserSession = (userData: User, authToken: string) => {
+    localStorage.setItem('nexora_token', authToken);
+    setToken(authToken);
+    setUser(userData);
+    if (userData.githubConnected !== undefined) {
+      syncGitHubLocalCache(!!userData.githubConnected, userData.githubUsername || null);
+    }
+  };
+
   // Verify token on mount or process incoming OAuth token
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tokenFromUrl = params.get('token');
     const code = params.get('code');
+    const githubConnectedParam = params.get('github_connected');
+    const githubUsernameParam = params.get('github_username');
+
+    if (githubConnectedParam === 'true') {
+      syncGitHubLocalCache(true, githubUsernameParam || null);
+    }
 
     if (tokenFromUrl) {
       setIsLoading(true);
@@ -125,7 +160,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         .then((res) => res.json())
         .then((data) => {
           if (data.success && data.user) {
-            setUser(data.user);
+            applyUserSession(data.user, tokenFromUrl);
           }
         })
         .catch(console.error)
@@ -164,11 +199,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         });
         const data = await res.json();
         if (data.success && data.user) {
-          setUser(data.user);
-          setToken(storedToken);
+          applyUserSession(data.user, storedToken);
         } else {
           // Token expired or invalid
           localStorage.removeItem('nexora_token');
+          syncGitHubLocalCache(false, null);
           setUser(null);
           setToken(null);
         }
@@ -203,9 +238,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: data.message || 'Login failed' };
       }
 
-      localStorage.setItem('nexora_token', data.token);
-      setToken(data.token);
-      setUser(data.user);
+      applyUserSession(data.user, data.token);
       setIsLoading(false);
       setAuthAction(null);
       setAuthStatusMessage(null);
@@ -239,9 +272,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: data.message || 'Registration failed' };
       }
 
-      localStorage.setItem('nexora_token', data.token);
-      setToken(data.token);
-      setUser(data.user);
+      applyUserSession(data.user, data.token);
       setIsLoading(false);
       setAuthAction(null);
       setAuthStatusMessage(null);
@@ -275,9 +306,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: data.message || 'Google authentication failed' };
       }
 
-      localStorage.setItem('nexora_token', data.token);
-      setToken(data.token);
-      setUser(data.user);
+      applyUserSession(data.user, data.token);
       setIsLoading(false);
       setAuthAction(null);
       setAuthStatusMessage(null);
@@ -386,9 +415,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return { success: false, message: data.message || 'GitHub authentication failed' };
       }
 
-      localStorage.setItem('nexora_token', data.token);
-      setToken(data.token);
-      setUser(data.user);
+      applyUserSession(data.user, data.token);
       setIsLoading(false);
       setAuthAction(null);
       setAuthStatusMessage(null);
@@ -409,12 +436,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthAction('github');
     setAuthStatusMessage('Authenticating in progress...');
     const redirectUri = 'http://localhost:5000/api/auth/github/callback';
-    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
+    const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=repo,read:user,user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = githubAuthUrl;
   };
 
   const logout = () => {
     localStorage.removeItem('nexora_token');
+    syncGitHubLocalCache(false, null);
     setToken(null);
     setUser(null);
     setAuthAction(null);
