@@ -8,6 +8,8 @@ export interface User {
   createdAt?: string;
   githubConnected?: boolean;
   githubUsername?: string | null;
+  hasPassword?: boolean;
+  authProvider?: 'email' | 'google' | 'github' | 'oauth';
 }
 
 export type AuthActionType = 'google' | 'github' | 'login' | 'register' | 'verifying' | null;
@@ -27,6 +29,7 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  changePassword: (currentPassword: string, newPassword: string, confirmPassword?: string) => Promise<{ success: boolean; message?: string }>;
   loginWithGoogle: (payload: { credential?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
   triggerGoogleSignIn: () => void;
   loginWithGithub: (payload: { code?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
@@ -440,6 +443,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     window.location.href = githubAuthUrl;
   };
 
+  const changePassword = async (currentPassword: string, newPassword: string, confirmPassword?: string) => {
+    const currentToken = token || localStorage.getItem('nexora_token');
+    if (!currentToken) {
+      return { success: false, message: 'Authentication required' };
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/change-password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${currentToken}`
+        },
+        body: JSON.stringify({ currentPassword, newPassword, confirmPassword })
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, message: data.message || 'Failed to update password' };
+      }
+
+      return { success: true, message: data.message || 'Password updated successfully' };
+    } catch (err: any) {
+      return { success: false, message: err.message || 'Network error while updating password' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('nexora_token');
     syncGitHubLocalCache(false, null);
@@ -467,6 +497,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeAuthModal,
         login,
         register,
+        changePassword,
         loginWithGoogle,
         triggerGoogleSignIn,
         loginWithGithub,

@@ -34,6 +34,14 @@ const getUserProfile = async (user) => {
     console.warn('Could not query GitHub account status for user:', err.message);
   }
 
+  const hasPassword = Boolean(user.password && user.password.length > 0);
+  let authProvider = 'email';
+  if (!hasPassword) {
+    if (user.google_id) authProvider = 'google';
+    else if (user.github_id) authProvider = 'github';
+    else authProvider = 'oauth';
+  }
+
   return {
     id: user.id,
     name: user.name,
@@ -41,7 +49,9 @@ const getUserProfile = async (user) => {
     avatarUrl: user.avatar_url,
     createdAt: user.created_at,
     githubConnected,
-    githubUsername
+    githubUsername,
+    hasPassword,
+    authProvider
   };
 };
 
@@ -84,7 +94,7 @@ export const register = async (req, res) => {
     });
 
     const token = generateToken(user.id);
-    const userProfile = await getUserProfile(user);
+    const userProfile = await getUserProfile({ ...user, password: hashedPassword });
 
     return res.status(201).json({
       success: true,
@@ -498,6 +508,83 @@ export const getMe = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Server error retrieving user'
+    });
+  }
+};
+
+export const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const userId = req.user.id;
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found'
+      });
+    }
+
+    if (!user.password) {
+      return res.status(400).json({
+        success: false,
+        message: 'This account was authenticated using OAuth (Google/GitHub) and does not have an active password.'
+      });
+    }
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide both your current password and new password'
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be at least 6 characters long'
+      });
+    }
+
+    if (confirmPassword && newPassword !== confirmPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password and confirmation password do not match'
+      });
+    }
+
+    // Verify current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({
+        success: false,
+        message: 'Current password is incorrect'
+      });
+    }
+
+    // Check if new password is identical to current password
+    const isSame = await bcrypt.compare(newPassword, user.password);
+    if (isSame) {
+      return res.status(400).json({
+        success: false,
+        message: 'New password must be different from current password'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    await UserModel.updatePassword(userId, hashedPassword);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Password updated successfully'
+    });
+  } catch (error) {
+    console.error('Change password error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error while updating password'
     });
   }
 };

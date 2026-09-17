@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { Shield, LogOut, Check, Sliders, Unlink, Plus } from 'lucide-react';
+import { 
+  Shield, 
+  LogOut, 
+  Check, 
+  Sliders, 
+  Unlink, 
+  Plus, 
+  KeyRound, 
+  Eye, 
+  EyeOff, 
+  CheckCircle2, 
+  AlertCircle, 
+  Loader2, 
+  ShieldCheck 
+} from 'lucide-react';
 import { LogoutConfirmModal } from './LogoutConfirmModal';
 import { DisconnectGithubModal } from './DisconnectGithubModal';
 
@@ -19,10 +33,28 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onDisconnectGitHub,
   isConnecting = false
 }) => {
-  const { user, logout } = useAuth();
+  const { user, logout, changePassword } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+  // Change Password Form State
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // Check if user is eligible for password change (email & password auth, not pure OAuth)
+  const isPasswordEligible = Boolean(
+    user?.hasPassword === true || 
+    (user?.authProvider === 'email' && user?.hasPassword !== false) ||
+    (!user?.authProvider && user?.hasPassword !== false)
+  );
 
   const handleOpenDisconnect = () => {
     if (onDisconnectGitHub) {
@@ -48,6 +80,49 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       setIsDisconnecting(false);
       setIsDisconnectModalOpen(false);
       window.location.reload();
+    }
+  };
+
+  const handleChangePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordSuccess(null);
+    setPasswordError(null);
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setPasswordError('Please fill in all password fields.');
+      return;
+    }
+
+    if (newPassword.length < 6) {
+      setPasswordError('New password must be at least 6 characters long.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError('New password and confirm password do not match.');
+      return;
+    }
+
+    if (newPassword === currentPassword) {
+      setPasswordError('New password must be different from current password.');
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      const result = await changePassword(currentPassword, newPassword, confirmPassword);
+      if (result.success) {
+        setPasswordSuccess(result.message || 'Password successfully updated!');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+      } else {
+        setPasswordError(result.message || 'Failed to update password.');
+      }
+    } catch (err: any) {
+      setPasswordError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setIsUpdatingPassword(false);
     }
   };
 
@@ -104,6 +179,170 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             />
           </div>
         </div>
+      </section>
+
+      {/* Security & Password Management Section */}
+      <section className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-6">
+        <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
+          <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
+            <KeyRound className="w-5 h-5 stroke-[2.2]" />
+          </div>
+          <div>
+            <h2 className="text-base font-extrabold text-slate-900">Security & Credentials</h2>
+            <p className="text-xs font-medium text-slate-400">
+              {isPasswordEligible
+                ? 'Update your email and password authentication credentials'
+                : 'OAuth federated identity and authentication security'}
+            </p>
+          </div>
+        </div>
+
+        {!isPasswordEligible ? (
+          <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-5 h-5" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs font-bold text-slate-900">
+                    Federated OAuth Authentication Active
+                  </h3>
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
+                    {user?.authProvider === 'google'
+                      ? 'Google OAuth'
+                      : user?.authProvider === 'github'
+                        ? 'GitHub OAuth'
+                        : 'OAuth Identity'}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                  You signed in using {user?.authProvider === 'google' ? 'Google' : user?.authProvider === 'github' ? 'GitHub' : 'OAuth'} authentication. Your account does not require a local password; security and credential updates are managed directly through your OAuth provider.
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <form onSubmit={handleChangePasswordSubmit} className="space-y-4">
+            {/* Feedback Notifications */}
+            {passwordSuccess && (
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 flex items-center gap-2.5 text-xs font-bold animate-in fade-in">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{passwordSuccess}</span>
+              </div>
+            )}
+
+            {passwordError && (
+              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-900 flex items-center gap-2.5 text-xs font-bold animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+                <span>{passwordError}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Current Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  Current Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showCurrentPassword ? 'text' : 'password'}
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    title={showCurrentPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* New Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  New Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNewPassword ? 'text' : 'password'}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Min. 6 characters"
+                    required
+                    minLength={6}
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    title={showNewPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Confirm New Password */}
+              <div className="space-y-1.5">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <input
+                    type={showConfirmPassword ? 'text' : 'password'}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Re-enter password"
+                    required
+                    minLength={6}
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                    title={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+              <p className="text-[11px] text-slate-400">
+                Password must be at least 6 characters and different from your current password.
+              </p>
+
+              <button
+                type="submit"
+                disabled={isUpdatingPassword}
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-md shadow-blue-500/25 transition-all cursor-pointer disabled:opacity-60 shrink-0"
+              >
+                {isUpdatingPassword ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Updating Password...</span>
+                  </>
+                ) : (
+                  <>
+                    <KeyRound className="w-3.5 h-3.5" />
+                    <span>Change Password</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        )}
       </section>
 
       {/* GitHub Authorization Section */}

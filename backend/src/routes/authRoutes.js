@@ -6,7 +6,8 @@ import {
   githubAuth,
   googleCallback,
   githubCallback,
-  getMe
+  getMe,
+  changePassword
 } from '../controllers/authController.js';
 import { protect } from '../middlewares/authMiddleware.js';
 
@@ -21,5 +22,7 @@ router.post('/github', authLimiter, githubAuth);
 router.get('/google/callback', googleCallback);
 router.get('/github/callback', githubCallback);
 router.get('/me', protect, getMe);
+router.put('/change-password', protect, authLimiter, changePassword);
+router.post('/change-password', protect, authLimiter, changePassword);
 
 export default router;
