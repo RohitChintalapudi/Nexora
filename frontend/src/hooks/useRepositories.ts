@@ -70,6 +70,8 @@ export function useRepositories(isGitHubConnected = false) {
 
   // Debounce search reference
   const searchTimeoutRef = useRef<any>(null);
+  const activeSavedRepoRef = useRef(activeSavedRepo);
+  activeSavedRepoRef.current = activeSavedRepo;
 
   const getAuthToken = useCallback(() => {
     return token || localStorage.getItem('nexora_token');
@@ -99,8 +101,9 @@ export function useRepositories(isGitHubConnected = false) {
         cachedSavedRepos = data.repositories || [];
         setSavedRepositories(data.repositories || []);
         // If there's an active saved repo, keep it updated
-        if (activeSavedRepo) {
-          const updated = data.repositories.find((r: SavedRepository) => r.id === activeSavedRepo.id);
+        if (activeSavedRepoRef.current) {
+          const currentActive = activeSavedRepoRef.current;
+          const updated = (data.repositories || []).find((r: SavedRepository) => r.id === currentActive.id);
           if (updated) setActiveSavedRepo(updated);
         }
       }
@@ -109,7 +112,7 @@ export function useRepositories(isGitHubConnected = false) {
     } finally {
       setIsLoadingSaved(false);
     }
-  }, [getAuthToken, activeSavedRepo]);
+  }, [getAuthToken]);
 
   // Fetch repositories from GitHub API via NEXORA backend
   const fetchGitHubRepos = useCallback(async (query = searchQuery, pageNum = page) => {

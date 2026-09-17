@@ -47,14 +47,14 @@ export const DashboardPage: React.FC = () => {
       const repoId = parseInt(match[1], 10);
       const isAnalysis = Boolean(match[2]);
       const found = savedRepositories.find((r) => r.id === repoId);
-      if (found) {
+      if (found && (!initialRepo || initialRepo.id !== repoId)) {
         setInitialRepo(found);
         setActiveSavedRepo(found);
         setActiveTab('repositories');
         setInitialSubView(isAnalysis ? 'analysis' : 'details');
       }
     }
-  }, [savedRepositories, setActiveSavedRepo]);
+  }, [savedRepositories, initialRepo, setActiveSavedRepo]);
 
   // Protected route guard: Redirect unauthenticated users
   useEffect(() => {
@@ -84,6 +84,28 @@ export const DashboardPage: React.FC = () => {
     setInitialRepo(repo);
     setInitialSubView('details');
     setActiveTab('repositories');
+    window.history.pushState(null, '', `/repositories/${repo.id}`);
+  };
+
+  const handleBackToList = () => {
+    setInitialRepo(null);
+    setInitialSubView('list');
+    setActiveSavedRepo(null);
+    if (window.location.pathname.startsWith('/repositories') || window.location.hash.includes('/repositories')) {
+      window.history.pushState(null, '', '/dashboard');
+    }
+  };
+
+  const handleTabChange = (tab: DashboardTab) => {
+    if (tab === 'repositories' && activeTab !== 'repositories') {
+      setInitialRepo(null);
+      setInitialSubView('list');
+      setActiveSavedRepo(null);
+      if (window.location.pathname.startsWith('/repositories') || window.location.hash.includes('/repositories')) {
+        window.history.pushState(null, '', '/dashboard');
+      }
+    }
+    setActiveTab(tab);
   };
 
   if (isLoading) {
@@ -103,7 +125,7 @@ export const DashboardPage: React.FC = () => {
   return (
     <DashboardLayout 
       activeTab={activeTab} 
-      onTabChange={setActiveTab}
+      onTabChange={handleTabChange}
       isGitHubConnected={isGitHubConnected}
       githubUsername={githubUsername}
       onConnectClick={handleOpenConnect}
@@ -146,7 +168,11 @@ export const DashboardPage: React.FC = () => {
             onChooseRepoClick={() => {
               setInitialRepo(null);
               setInitialSubView('list');
+              setActiveSavedRepo(null);
               setActiveTab('repositories');
+              if (window.location.pathname.startsWith('/repositories') || window.location.hash.includes('/repositories')) {
+                window.history.pushState(null, '', '/dashboard');
+              }
             }}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
@@ -157,7 +183,11 @@ export const DashboardPage: React.FC = () => {
             onChooseRepoClick={() => {
               setInitialRepo(null);
               setInitialSubView('list');
+              setActiveSavedRepo(null);
               setActiveTab('repositories');
+              if (window.location.pathname.startsWith('/repositories') || window.location.hash.includes('/repositories')) {
+                window.history.pushState(null, '', '/dashboard');
+              }
             }}
             onViewRepoDetails={handleViewSavedRepo}
             isGitHubConnected={isGitHubConnected}
@@ -179,6 +209,7 @@ export const DashboardPage: React.FC = () => {
             isConnecting={isConnecting}
             initialSelectedRepo={initialRepo}
             initialSubView={initialSubView}
+            onBackToList={handleBackToList}
           />
         </div>
       )}

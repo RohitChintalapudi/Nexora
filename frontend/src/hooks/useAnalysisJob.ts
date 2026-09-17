@@ -139,7 +139,7 @@ export function useAnalysisJob() {
   }, [getAuthToken]);
 
   // Start analysis for a repository
-  const startAnalysis = async (repositoryId: number): Promise<AnalysisJob | null> => {
+  const startAnalysis = useCallback(async (repositoryId: number): Promise<AnalysisJob | null> => {
     const currentToken = getAuthToken();
     if (!currentToken) {
       setError('Authentication required to start analysis.');
@@ -181,7 +181,7 @@ export function useAnalysisJob() {
     } finally {
       setIsStarting(false);
     }
-  };
+  }, [getAuthToken]);
 
   // Automated polling effect
   useEffect(() => {
@@ -220,7 +220,7 @@ export function useAnalysisJob() {
     };
   }, [job?.id, job?.status, fetchJobStatus]);
 
-  const resetJob = () => {
+  const resetJob = useCallback(() => {
     if (pollIntervalRef.current) {
       clearInterval(pollIntervalRef.current);
       pollIntervalRef.current = null;
@@ -228,7 +228,7 @@ export function useAnalysisJob() {
     setJob(null);
     setError(null);
     setIsPolling(false);
-  };
+  }, []);
 
   return {
     job,
