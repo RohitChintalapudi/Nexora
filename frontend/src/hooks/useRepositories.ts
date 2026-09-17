@@ -29,6 +29,16 @@ export interface SavedRepository {
   language: string | null;
   htmlUrl: string;
   githubUpdatedAt: string;
+  commitSha?: string | null;
+  fileCount?: number;
+  sourceFileCount?: number;
+  ignoredFileCount?: number;
+  totalSourceSizeBytes?: number;
+  ingestedAt?: string | null;
+  latestJobId?: number | null;
+  latestJobStatus?: 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED' | null;
+  latestJobStage?: string | null;
+  isAnalyzed?: boolean;
   createdAt: string;
   updatedAt: string;
 }

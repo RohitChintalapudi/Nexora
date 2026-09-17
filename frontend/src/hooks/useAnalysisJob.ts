@@ -59,6 +59,7 @@ export interface AnalysisJob {
 export function useAnalysisJob() {
   const { token } = useAuth();
   const [job, setJob] = useState<AnalysisJob | null>(null);
+  const [isLoadingJob, setIsLoadingJob] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
   const [isPolling, setIsPolling] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +105,7 @@ export function useAnalysisJob() {
     const currentToken = getAuthToken();
     if (!currentToken || !repositoryId) return null;
 
+    setIsLoadingJob(true);
     try {
       const res = await fetch(`${API_BASE_URL}/api/repositories/${repositoryId}/analysis/latest`, {
         headers: {
@@ -112,17 +114,25 @@ export function useAnalysisJob() {
         }
       });
 
-      if (!res.ok) return null;
+      if (!res.ok) {
+        setJob(null);
+        return null;
+      }
 
       const data = await res.json();
       if (data.success && data.job) {
         setJob(data.job);
         return data.job;
+      } else {
+        setJob(null);
       }
       return null;
     } catch (err: any) {
       console.error('Error fetching latest repository job:', err);
+      setJob(null);
       return null;
+    } finally {
+      setIsLoadingJob(false);
     }
   }, [getAuthToken]);
 
@@ -220,6 +230,7 @@ export function useAnalysisJob() {
 
   return {
     job,
+    isLoadingJob,
     isStarting,
     isPolling,
     error,

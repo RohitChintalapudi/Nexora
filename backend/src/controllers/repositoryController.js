@@ -127,6 +127,16 @@ export const repositoryController = {
         language: repo.language,
         htmlUrl: repo.html_url,
         githubUpdatedAt: repo.github_updated_at,
+        commitSha: repo.commit_sha,
+        fileCount: repo.file_count,
+        sourceFileCount: repo.source_file_count,
+        ignoredFileCount: repo.ignored_file_count,
+        totalSourceSizeBytes: repo.total_source_size_bytes,
+        ingestedAt: repo.ingested_at,
+        latestJobId: repo.latest_job_id || null,
+        latestJobStatus: repo.latest_job_status || null,
+        latestJobStage: repo.latest_job_stage || null,
+        isAnalyzed: Boolean(repo.is_analyzed),
         createdAt: repo.created_at,
         updatedAt: repo.updated_at
       }));
@@ -184,6 +194,16 @@ export const repositoryController = {
           language: repo.language,
           htmlUrl: repo.html_url,
           githubUpdatedAt: repo.github_updated_at,
+          commitSha: repo.commit_sha,
+          fileCount: repo.file_count,
+          sourceFileCount: repo.source_file_count,
+          ignoredFileCount: repo.ignored_file_count,
+          totalSourceSizeBytes: repo.total_source_size_bytes,
+          ingestedAt: repo.ingested_at,
+          latestJobId: repo.latest_job_id || null,
+          latestJobStatus: repo.latest_job_status || null,
+          latestJobStage: repo.latest_job_stage || null,
+          isAnalyzed: Boolean(repo.is_analyzed),
           createdAt: repo.created_at,
           updatedAt: repo.updated_at
         }

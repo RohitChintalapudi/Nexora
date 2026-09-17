@@ -64,6 +64,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
 
   const {
     job,
+    isLoadingJob,
     isStarting: isStartingAnalysis,
     startAnalysis,
     fetchLatestJob,
@@ -135,6 +136,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
       <RepositoryDetailsView
         repository={activeSavedRepo}
         latestJob={job}
+        isLoadingJob={isLoadingJob}
         onBackToSelection={() => {
           setActiveSavedRepo(null);
           setSubView('list');

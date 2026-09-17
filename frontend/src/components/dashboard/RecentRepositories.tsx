@@ -5,7 +5,9 @@ import {
   Globe, 
   ArrowRight, 
   Plus, 
-  ExternalLink
+  ExternalLink,
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 
@@ -136,6 +138,20 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700">
                       <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                       <span>{repo.language}</span>
+                    </span>
+                  )}
+
+                  {repo.isAnalyzed && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-800">
+                      <Sparkles className="w-3 h-3 text-emerald-600" />
+                      <span>Analyzed</span>
+                    </span>
+                  )}
+
+                  {repo.latestJobStatus === 'PROCESSING' && (
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 border border-blue-200 text-blue-800">
+                      <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
+                      <span>Analyzing</span>
                     </span>
                   )}
                 </div>
