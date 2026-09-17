@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   Network,
-  ShieldAlert,
   CheckCircle2,
   GitBranch,
   Search,
@@ -18,7 +17,6 @@ import {
   Route,
   Package,
   FileText,
-  Terminal,
 } from 'lucide-react';
 
 interface NodeItem {
@@ -37,9 +35,6 @@ interface EdgeItem {
 
 export const ProductIntelligence: React.FC = () => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
-
-  const viewWidth = 340;
-  const viewHeight = 175;
 
   const nodes: NodeItem[] = [
     { id: 'gateway', label: 'API Gateway', type: 'ROUTER', x: 170, y: 25, info: 'Handles route rate limiting & client proxy checks' },

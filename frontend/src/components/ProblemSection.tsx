@@ -7,7 +7,6 @@ import {
   CheckCircle2,
   Sparkles,
   Terminal,
-  Activity,
   Layers,
   ArrowUpRight
 } from 'lucide-react';

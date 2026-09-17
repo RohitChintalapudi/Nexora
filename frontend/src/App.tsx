@@ -8,7 +8,6 @@ import { AskCodebase } from './components/AskCodebase';
 import { ComplexSystems } from './components/ComplexSystems';
 import { TechnicalFoundation } from './components/TechnicalFoundation';
 import { CollaborationSection } from './components/CollaborationSection';
-import { PricingSection } from './components/PricingSection';
 import { FAQSection } from './components/FAQSection';
 import { FinalCTA } from './components/FinalCTA';
 import { AuthProvider, useAuth } from './context/AuthContext';
