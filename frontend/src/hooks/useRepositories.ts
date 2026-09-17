@@ -131,6 +131,11 @@ export function useRepositories(isGitHubConnected = false) {
 
       const data = await res.json();
 
+      if (data.rate_limited) {
+        setError(data.message || 'GitHub rate limit temporarily reached. Please wait a moment.');
+        return;
+      }
+
       if (data.needs_reauth) {
         setNeedsReauth(true);
         setError('GitHub authorization expired. Please reconnect your account.');
