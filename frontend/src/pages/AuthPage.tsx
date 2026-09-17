@@ -35,7 +35,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authAction, authStatusMessage, navigateTo } = useAuth();
+  const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authStatusMessage, navigateTo } = useAuth();
 
   useEffect(() => {
     setMode(initialMode);
@@ -244,34 +244,25 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   onClick={() => triggerGoogleSignIn()}
                   className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {isLoading && authAction === 'google' ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-neutral-800" />
-                      <span>Authenticating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4" viewBox="0 0 24 24">
-                        <path
-                          fill="#EA4335"
-                          d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
-                        />
-                        <path
-                          fill="#4285F4"
-                          d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
-                        />
-                        <path
-                          fill="#FBBC05"
-                          d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
-                        />
-                        <path
-                          fill="#34A853"
-                          d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
-                        />
-                      </svg>
-                      <span>Google</span>
-                    </>
-                  )}
+                  <svg className="w-4 h-4" viewBox="0 0 24 24">
+                    <path
+                      fill="#EA4335"
+                      d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.3 9 5 12 5z"
+                    />
+                    <path
+                      fill="#4285F4"
+                      d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.8z"
+                    />
+                    <path
+                      fill="#FBBC05"
+                      d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1c0 2.8.7 5.4 1.9 7.8l3.7-2.9z"
+                    />
+                    <path
+                      fill="#34A853"
+                      d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.3-6.4-5.2L1.9 16.5C3.7 20.2 7.5 23.5 12 23.5z"
+                    />
+                  </svg>
+                  <span>Google</span>
                 </button>
 
                 <button
@@ -280,19 +271,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   onClick={() => triggerGithubSignIn()}
                   className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
                 >
-                  {isLoading && authAction === 'github' ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin text-neutral-800" />
-                      <span>Authenticating...</span>
-                    </>
-                  ) : (
-                    <>
-                      <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
-                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
-                      </svg>
-                      <span>GitHub</span>
-                    </>
-                  )}
+                  <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                  </svg>
+                  <span>GitHub</span>
                 </button>
               </div>
 
@@ -414,31 +396,24 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 <motion.button
                   type="submit"
                   disabled={isLoading}
-                  whileHover={{ scale: 1.01 }}
-                  whileTap={{ scale: 0.98 }}
+                  whileHover={!isLoading ? { scale: 1.01 } : undefined}
+                  whileTap={!isLoading ? { scale: 0.98 } : undefined}
                   className="w-full mt-2 py-3 px-4 rounded-xl bg-neutral-950 hover:bg-black text-white font-semibold text-sm sm:text-base font-serif flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
                 >
-                  {isLoading ? (
-                    <div className="flex items-center gap-2">
-                      <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>{authStatusMessage || 'Processing...'}</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <AnimatePresence mode="wait">
-                        <motion.span
-                          key={mode}
-                          initial={{ opacity: 0, y: -4 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 4 }}
-                          transition={{ duration: 0.15 }}
-                        >
-                          {mode === 'signup' ? 'Create Account' : 'Sign In'}
-                        </motion.span>
-                      </AnimatePresence>
-                      <ArrowRight className="w-4 h-4 text-white" />
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={mode}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 4 }}
+                        transition={{ duration: 0.15 }}
+                      >
+                        {mode === 'signup' ? 'Create Account' : 'Sign In'}
+                      </motion.span>
+                    </AnimatePresence>
+                    <ArrowRight className="w-4 h-4 text-white" />
+                  </div>
                 </motion.button>
               </form>
 
