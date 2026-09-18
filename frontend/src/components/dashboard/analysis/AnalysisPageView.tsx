@@ -36,6 +36,7 @@ import { NexoraLoader } from '../../common/NexoraLoader';
 import { SourceReferenceModal } from './SourceReferenceModal';
 import { AIChatView } from './AIChatView';
 import { ArchitectureFlowDiagram } from './ArchitectureFlowDiagram';
+import { ComponentCommunicationMatrix } from './ComponentCommunicationMatrix';
 import { DeleteRepositoryModal } from '../DeleteRepositoryModal';
 import type { 
   SavedRepository 
@@ -864,7 +865,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   </span>
                 )}
 
-                {/* View Switcher: Interactive Diagram vs List */}
+                {/* View Switcher: Interactive Diagram vs Matrix */}
                 <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200">
                   <button
                     type="button"
@@ -875,18 +876,27 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    Tree Flow
+                    Tree Diagram
                   </button>
                   <button
                     type="button"
                     onClick={() => setArchTab('matrix')}
-                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                    className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       archTab === 'matrix'
                         ? 'bg-white text-blue-600 shadow-2xs font-extrabold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    Matrix List
+                    <span>Communication Matrix</span>
+                    {Array.isArray(analysis.architecture?.relationships) && analysis.architecture.relationships.length > 0 && (
+                      <span
+                        className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
+                          archTab === 'matrix' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200 text-slate-700'
+                        }`}
+                      >
+                        {analysis.architecture.relationships.length}
+                      </span>
+                    )}
                   </button>
                 </div>
               </div>
@@ -955,75 +965,16 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                 />
               </div>
             ) : (
-              /* TAB CONTENT: RELATIONSHIPS MATRIX LIST WITH NO HORIZONTAL OVERFLOW */
-              Array.isArray(analysis.architecture?.relationships) && analysis.architecture.relationships.length > 0 ? (
-                <div className="space-y-3 pt-2">
-                  <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                    Component Communication & Relationships
-                  </h3>
-                  <div className="space-y-3">
-                    {analysis.architecture.relationships.map((rel: any, idx: number) => {
-                      const relFrom = safeStr(rel?.from, 'Component A');
-                      const relTo = safeStr(rel?.to, 'Component B');
-                      const relType = safeStr(rel?.type, 'DEPENDS_ON');
-                      const rawEv = safeStr(rel?.evidence);
-
-                      // Clean up evidence string
-                      const cleanEv = rawEv
-                        .replace(/sourceFileId\s+\d+\s+imports\s+/gi, 'Imports ')
-                        .replace(/\(IMPORTS relationship\)\.?/gi, '')
-                        .trim();
-
-                      return (
-                        <div
-                          key={idx}
-                          className="p-4 rounded-2xl bg-slate-50/70 border border-slate-200/80 flex flex-col xl:flex-row xl:items-center justify-between gap-3 text-xs"
-                        >
-                          {/* From -> To Nodes */}
-                          <div className="flex items-center gap-2 font-mono font-bold text-slate-900 flex-wrap min-w-0">
-                            <button
-                              type="button"
-                              onClick={() => isFilePath(relFrom) ? handleOpenFileModal(relFrom) : null}
-                              className={`bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-left truncate max-w-full ${
-                                isFilePath(relFrom) ? 'hover:border-blue-400 hover:text-blue-600 cursor-pointer' : ''
-                              }`}
-                              title={relFrom}
-                            >
-                              {relFrom}
-                            </button>
-                            <ArrowRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <button
-                              type="button"
-                              onClick={() => isFilePath(relTo) ? handleOpenFileModal(relTo) : null}
-                              className={`bg-white px-2.5 py-1 rounded-lg border border-slate-200 text-left truncate max-w-full ${
-                                isFilePath(relTo) ? 'hover:border-blue-400 hover:text-blue-600 cursor-pointer' : ''
-                              }`}
-                              title={relTo}
-                            >
-                              {relTo}
-                            </button>
-                            <span className="text-[10px] font-sans font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
-                              {relType}
-                            </span>
-                          </div>
-
-                          {/* Formatted Evidence */}
-                          {cleanEv && (
-                            <div className="text-[11px] text-slate-600 min-w-0 max-w-full xl:max-w-md break-words bg-white p-2.5 rounded-xl border border-slate-200/70">
-                              <span className="text-slate-400 font-semibold mr-1 font-sans">Evidence:</span>
-                              <span className="font-mono text-slate-700">{cleanEv}</span>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ) : (
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-500">
-                  No explicit component relationships recorded.
-                </div>
-              )
+              /* TAB CONTENT: ADVANCED INTERACTIVE COMPONENT COMMUNICATION MATRIX */
+              <div className="space-y-3 pt-2">
+                <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
+                  Component Communication & Relationships Matrix
+                </h3>
+                <ComponentCommunicationMatrix
+                  relationships={analysis.architecture?.relationships}
+                  onOpenFileModal={handleOpenFileModal}
+                />
+              </div>
             )}
           </section>
 
