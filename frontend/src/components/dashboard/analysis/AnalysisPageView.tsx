@@ -961,6 +961,9 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   apiStructure={analysis.apiStructure}
                   databaseType={analysis.database?.type}
                   databaseModels={analysis.database?.models}
+                  entryPoints={analysis.entryPoints}
+                  applicationFlow={analysis.applicationFlow}
+                  importantFiles={analysis.importantFiles}
                   onOpenFileModal={handleOpenFileModal}
                 />
               </div>

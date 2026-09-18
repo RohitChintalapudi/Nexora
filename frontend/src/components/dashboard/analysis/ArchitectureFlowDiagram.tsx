@@ -32,7 +32,10 @@ import type {
   ArchitectureLayer, 
   ArchitectureRelationship, 
   ModuleItem, 
-  RouteItem 
+  RouteItem,
+  EntryPoint,
+  ApplicationFlowStep,
+  ImportantFile
 } from '../../../types/analysis';
 
 interface ArchitectureFlowDiagramProps {
@@ -42,6 +45,9 @@ interface ArchitectureFlowDiagramProps {
   apiStructure?: RouteItem[];
   databaseType?: string;
   databaseModels?: string[];
+  entryPoints?: EntryPoint[];
+  applicationFlow?: ApplicationFlowStep[];
+  importantFiles?: ImportantFile[];
   onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void;
 }
 
@@ -117,45 +123,120 @@ export const LAYER_CONFIGS: Record<string, LayerConfig> = {
 };
 
 /**
- * Classify a node into its architectural tier based on its filename or path
+ * Architectural tier rank ordering to ensure strictly layered Dagre flow
+ */
+const TIER_ORDER: Record<string, number> = {
+  entry: 0,
+  middleware: 1,
+  controller: 2,
+  service: 3,
+  model: 4
+};
+
+/**
+ * Clean and normalize file paths for reliable deduplication
+ */
+const normalizePath = (p: string): string => {
+  if (!p) return '';
+  return p
+    .replace(/\\/g, '/')
+    .replace(/^\.\//, '')
+    .trim();
+};
+
+/**
+ * High-precision architectural classifier with specific-to-general precedence
  */
 function classifyNode(nameOrPath: string): keyof typeof LAYER_CONFIGS {
-  const lower = nameOrPath.toLowerCase();
+  const norm = normalizePath(nameOrPath).toLowerCase();
+  const segments = norm.split('/');
+  const filename = segments[segments.length - 1] || norm;
+
+  // 1. Model / Schema / Database (most specific)
   if (
-    lower.includes('route') || 
-    lower.includes('router') || 
-    lower.includes('entry') || 
-    lower.includes('server') || 
-    lower.includes('app.') || 
-    lower.includes('main.') || 
-    lower.includes('api/')
-  ) {
-    return 'entry';
-  }
-  if (
-    lower.includes('middleware') || 
-    lower.includes('guard') || 
-    lower.includes('auth.mw') || 
-    lower.includes('protect') || 
-    lower.includes('interceptor')
-  ) {
-    return 'middleware';
-  }
-  if (lower.includes('controller') || lower.includes('handler') || lower.includes('resolver')) {
-    return 'controller';
-  }
-  if (
-    lower.includes('model') || 
-    lower.includes('schema') || 
-    lower.includes('entity') || 
-    lower.includes('db') || 
-    lower.includes('database') || 
-    lower.includes('prisma') || 
-    lower.includes('mongo') || 
-    lower.includes('sql')
+    filename.includes('.model.') ||
+    filename.includes('.schema.') ||
+    filename.includes('.entity.') ||
+    filename.includes('.dao.') ||
+    filename.includes('.repository.') ||
+    filename.includes('.table.') ||
+    norm.includes('/models/') ||
+    norm.includes('/schemas/') ||
+    norm.includes('/entities/') ||
+    norm.includes('/prisma/') ||
+    norm.includes('/db/') ||
+    norm.includes('/database/')
   ) {
     return 'model';
   }
+
+  // 2. Middleware / Security / Auth guards
+  if (
+    filename.includes('.middleware.') ||
+    filename.includes('.guard.') ||
+    filename.includes('.interceptor.') ||
+    filename.includes('auth.mw') ||
+    filename.includes('protect') ||
+    norm.includes('/middleware/') ||
+    norm.includes('/middlewares/') ||
+    norm.includes('/guards/') ||
+    norm.includes('/interceptors/')
+  ) {
+    return 'middleware';
+  }
+
+  // 3. Controllers / Handlers / Resolvers
+  if (
+    filename.includes('.controller.') ||
+    filename.includes('.handler.') ||
+    filename.includes('.resolver.') ||
+    filename.includes('.action.') ||
+    norm.includes('/controllers/') ||
+    norm.includes('/handlers/') ||
+    norm.includes('/resolvers/')
+  ) {
+    return 'controller';
+  }
+
+  // 4. Services / Business Logic / Utilities
+  if (
+    filename.includes('.service.') ||
+    filename.includes('.usecase.') ||
+    filename.includes('.manager.') ||
+    filename.includes('.provider.') ||
+    filename.includes('.client.') ||
+    filename.includes('.helper.') ||
+    filename.includes('.util.') ||
+    norm.includes('/services/') ||
+    norm.includes('/usecases/') ||
+    norm.includes('/lib/') ||
+    norm.includes('/utils/')
+  ) {
+    return 'service';
+  }
+
+  // 5. Entry & Routes
+  if (
+    filename.includes('.route.') ||
+    filename.includes('.router.') ||
+    filename.includes('routes.') ||
+    filename.startsWith('route.') ||
+    filename.startsWith('router.') ||
+    norm.includes('/routes/') ||
+    norm.includes('/routers/') ||
+    norm.includes('/api/') ||
+    filename === 'server.js' ||
+    filename === 'server.ts' ||
+    filename === 'app.js' ||
+    filename === 'app.ts' ||
+    filename === 'index.js' ||
+    filename === 'index.ts' ||
+    filename === 'main.js' ||
+    filename === 'main.ts'
+  ) {
+    return 'entry';
+  }
+
   return 'service';
 }
 
@@ -311,6 +392,9 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
   apiStructure = [],
   databaseType,
   databaseModels = [],
+  entryPoints = [],
+  applicationFlow = [],
+  importantFiles = [],
   onOpenFileModal
 }) => {
   const [layoutDirection, setLayoutDirection] = useState<'LR' | 'TB'>('LR');
@@ -336,55 +420,89 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
     // Unique node identifier set and descriptive roles
     const uniqueNodeSet = new Set<string>();
     const nodeRoleMap = new Map<string, string>();
-    
+
+    // 1. Ingest Entry Points
+    if (Array.isArray(entryPoints)) {
+      entryPoints.forEach(ep => {
+        if (ep?.path) {
+          const norm = normalizePath(ep.path);
+          uniqueNodeSet.add(norm);
+          nodeRoleMap.set(norm, ep.type || 'Application Entry Point');
+        }
+      });
+    }
+
+    // 2. Ingest Explicit Relationships
     rawRels.forEach(r => {
-      if (r?.from) uniqueNodeSet.add(String(r.from).trim());
-      if (r?.to) uniqueNodeSet.add(String(r.to).trim());
+      if (r?.from) {
+        const normFrom = normalizePath(String(r.from));
+        uniqueNodeSet.add(normFrom);
+      }
+      if (r?.to) {
+        const normTo = normalizePath(String(r.to));
+        uniqueNodeSet.add(normTo);
+      }
     });
 
-    // Add key module files
+    // 3. Ingest Key Module Files & Symbols
     if (Array.isArray(modules)) {
       modules.forEach(m => {
         (m?.keyFiles || []).forEach(f => {
-          const trimmed = String(f).trim();
-          uniqueNodeSet.add(trimmed);
-          if (m.purpose && !nodeRoleMap.has(trimmed)) {
-            nodeRoleMap.set(trimmed, m.name || m.purpose);
+          const norm = normalizePath(String(f));
+          uniqueNodeSet.add(norm);
+          if (m.purpose && !nodeRoleMap.has(norm)) {
+            nodeRoleMap.set(norm, m.name || m.purpose);
           }
         });
       });
     }
 
-    // Add API route files
+    // 4. Ingest API Route Files & Handlers
     if (Array.isArray(apiStructure)) {
-      apiStructure.slice(0, 12).forEach(r => {
+      apiStructure.slice(0, 15).forEach(r => {
         if (r?.filePath) {
-          const trimmed = String(r.filePath).trim();
-          uniqueNodeSet.add(trimmed);
-          if (r.path && !nodeRoleMap.has(trimmed)) {
-            nodeRoleMap.set(trimmed, `${r.method || 'GET'} ${r.path}`);
+          const norm = normalizePath(String(r.filePath));
+          uniqueNodeSet.add(norm);
+          if (r.path && !nodeRoleMap.has(norm)) {
+            nodeRoleMap.set(norm, `${r.method || 'GET'} ${r.path}`);
           }
         }
       });
     }
 
-    // Add Database models
+    // 5. Ingest Database Models
     if (Array.isArray(databaseModels)) {
       databaseModels.forEach(m => {
         const name = typeof m === 'object' && m !== null ? (m as any).name : String(m || '');
         if (name) {
-          const modelKey = name.includes('/') ? name.trim() : `models/${name.trim()}`;
+          const modelKey = name.includes('/') ? normalizePath(name) : `models/${name.trim()}`;
           uniqueNodeSet.add(modelKey);
-          nodeRoleMap.set(modelKey, `${databaseType ? databaseType + ' ' : ''}Schema`);
+          nodeRoleMap.set(modelKey, `${databaseType ? databaseType + ' ' : ''}Schema / Data Model`);
         }
       });
     }
 
-    // Associate architectural layers metadata if provided
+    // 6. Ingest Important Files
+    if (Array.isArray(importantFiles)) {
+      importantFiles.forEach(inf => {
+        if (inf?.path) {
+          const norm = normalizePath(inf.path);
+          uniqueNodeSet.add(norm);
+          if (inf.reason && !nodeRoleMap.has(norm)) {
+            nodeRoleMap.set(norm, inf.reason);
+          }
+        }
+      });
+    }
+
+    // 7. Associate Architectural Layers Metadata
     if (Array.isArray(layers)) {
       layers.forEach(l => {
         if (l?.name && l?.description) {
-          nodeRoleMap.set(String(l.name).trim(), l.role || l.description);
+          const norm = normalizePath(String(l.name));
+          if (uniqueNodeSet.has(norm)) {
+            nodeRoleMap.set(norm, l.role || l.description);
+          }
         }
       });
     }
@@ -397,7 +515,13 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
       uniqueNodeSet.add('src/models/schema.js');
     }
 
-    const nodeList = Array.from(uniqueNodeSet);
+    // Sort nodes deterministically by architectural tier order
+    const nodeList = Array.from(uniqueNodeSet).sort((a, b) => {
+      const tierA = TIER_ORDER[classifyNode(a)] ?? 3;
+      const tierB = TIER_ORDER[classifyNode(b)] ?? 3;
+      if (tierA !== tierB) return tierA - tierB;
+      return a.localeCompare(b);
+    });
 
     // Build raw React Flow nodes
     const nodes: Node[] = nodeList.map((item) => {
@@ -416,32 +540,30 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
     });
 
     const nodeIds = new Set(nodes.map(n => n.id));
-
-    // Generate edges from relationships
     const edges: Edge[] = [];
     const edgeKeySet = new Set<string>();
 
-    rawRels.forEach((rel, idx) => {
-      const from = rel?.from ? String(rel.from).trim() : '';
-      const to = rel?.to ? String(rel.to).trim() : '';
-
-      if (from && to && nodeIds.has(from) && nodeIds.has(to)) {
-        const edgeKey = `${from}->${to}`;
+    const addEdge = (src: string, dst: string, label: string, isAnimated = true) => {
+      const s = normalizePath(src);
+      const d = normalizePath(dst);
+      if (s && d && s !== d && nodeIds.has(s) && nodeIds.has(d)) {
+        const edgeKey = `${s}->${d}`;
         if (!edgeKeySet.has(edgeKey)) {
           edgeKeySet.add(edgeKey);
-
-          const relType = (rel.type || 'DEPENDS_ON').toUpperCase();
-          const isRoute = relType.includes('ROUTE');
-          const isImport = relType.includes('IMPORT');
+          
+          const isRoute = label.includes('ROUTE') || label.includes('DISPATCH');
+          const isModel = label.includes('MODEL') || label.includes('QUERY') || label.includes('PERSIST');
+          const isImport = label.includes('IMPORT') || label.includes('CALL');
+          const strokeColor = isRoute ? '#0284c7' : (isModel ? '#059669' : (isImport ? '#4f46e5' : '#9333ea'));
 
           edges.push({
-            id: `edge-${idx}-${from}-${to}`,
-            source: from,
-            target: to,
-            animated: isRoute || isImport,
-            label: relType.replace(/_/g, ' '),
+            id: `edge-${edges.length}-${s}-${d}`,
+            source: s,
+            target: d,
+            animated: isAnimated,
+            label: label.replace(/_/g, ' '),
             style: {
-              stroke: isRoute ? '#0284c7' : (isImport ? '#4f46e5' : '#9333ea'),
+              stroke: strokeColor,
               strokeWidth: 2
             },
             labelStyle: {
@@ -457,34 +579,82 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
             },
             markerEnd: {
               type: MarkerType.ArrowClosed,
-              color: isRoute ? '#0284c7' : (isImport ? '#4f46e5' : '#9333ea'),
+              color: strokeColor,
               width: 16,
               height: 16
             }
           });
         }
       }
+    };
+
+    // 1. Add Explicit Relationships from Deterministic AST Analysis
+    rawRels.forEach((rel) => {
+      const from = rel?.from ? String(rel.from).trim() : '';
+      const to = rel?.to ? String(rel.to).trim() : '';
+      const type = (rel?.type || 'DEPENDS_ON').toUpperCase();
+      addEdge(from, to, type);
     });
 
-    // If no explicit edges exist, connect sequentially across categories
-    if (edges.length === 0 && nodes.length > 1) {
-      for (let i = 0; i < nodes.length - 1; i++) {
-        const src = nodes[i].id;
-        const dst = nodes[i + 1].id;
-        edges.push({
-          id: `fallback-edge-${i}`,
-          source: src,
-          target: dst,
-          animated: true,
-          label: 'FLOWS_TO',
-          style: { stroke: '#4f46e5', strokeWidth: 1.5 },
-          markerEnd: { type: MarkerType.ArrowClosed, color: '#4f46e5' }
+    // 2. Synthesize High-Confidence API Route -> Controller Edges
+    if (Array.isArray(apiStructure)) {
+      apiStructure.forEach(route => {
+        if (route?.filePath) {
+          const routeFile = normalizePath(route.filePath);
+          // Look for matching controller files
+          if (route.handler && route.handler !== 'anonymousHandler') {
+            nodes.forEach(n => {
+              if (n.data?.category === 'controller' && n.id !== routeFile) {
+                const cLower = n.id.toLowerCase();
+                const rLower = routeFile.toLowerCase();
+                // If route and controller match by domain name (e.g. auth.routes -> auth.controller)
+                const baseDomain = routeFile.replace(/[^a-zA-Z0-9]/g, '');
+                if (cLower.includes(baseDomain) || rLower.includes(n.id.split('/').pop()?.split('.')[0] || '')) {
+                  addEdge(routeFile, n.id, 'DISPATCHES_TO');
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+
+    // 3. Synthesize Application Flow Sequential Steps
+    if (Array.isArray(applicationFlow) && applicationFlow.length > 1) {
+      for (let i = 0; i < applicationFlow.length - 1; i++) {
+        const stepA = applicationFlow[i];
+        const stepB = applicationFlow[i + 1];
+        const filesA = stepA?.filesInvolved || [];
+        const filesB = stepB?.filesInvolved || [];
+
+        filesA.forEach(fA => {
+          filesB.forEach(fB => {
+            addEdge(fA, fB, 'FLOWS_TO');
+          });
         });
       }
     }
 
+    // 4. Synthesize Tiered Flow if Graph is Disconnected
+    if (edges.length === 0 && nodes.length > 1) {
+      for (let i = 0; i < nodes.length - 1; i++) {
+        addEdge(nodes[i].id, nodes[i + 1].id, 'FLOWS_TO');
+      }
+    }
+
     return { rawNodes: nodes, rawEdges: edges };
-  }, [relationships, modules, apiStructure, databaseModels, databaseType, layers, handleInspect]);
+  }, [
+    relationships,
+    modules,
+    apiStructure,
+    databaseModels,
+    databaseType,
+    layers,
+    entryPoints,
+    applicationFlow,
+    importantFiles,
+    handleInspect
+  ]);
 
   // Filter nodes & edges according to active layer filter
   const { filteredNodes, filteredEdges } = useMemo(() => {
@@ -589,7 +759,7 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
         <div className="flex items-center gap-2.5 flex-wrap">
           <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-900">
             <Workflow className="w-4 h-4 text-blue-600" />
-            <span>Interactive Matrix Architecture Flow</span>
+            <span>Interactive Architecture Flow Diagram</span>
           </div>
           <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
             {layoutedNodes.length} Nodes • {layoutedEdges.length} Connections
