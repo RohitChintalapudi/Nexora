@@ -125,7 +125,7 @@ export const TechnologyConvergence: React.FC = () => {
       id="systems"
     >
       {/* Sticky Viewport Stage with generous top padding to prevent header collisions */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between items-center px-4 sm:px-6 select-none pt-16 sm:pt-20 md:pt-24 pb-6 sm:pb-10">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between items-center px-4 sm:px-6 select-none pt-12 sm:pt-16 md:pt-20 pb-4 sm:pb-8">
         
         {/* Clean Subtle Technical Grid Background on White/Off-white */}
         <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -133,10 +133,10 @@ export const TechnologyConvergence: React.FC = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.03)_0%,transparent_60%)]" />
         </div>
 
-        {/* Header Title Section: More top margin and distinct vertical buffer */}
+        {/* Header Title Section: Significant bottom margin to separate from the icon constellation */}
         <motion.div 
           style={{ opacity: headerOpacity, y: headerY }}
-          className="text-center max-w-2xl mx-auto mt-2 sm:mt-4 mb-4 sm:mb-6 px-2 z-30 pointer-events-none relative"
+          className="text-center max-w-2xl mx-auto mt-2 sm:mt-4 mb-10 sm:mb-16 md:mb-20 px-2 z-30 pointer-events-none relative"
         >
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2">
             Ecosystem Intelligence
@@ -148,7 +148,7 @@ export const TechnologyConvergence: React.FC = () => {
             stagger={0.045}
             blur={6}
             yOffset="20%"
-            className="text-2xl sm:text-3xl md:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-2.5"
+            className="text-2xl sm:text-3xl md:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-3"
           />
           <TextReveal
             as="p"
@@ -161,8 +161,8 @@ export const TechnologyConvergence: React.FC = () => {
           />
         </motion.div>
 
-        {/* Central Convergence Stage Container */}
-        <div className="relative w-full flex-1 flex items-center justify-center mt-2 sm:mt-4">
+        {/* Central Convergence Stage Container (Lowered with top buffer) */}
+        <div className="relative w-full flex-1 flex items-center justify-center mt-6 sm:mt-10 md:mt-14 mb-4">
           
           {/* SVG Flower Petal Rosette & Orbital Guides Layer */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none overflow-visible">
