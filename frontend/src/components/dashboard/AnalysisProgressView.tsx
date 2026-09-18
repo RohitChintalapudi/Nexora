@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   ArrowLeft, 
   CheckCircle2, 
@@ -28,7 +28,11 @@ import {
   Workflow,
   FileText,
   Activity,
-  ArrowRight
+  ArrowRight,
+  Clock,
+  Timer,
+  Hourglass,
+  Gauge
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob, AnalysisStage } from '../../hooks/useAnalysisJob';
@@ -238,6 +242,64 @@ const STAGE_ORDER: Record<AnalysisStage, number> = {
   FAILED: -1
 };
 
+// Empirical baseline execution weights (in seconds) for each pipeline stage
+const STAGE_WEIGHTS: Record<AnalysisStage, number> = {
+  QUEUED: 1,
+  INITIALIZING: 2,
+  FETCHING_REPOSITORY: 4,
+  SCANNING_FILES: 1,
+  FILTERING_FILES: 1,
+  PERSISTING_FILES: 2,
+  PARSING_FILES: 4,
+  EXTRACTING_SYMBOLS: 3,
+  EXTRACTING_IMPORTS: 2,
+  EXTRACTING_EXPORTS: 1,
+  DETECTING_ROUTES: 2,
+  BUILDING_RELATIONSHIPS: 3,
+  EXTRACTING_PROJECT_METADATA: 2,
+  INTELLIGENCE_COMPLETE: 1,
+  CHUNKING_FILES: 2,
+  GENERATING_EMBEDDINGS: 18, // Transformer inference stage
+  STORING_EMBEDDINGS: 2,
+  INDEXING_COMPLETE: 1,
+  LOADING_CODEBASE_CONTEXT: 2,
+  RETRIEVING_CONTEXT: 3,
+  ANALYZING_TECHNOLOGIES: 5,
+  ANALYZING_ARCHITECTURE: 6,
+  ANALYZING_MODULES: 6,
+  ANALYZING_APPLICATION_FLOW: 6,
+  GENERATING_SUMMARY: 6,
+  PERSISTING_ANALYSIS: 2,
+  COMPLETED: 0,
+  FAILED: 0
+};
+
+const TOTAL_BASELINE_WEIGHT = STAGES.slice(0, 21).reduce((sum, s) => sum + (STAGE_WEIGHTS[s.stageKey] || 3), 0);
+
+// Helper to format seconds to mm:ss format
+function formatMinutesSeconds(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = Math.floor(totalSeconds % 60);
+  return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+}
+
+// Helper to format remaining time nicely (e.g. "~35s", "~1m 10s", "Finishing touches...")
+function formatRemainingTime(seconds: number): string {
+  if (seconds <= 2) return 'Finishing touches...';
+  if (seconds < 60) return `~${seconds}s remaining`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s > 0 ? `~${m}m ${s}s remaining` : `~${m}m remaining`;
+}
+
+// Helper to format full duration nicely (e.g. "47 seconds", "1m 12s")
+function formatDuration(seconds: number): string {
+  if (seconds < 60) return `${seconds} seconds`;
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return s > 0 ? `${m}m ${s}s` : `${m} minutes`;
+}
+
 export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
   repository,
   job,
@@ -255,6 +317,104 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
     ? STAGE_ORDER[currentStage] 
     : 0;
 
+  // Local clock for live 1-second interval ticking
+  const [now, setNow] = useState<number>(Date.now());
+  const initialMountTimeRef = useRef<number>(Date.now());
+  const stageStartTimeRef = useRef<{ stage: AnalysisStage; timestamp: number }>({
+    stage: currentStage,
+    timestamp: Date.now()
+  });
+
+  // Track stage transitions for sub-stage time estimation
+  useEffect(() => {
+    if (stageStartTimeRef.current.stage !== currentStage) {
+      stageStartTimeRef.current = {
+        stage: currentStage,
+        timestamp: Date.now()
+      };
+    }
+  }, [currentStage]);
+
+  // 1-second interval timer while running
+  useEffect(() => {
+    if (!isRunning) return;
+    const interval = setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [isRunning]);
+
+  // Calculate elapsed time in seconds
+  const startTimestamp = job?.startedAt 
+    ? new Date(job.startedAt).getTime() 
+    : (job?.createdAt ? new Date(job.createdAt).getTime() : initialMountTimeRef.current);
+
+  const completionTimestamp = job?.completedAt ? new Date(job.completedAt).getTime() : null;
+
+  const elapsedSeconds = isCompleted && completionTimestamp
+    ? Math.max(1, Math.round((completionTimestamp - startTimestamp) / 1000))
+    : Math.max(0, Math.floor((now - startTimestamp) / 1000));
+
+  // Time spent in the current stage
+  const stageElapsedSeconds = Math.max(0, Math.floor((now - stageStartTimeRef.current.timestamp) / 1000));
+
+  // Sum of baseline weights of already completed stages
+  let completedWeight = 0;
+  for (let i = 0; i < STAGES.length - 1; i++) {
+    const stepIndex = i + 1;
+    if (currentStageIndex > stepIndex) {
+      completedWeight += STAGE_WEIGHTS[STAGES[i].stageKey] || 3;
+    }
+  }
+
+  // Current stage baseline weight and sub-stage progress fraction
+  const currentStageWeight = STAGE_WEIGHTS[currentStage] || 3;
+  const currentStageSubWeight = Math.min(
+    currentStageWeight * 0.85, 
+    stageElapsedSeconds * 0.9
+  );
+
+  // Total progress weight so far
+  const totalProgressWeightSoFar = Math.min(
+    TOTAL_BASELINE_WEIGHT,
+    completedWeight + currentStageSubWeight
+  );
+
+  // Dynamic Progress Percentage (0% to 100%)
+  let progressPercentage = 0;
+  if (isCompleted) {
+    progressPercentage = 100;
+  } else if (isFailed) {
+    progressPercentage = Math.round((completedWeight / TOTAL_BASELINE_WEIGHT) * 100);
+  } else if (currentStageIndex === 0) {
+    progressPercentage = 3;
+  } else {
+    progressPercentage = Math.min(
+      98,
+      Math.max(4, Math.round((totalProgressWeightSoFar / TOTAL_BASELINE_WEIGHT) * 100))
+    );
+  }
+
+  // Adaptive Estimation Velocity (Observed progress rate)
+  const remainingWeight = Math.max(0, TOTAL_BASELINE_WEIGHT - totalProgressWeightSoFar);
+  
+  let speedFactor = 1.0;
+  if (elapsedSeconds > 4 && totalProgressWeightSoFar > 4) {
+    speedFactor = totalProgressWeightSoFar / elapsedSeconds;
+    // Bound speed factor between 0.4x and 2.5x to prevent erratic estimates
+    speedFactor = Math.min(2.5, Math.max(0.4, speedFactor));
+  }
+
+  // Estimated Remaining Seconds
+  const estimatedRemainingSeconds = isCompleted
+    ? 0
+    : isFailed
+      ? 0
+      : Math.max(2, Math.round(remainingWeight / speedFactor));
+
+  // Active step details
+  const activeStep = STAGES.find(s => s.stageKey === currentStage) || STAGES[0];
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
       
@@ -269,7 +429,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
       </button>
 
       {/* Main Status & Progress Container */}
-      <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-8">
+      <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-7">
         
         {/* Header: Repository Context */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
@@ -330,6 +490,127 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
               </span>
             )}
           </div>
+        </div>
+
+        {/* Real-time Dynamic Progress & Estimated Timer Dashboard */}
+        <div className="rounded-2xl border border-slate-200/80 bg-gradient-to-b from-slate-50/80 to-white p-5 space-y-4 shadow-2xs">
+          
+          {/* Top Timer Metrics Row */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            
+            {/* Left: Current Step & Percentage */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-blue-500/20">
+                {isCompleted ? (
+                  <Check className="w-5 h-5 stroke-[3]" />
+                ) : (
+                  <span>{progressPercentage}%</span>
+                )}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-xs sm:text-sm font-extrabold text-slate-900">
+                    {isCompleted 
+                      ? 'Analysis Completed Successfully' 
+                      : isFailed 
+                        ? 'Analysis Interrupted' 
+                        : `Step ${Math.min(22, Math.max(1, currentStageIndex))} of 22: ${activeStep.title}`}
+                  </h3>
+                </div>
+                <p className="text-[11px] text-slate-500 line-clamp-1">
+                  {isCompleted 
+                    ? 'All symbols, graph relationships, vector embeddings & AI models ready.'
+                    : activeStep.description}
+                </p>
+              </div>
+            </div>
+
+            {/* Right: Live Elapsed & Estimated Timer Cards */}
+            <div className="flex items-center gap-2.5 sm:self-center shrink-0">
+              
+              {/* Elapsed Timer */}
+              <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200/90 shadow-2xs text-slate-700">
+                <Clock className="w-3.5 h-3.5 text-slate-500" />
+                <div className="flex flex-col">
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 leading-none">
+                    Elapsed
+                  </span>
+                  <span className="text-xs font-mono font-extrabold text-slate-900">
+                    {formatMinutesSeconds(elapsedSeconds)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Estimated Time Remaining (or Total Time if completed) */}
+              {isCompleted ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 shadow-2xs">
+                  <Timer className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 leading-none">
+                      Total Time
+                    </span>
+                    <span className="text-xs font-mono font-extrabold text-emerald-950">
+                      {formatDuration(elapsedSeconds)}
+                    </span>
+                  </div>
+                </div>
+              ) : isRunning ? (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 shadow-2xs">
+                  <Hourglass className="w-3.5 h-3.5 text-blue-600 animate-spin stroke-[2.5]" style={{ animationDuration: '3s' }} />
+                  <div className="flex flex-col">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 leading-none">
+                      Est. Remaining
+                    </span>
+                    <span className="text-xs font-mono font-extrabold text-blue-950">
+                      {formatRemainingTime(estimatedRemainingSeconds)}
+                    </span>
+                  </div>
+                </div>
+              ) : null}
+
+            </div>
+          </div>
+
+          {/* Animated Gradient Progress Bar */}
+          <div className="space-y-1.5">
+            <div className="w-full h-2.5 bg-slate-200/80 rounded-full overflow-hidden p-0.5 relative">
+              <div 
+                className={`h-full rounded-full transition-all duration-700 ease-out relative ${
+                  isCompleted
+                    ? 'bg-emerald-500'
+                    : isFailed
+                      ? 'bg-red-500'
+                      : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400'
+                }`}
+                style={{ width: `${progressPercentage}%` }}
+              >
+                {/* Shimmer highlight animation while running */}
+                {isRunning && (
+                  <div 
+                    className="absolute inset-0 bg-white/25 rounded-full animate-pulse"
+                  />
+                )}
+              </div>
+            </div>
+
+            {/* Sub-label showing adaptive status */}
+            <div className="flex items-center justify-between text-[11px] text-slate-400">
+              <span className="flex items-center gap-1">
+                <Gauge className="w-3 h-3 text-slate-400" />
+                <span>
+                  {isRunning 
+                    ? `Adaptive timer tuned for ${repository.language || 'source'} codebase`
+                    : isCompleted 
+                      ? `Full pipeline finished in ${formatDuration(elapsedSeconds)}`
+                      : 'Analysis stopped'}
+                </span>
+              </span>
+              <span className="font-semibold text-slate-600">
+                {progressPercentage}%
+              </span>
+            </div>
+          </div>
+
         </div>
 
         {/* Real-time Ingestion, Intelligence & Embedding Statistics */}
@@ -399,9 +680,14 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
 
         {/* Stage-Based Progress Checklist */}
         <div className="space-y-4">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-            M5 Ingestion, M6 Intelligence & M7 Semantic Vector Pipeline
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
+              Pipeline Stages (22 Steps)
+            </h2>
+            <span className="text-[11px] font-semibold text-slate-500">
+              {isCompleted ? '22 / 22 Completed' : `${Math.min(22, Math.max(0, currentStageIndex - 1))} Completed`}
+            </span>
+          </div>
 
           <div className="space-y-3">
             {STAGES.map((step, index) => {
@@ -514,7 +800,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
-                <span>Analysis Complete</span>
+                <span>Analysis Complete in {formatDuration(elapsedSeconds)}</span>
               </div>
               <h3 className="text-base font-extrabold text-slate-900">
                 Codebase Intelligence & Architecture Ready
