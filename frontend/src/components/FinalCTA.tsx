@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import { HaddybhaiyaShader } from './HaddybhaiyaShader';
 import { useAuth } from '../context/AuthContext';
+import { TextReveal } from './motion/text-reveal';
 
 export const FinalCTA: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -93,14 +94,25 @@ export const FinalCTA: React.FC = () => {
                 <span className="text-blue-400 font-bold text-sm tracking-wider">N</span>
               </div>
 
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-normal tracking-tight text-white leading-[1.12] mb-5 sm:mb-6">
-                Your codebase is more than files.<br />
-                <span className="text-white font-normal">Understand how it all connects.</span>
-              </h2>
+              <TextReveal
+                as="h2"
+                text={["Your codebase is more than files.", "Understand how it all connects."]}
+                delay={0.1}
+                stagger={0.045}
+                blur={7}
+                yOffset="22%"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-sans font-normal tracking-tight text-white leading-[1.12] mb-5 sm:mb-6"
+              />
 
-              <p className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-8 sm:mb-10 max-w-xl font-light">
-                Start exploring your software with NEXORA. Connect your repositories and understand your system structure in minutes.
-              </p>
+              <TextReveal
+                as="p"
+                text="Start exploring your software with NEXORA. Connect your repositories and understand your system structure in minutes."
+                delay={0.4}
+                stagger={0.025}
+                blur={5}
+                yOffset="15%"
+                className="text-neutral-300 text-sm sm:text-base leading-relaxed mb-8 sm:mb-10 max-w-xl font-light"
+              />
 
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full sm:w-auto">
                 <motion.button

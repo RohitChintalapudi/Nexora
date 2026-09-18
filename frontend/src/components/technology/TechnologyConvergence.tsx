@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 import { TechIcons } from './TechIcons';
 import { Sparkles, ArrowDown } from 'lucide-react';
+import { TextReveal } from '../motion/text-reveal';
 
 interface TechNodeData {
   id: string;
@@ -131,20 +132,32 @@ export const TechnologyConvergence: React.FC = () => {
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.03)_0%,transparent_60%)]" />
         </div>
 
-        {/* Section Header (Fades smoothly as user scrolls) */}
+        {/* Header Title Section: Swirl and fade out dynamically on scroll */}
         <motion.div 
-          style={{ opacity: shouldReduceMotion ? 1 : headerOpacity, y: shouldReduceMotion ? 0 : headerY }}
-          className="pt-10 sm:pt-14 z-20 text-center max-w-2xl mx-auto pointer-events-none"
+          style={{ opacity: headerOpacity, y: headerY }}
+          className="text-center max-w-2xl mx-auto mb-2 sm:mb-4 px-2 z-20 pointer-events-none"
         >
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2.5">
+          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-2">
             Ecosystem Intelligence
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-3">
-            Built to understand the technologies behind your system.
-          </h2>
-          <p className="text-neutral-500 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto">
-            From frontend components to backend services, APIs, databases, and dependencies — NEXORA connects the pieces into a clearer picture of your codebase.
-          </p>
+          <TextReveal
+            as="h2"
+            text="Built to understand the technologies behind your system."
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-3"
+          />
+          <TextReveal
+            as="p"
+            text="From frontend components to backend services, APIs, databases, and dependencies — NEXORA connects the pieces into a clearer picture of your codebase."
+            delay={0.3}
+            stagger={0.02}
+            blur={5}
+            yOffset="15%"
+            className="text-neutral-500 text-xs sm:text-sm leading-relaxed max-w-xl mx-auto"
+          />
         </motion.div>
 
         {/* Central Convergence Stage Container */}

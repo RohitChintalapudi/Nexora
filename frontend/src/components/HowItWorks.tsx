@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { TextReveal } from './motion/text-reveal';
 
 interface StepItem {
   num: string;
@@ -61,9 +62,15 @@ export const HowItWorks: React.FC = () => {
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             How It Works
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
-            From repository to understanding.
-          </h2>
+          <TextReveal
+            as="h2"
+            text="From repository to understanding."
+            delay={0.05}
+            stagger={0.05}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]"
+          />
         </div>
 
         <div className="relative max-w-5xl mx-auto">

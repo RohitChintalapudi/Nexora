@@ -17,6 +17,7 @@ import {
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob } from '../../hooks/useAnalysisJob';
 import { DeleteRepositoryModal } from './DeleteRepositoryModal';
+import { TextShimmer } from '../motion/text-shimmer';
 
 interface RepositoryDetailsViewProps {
   repository: SavedRepository;
@@ -234,7 +235,13 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
 
               <div className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-bold text-slate-400 bg-slate-100 rounded-full cursor-not-allowed">
                 <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-400" />
-                <span>Loading...</span>
+                <TextShimmer
+                  duration={2}
+                  baseColor="rgba(148, 163, 184, 0.5)"
+                  highlightColor="#334155"
+                >
+                  Loading...
+                </TextShimmer>
               </div>
             </div>
           </>

@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { FloatingInsightCard } from './FloatingInsightCard';
 import { HaddybhaiyaShader } from './HaddybhaiyaShader';
 import { useAuth } from '../context/AuthContext';
+import { TextReveal } from './motion/text-reveal';
+import { TextShimmer } from './motion/text-shimmer';
 
 export const Hero: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
@@ -109,24 +111,29 @@ export const Hero: React.FC = () => {
         animate="animate"
         className="relative z-20 max-w-3xl text-center flex flex-col items-center"
       >
-        <motion.h1
-          variants={itemVariants}
+        <TextReveal
+          as="h1"
+          text={["Understand your entire software.", "Build the future."]}
+          delay={0.15}
+          stagger={0.06}
+          blur={8}
+          yOffset="20%"
           style={{ 
             fontFamily: '"Times New Roman", Times, Georgia, serif',
             textShadow: '0 2px 10px rgba(0, 0, 0, 0.45), 0 1px 3px rgba(0, 0, 0, 0.6)'
           }}
           className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-serif font-semibold tracking-tight text-white leading-[1.12] mb-6 max-w-3xl"
-        >
-          Understand your entire software.<br />
-          Build the future.
-        </motion.h1>
+        />
 
-        <motion.p
-          variants={itemVariants}
+        <TextReveal
+          as="p"
+          text="NEXORA maps your software, understands its architecture, and helps you explore every connection with AI."
+          delay={0.65}
+          stagger={0.03}
+          blur={6}
+          yOffset="18%"
           className="text-neutral-300 text-base sm:text-lg font-sans max-w-xl mb-10 leading-relaxed font-light"
-        >
-          NEXORA maps your software, understands its architecture, and helps you explore every connection with AI.
-        </motion.p>
+        />
 
         <motion.div
           variants={itemVariants}
@@ -166,7 +173,14 @@ export const Hero: React.FC = () => {
             </span>
             <div className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span className="text-[11px] font-medium text-neutral-300">Syncing</span>
+              <TextShimmer 
+                duration={1.8}
+                baseColor="rgba(212, 212, 216, 0.4)"
+                highlightColor="#34d399"
+                className="text-[11px] font-medium"
+              >
+                Syncing
+              </TextShimmer>
             </div>
           </div>
           <div className="font-mono text-xs text-neutral-200 space-y-1.5 select-none">

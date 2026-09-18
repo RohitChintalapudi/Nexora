@@ -10,6 +10,7 @@ import {
   Layers,
   ArrowUpRight
 } from 'lucide-react';
+import { TextReveal } from './motion/text-reveal';
 
 interface ToolItem {
   id: string;
@@ -113,13 +114,24 @@ export const ProblemSection: React.FC = () => {
             <Layers className="w-3.5 h-3.5" />
             The Unified Graph Problem
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-5">
-            Modern software is connected.<br />
-            Your tools shouldn't be fragmented.
-          </h2>
-          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed font-sans max-w-2xl mx-auto">
-            Developers constantly switch between repositories, documentation wikis, architecture diagrams, issue trackers, and terminals just to understand how a single request flows. NEXORA unifies every signal into one live, queryable system graph.
-          </p>
+          <TextReveal
+            as="h2"
+            text={["Modern software is connected.", "Your tools shouldn't be fragmented."]}
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-5"
+          />
+          <TextReveal
+            as="p"
+            text="Developers constantly switch between repositories, documentation wikis, architecture diagrams, issue trackers, and terminals just to understand how a single request flows. NEXORA unifies every signal into one live, queryable system graph."
+            delay={0.35}
+            stagger={0.02}
+            blur={5}
+            yOffset="16%"
+            className="text-neutral-500 text-sm sm:text-base leading-relaxed font-sans max-w-2xl mx-auto"
+          />
         </div>
 
         {/* ========================================================= */}

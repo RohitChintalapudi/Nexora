@@ -10,6 +10,7 @@ import {
   Sparkles,
   Cpu
 } from 'lucide-react';
+import { TextReveal } from '../motion/text-reveal';
 
 interface StageData {
   id: string;
@@ -107,12 +108,24 @@ export const EngineeredIntelligence: React.FC = () => {
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-1.5">
             Engineered for Intelligence
           </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-sans font-normal tracking-tight text-neutral-900">
-            Built on the structure of your software.
-          </h2>
-          <p className="text-neutral-500 text-xs sm:text-sm max-w-xl mx-auto mt-1">
-            NEXORA doesn't treat a repository as a wall of text. It extracts structure, relationships, and context before generating an understanding of the system.
-          </p>
+          <TextReveal
+            as="h2"
+            text="Built on the structure of your software."
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-2xl sm:text-3xl md:text-4xl font-sans font-normal tracking-tight text-neutral-900"
+          />
+          <TextReveal
+            as="p"
+            text="NEXORA doesn't treat a repository as a wall of text. It extracts structure, relationships, and context before generating an understanding of the system."
+            delay={0.3}
+            stagger={0.02}
+            blur={5}
+            yOffset="15%"
+            className="text-neutral-500 text-xs sm:text-sm max-w-xl mx-auto mt-1"
+          />
         </div>
 
         {/* Main Grid: Left Dynamic System Visualizer + Right Narrative & Progress */}
