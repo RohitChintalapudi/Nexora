@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   FolderGit2, 
   GitBranch, 
@@ -9,12 +9,14 @@ import {
   Sparkles, 
   CheckCircle2, 
   Clock, 
-  Cpu,
-  Loader2,
-  ArrowRight
+  Cpu, 
+  Loader2, 
+  ArrowRight,
+  Trash2
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob } from '../../hooks/useAnalysisJob';
+import { DeleteRepositoryModal } from './DeleteRepositoryModal';
 
 interface RepositoryDetailsViewProps {
   repository: SavedRepository;
@@ -25,6 +27,7 @@ interface RepositoryDetailsViewProps {
   latestJob?: AnalysisJob | null;
   onViewAnalysisProgress?: () => void;
   onViewAnalysis?: () => void;
+  onDeleteRepo?: (repoId: number) => Promise<boolean | void>;
 }
 
 export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
@@ -35,8 +38,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
   isLoadingJob = false,
   latestJob = null,
   onViewAnalysisProgress,
-  onViewAnalysis
+  onViewAnalysis,
+  onDeleteRepo
 }) => {
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
   // Ensure latestJob strictly belongs to this repository to prevent stale job state from a previous repo
   const relevantJob = latestJob && latestJob.repositoryId === repository.id ? latestJob : null;
 
@@ -50,18 +56,39 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
 
   const isCheckingStatus = isLoadingJob && !relevantJob && !repository.latestJobStatus && repository.isAnalyzed === undefined;
 
+  const handleDeleteConfirm = async () => {
+    if (onDeleteRepo) {
+      await onDeleteRepo(repository.id);
+      onBackToSelection();
+    }
+  };
+
   return (
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-200">
       
-      {/* Top Navigation / Breadcrumb */}
-      <button
-        type="button"
-        onClick={onBackToSelection}
-        className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-full transition-all cursor-pointer shadow-2xs"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" />
-        <span>Back to Repository List</span>
-      </button>
+      {/* Top Navigation / Breadcrumb & Actions */}
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={onBackToSelection}
+          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-full transition-all cursor-pointer shadow-2xs"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Back to Repository List</span>
+        </button>
+
+        {onDeleteRepo && (
+          <button
+            type="button"
+            onClick={() => setShowDeleteModal(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-red-600 hover:text-red-700 bg-white hover:bg-red-50 border border-red-200/80 rounded-full transition-all cursor-pointer shadow-2xs"
+            title="Delete repository and its analysis data"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Delete Repository</span>
+          </button>
+        )}
+      </div>
 
       {/* Main Repository Summary Card */}
       <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8">
@@ -299,6 +326,15 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
           </>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <DeleteRepositoryModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        repoName={repository.name}
+        repoFullName={repository.fullName}
+      />
     </div>
   );
 };

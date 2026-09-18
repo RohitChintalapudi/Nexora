@@ -28,13 +28,15 @@ import {
   Search,
   Code2,
   X,
-  CheckCheck
+  CheckCheck,
+  Trash2
 } from 'lucide-react';
 import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
 import { NexoraLoader } from '../../common/NexoraLoader';
 import { SourceReferenceModal } from './SourceReferenceModal';
 import { AIChatView } from './AIChatView';
 import { ArchitectureFlowDiagram } from './ArchitectureFlowDiagram';
+import { DeleteRepositoryModal } from '../DeleteRepositoryModal';
 import type { 
   SavedRepository 
 } from '../../../hooks/useRepositories';
@@ -46,6 +48,7 @@ interface AnalysisPageViewProps {
   repository: SavedRepository;
   onBack: () => void;
   onViewProgress?: () => void;
+  onDeleteRepo?: (repoId: number) => Promise<boolean | void>;
 }
 
 interface NavSection {
@@ -110,7 +113,8 @@ const isFilePath = (val: any): boolean => {
 export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   repository,
   onBack,
-  onViewProgress
+  onViewProgress,
+  onDeleteRepo
 }) => {
   const {
     data,
@@ -128,6 +132,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   const [apiMethodFilter, setApiMethodFilter] = useState<string>('ALL');
   const [apiSearchQuery, setApiSearchQuery] = useState<string>('');
   const [factsFilter, setFactsFilter] = useState<'ALL' | 'FACTS' | 'INFERENCES' | 'CAVEATS'>('ALL');
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Source Reference Modal state
   const [selectedFileRef, setSelectedFileRef] = useState<{
@@ -169,19 +174,26 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
     }
   };
 
-  const handleOpenFileModal = (filePath: any, startLine?: any, endLine?: any, symbolName?: any) => {
+  const handleOpenFileModal = useCallback((filePath: any, startLine?: any, endLine?: any, symbolName?: any) => {
     const p = safeStr(filePath);
     if (!p) return;
     const sLine = typeof startLine === 'number' ? startLine : undefined;
     const eLine = typeof endLine === 'number' ? endLine : undefined;
     const sName = symbolName ? safeStr(symbolName) : undefined;
     setSelectedFileRef({ filePath: p, startLine: sLine, endLine: eLine, symbolName: sName });
-  };
+  }, []);
 
   const handleReanalyze = async () => {
     const res = await reanalyze();
     if (res.success && onViewProgress) {
       onViewProgress();
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (onDeleteRepo) {
+      await onDeleteRepo(repository.id);
+      onBack();
     }
   };
 
@@ -580,7 +592,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
             {repo.htmlUrl && (
               <a
                 href={repo.htmlUrl}
@@ -592,6 +604,18 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                 <span>GitHub</span>
                 <ExternalLink className="w-3.5 h-3.5" />
               </a>
+            )}
+
+            {onDeleteRepo && (
+              <button
+                type="button"
+                onClick={() => setShowDeleteModal(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-bold text-red-600 hover:text-red-700 bg-white hover:bg-red-50 border border-red-200/80 shadow-2xs transition-colors cursor-pointer shrink-0"
+                title="Delete this repository and its analysis data"
+              >
+                <Trash2 className="w-3.5 h-3.5" />
+                <span>Delete Repo</span>
+              </button>
             )}
 
             <button
@@ -2172,6 +2196,17 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           onFetchContent={fetchFileContent}
         />
       )}
+
+      {/* ───────────────────────────────────────────────────────────── */}
+      {/* 5. DELETE REPOSITORY CONFIRMATION MODAL */}
+      {/* ───────────────────────────────────────────────────────────── */}
+      <DeleteRepositoryModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={handleDeleteConfirm}
+        repoName={repo.name}
+        repoFullName={repo.fullName}
+      />
 
     </div>
   );
