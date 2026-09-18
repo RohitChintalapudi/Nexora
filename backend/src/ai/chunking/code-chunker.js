@@ -2,6 +2,11 @@ import crypto from 'crypto';
 import path from 'path';
 
 export class CodeChunker {
+  // Safety limits to guarantee fast, sub-second vector generation even for massive repos
+  static MAX_GLOBAL_CHUNKS = parseInt(process.env.MAX_GLOBAL_CHUNKS || '75', 10);
+  static MAX_CHUNKS_PER_FILE = 8;
+  static MAX_CHUNK_CHARS = 1200;
+
   /**
    * Chunk all repository source and documentation files into structured, semantic chunks
    * @param {Object} params
@@ -11,7 +16,7 @@ export class CodeChunker {
    * @returns {Array<Object>} List of structured chunk objects ready for embedding
    */
   static chunkRepository({ repositoryId, repositoryFiles = [], symbols = [] }) {
-    const chunks = [];
+    let rawChunks = [];
     let globalChunkIndex = 0;
 
     // Group symbols by fileId
@@ -32,30 +37,30 @@ export class CodeChunker {
       const extension = (file.extension || '').toLowerCase();
       const filename = path.basename(file.path).toLowerCase();
 
-      // 1. Documentation files (README.md, docs/**/*.md)
+      // 1. Configuration files (package.json, pyproject.toml, go.mod, Cargo.toml) - Priority 100
+      if (['package.json', 'pyproject.toml', 'requirements.txt', 'go.mod', 'cargo.toml', 'dockerfile'].includes(filename)) {
+        const configChunk = this.chunkConfigFile({
+          repositoryId,
+          file,
+          chunkIndex: globalChunkIndex++
+        });
+        if (configChunk) rawChunks.push({ ...configChunk, priorityWeight: 100 });
+        continue;
+      }
+
+      // 2. Documentation files (README.md, docs/**/*.md) - Priority 90
       if (extension === '.md' || extension === '.mdx' || filename.startsWith('readme')) {
         const docChunks = this.chunkMarkdownFile({
           repositoryId,
           file,
           startIndex: globalChunkIndex
         });
-        chunks.push(...docChunks);
+        docChunks.forEach(c => rawChunks.push({ ...c, priorityWeight: 90 }));
         globalChunkIndex += docChunks.length;
         continue;
       }
 
-      // 2. Configuration files (package.json, pyproject.toml, go.mod, Cargo.toml)
-      if (['package.json', 'pyproject.toml', 'requirements.txt', 'go.mod', 'cargo.toml'].includes(filename)) {
-        const configChunk = this.chunkConfigFile({
-          repositoryId,
-          file,
-          chunkIndex: globalChunkIndex++
-        });
-        if (configChunk) chunks.push(configChunk);
-        continue;
-      }
-
-      // 3. Source code with M6 symbols
+      // 3. Source code with M6 symbols - Priority 80 (exported) / 60 (internal)
       if (fileSymbols.length > 0) {
         const symbolChunks = this.chunkBySymbols({
           repositoryId,
@@ -63,26 +68,40 @@ export class CodeChunker {
           symbols: fileSymbols,
           startIndex: globalChunkIndex
         });
-        chunks.push(...symbolChunks);
+        symbolChunks.forEach(c => {
+          const isHighValue = c.metadata?.isExported || ['CLASS', 'INTERFACE', 'ROUTE', 'CONTROLLER'].includes(c.chunkType);
+          rawChunks.push({ ...c, priorityWeight: isHighValue ? 80 : 60 });
+        });
         globalChunkIndex += symbolChunks.length;
         continue;
       }
 
-      // 4. Source code fallback (sliding line window)
+      // 4. Source code fallback (sliding line window) - Priority 40
       const fallbackChunks = this.chunkByLineWindow({
         repositoryId,
         file,
         startIndex: globalChunkIndex
       });
-      chunks.push(...fallbackChunks);
+      fallbackChunks.forEach(c => rawChunks.push({ ...c, priorityWeight: 40 }));
       globalChunkIndex += fallbackChunks.length;
     }
 
-    return chunks;
+    // Apply global chunk budget to prevent CPU embedding overload on massive codebases
+    if (rawChunks.length > this.MAX_GLOBAL_CHUNKS) {
+      // Sort by priority weight descending, then slice top budget
+      rawChunks.sort((a, b) => (b.priorityWeight || 50) - (a.priorityWeight || 50));
+      rawChunks = rawChunks.slice(0, this.MAX_GLOBAL_CHUNKS);
+    }
+
+    // Re-index sequentially
+    return rawChunks.map((chunk, idx) => ({
+      ...chunk,
+      chunkIndex: idx
+    }));
   }
 
   /**
-   * Chunk source code file using M6 symbol boundaries
+   * Chunk source code file using M6 symbol boundaries with intelligent capping
    */
   static chunkBySymbols({ repositoryId, file, symbols = [], startIndex = 0 }) {
     const chunks = [];
@@ -90,22 +109,32 @@ export class CodeChunker {
     let currentIndex = startIndex;
 
     // Filter meaningful top-level and method symbols, sorted by lineStart
+    // Prioritize exported classes, functions, and interfaces
     const sortedSymbols = [...symbols]
       .filter(s => s.lineStart && s.lineEnd && s.lineEnd >= s.lineStart)
-      .sort((a, b) => a.lineStart - b.lineStart);
+      .sort((a, b) => {
+        if (a.isExported && !b.isExported) return -1;
+        if (!a.isExported && b.isExported) return 1;
+        return a.lineStart - b.lineStart;
+      })
+      .slice(0, this.MAX_CHUNKS_PER_FILE);
 
     for (const sym of sortedSymbols) {
-      // 1-indexed to 0-indexed slice
       const startIdx = Math.max(0, sym.lineStart - 1);
       const endIdx = Math.min(lines.length, sym.lineEnd);
       const symbolLines = lines.slice(startIdx, endIdx);
-      const symbolBody = symbolLines.join('\n').trim();
+      let symbolBody = symbolLines.join('\n').trim();
 
       if (!symbolBody) continue;
 
-      // Construct contextual header prefix to enhance retrieval
+      // Truncate overly long single symbol body for fast inference
+      if (symbolBody.length > this.MAX_CHUNK_CHARS) {
+        symbolBody = symbolBody.substring(0, this.MAX_CHUNK_CHARS) + '\n// ... [truncated for embedding context]';
+      }
+
+      // Construct contextual header prefix
       const prefix = `// File: ${file.path} | Symbol: ${sym.name} | Type: ${sym.type}${sym.language ? ` | Lang: ${sym.language}` : ''}\n`;
-      const fullContent = prefix + symbolBody;
+      const fullContent = (prefix + symbolBody).substring(0, this.MAX_CHUNK_CHARS);
       const contentHash = this.computeHash(fullContent);
 
       chunks.push({
@@ -128,7 +157,6 @@ export class CodeChunker {
       });
     }
 
-    // If symbols covered very little of the file, supplement with file-level fallback
     if (chunks.length === 0) {
       return this.chunkByLineWindow({ repositoryId, file, startIndex });
     }
@@ -181,10 +209,17 @@ export class CodeChunker {
       });
     }
 
-    for (const sec of sections) {
+    // Limit to top 4 sections per markdown document
+    const cappedSections = sections.slice(0, 4);
+
+    for (const sec of cappedSections) {
       if (!sec.content) continue;
+      const truncatedBody = sec.content.length > this.MAX_CHUNK_CHARS 
+        ? sec.content.substring(0, this.MAX_CHUNK_CHARS) 
+        : sec.content;
+
       const prefix = `<!-- File: ${file.path} | Section: ${sec.heading} -->\n`;
-      const fullContent = prefix + sec.content;
+      const fullContent = (prefix + truncatedBody).substring(0, this.MAX_CHUNK_CHARS);
       const contentHash = this.computeHash(fullContent);
 
       chunks.push({
@@ -213,8 +248,13 @@ export class CodeChunker {
    * Chunk configuration metadata files
    */
   static chunkConfigFile({ repositoryId, file, chunkIndex = 0 }) {
+    const rawContent = file.content.trim();
+    const truncatedBody = rawContent.length > this.MAX_CHUNK_CHARS 
+      ? rawContent.substring(0, this.MAX_CHUNK_CHARS) 
+      : rawContent;
+
     const prefix = `// File: ${file.path} | Config: ${path.basename(file.path)}\n`;
-    const fullContent = prefix + file.content.trim();
+    const fullContent = (prefix + truncatedBody).substring(0, this.MAX_CHUNK_CHARS);
     const contentHash = this.computeHash(fullContent);
 
     return {
@@ -237,7 +277,7 @@ export class CodeChunker {
   }
 
   /**
-   * Fallback sliding-window line chunker (50 lines with 10 lines overlap)
+   * Fallback sliding-window line chunker
    */
   static chunkByLineWindow({ repositoryId, file, startIndex = 0, windowSize = 50, overlap = 10 }) {
     const chunks = [];
@@ -245,8 +285,13 @@ export class CodeChunker {
     let currentIndex = startIndex;
 
     if (lines.length <= windowSize) {
+      const rawContent = file.content.trim();
+      const truncated = rawContent.length > this.MAX_CHUNK_CHARS 
+        ? rawContent.substring(0, this.MAX_CHUNK_CHARS) 
+        : rawContent;
+
       const prefix = `// File: ${file.path}\n`;
-      const fullContent = prefix + file.content.trim();
+      const fullContent = (prefix + truncated).substring(0, this.MAX_CHUNK_CHARS);
       const contentHash = this.computeHash(fullContent);
 
       return [{
@@ -265,7 +310,9 @@ export class CodeChunker {
       }];
     }
 
-    for (let i = 0; i < lines.length; i += (windowSize - overlap)) {
+    // Limit sliding window to max 3 chunks per fallback file
+    let windowCount = 0;
+    for (let i = 0; i < lines.length && windowCount < 3; i += (windowSize - overlap)) {
       const chunkLines = lines.slice(i, i + windowSize);
       const startLine = i + 1;
       const endLine = Math.min(lines.length, i + windowSize);
@@ -273,8 +320,12 @@ export class CodeChunker {
 
       if (!chunkBody) continue;
 
+      const truncated = chunkBody.length > this.MAX_CHUNK_CHARS 
+        ? chunkBody.substring(0, this.MAX_CHUNK_CHARS) 
+        : chunkBody;
+
       const prefix = `// File: ${file.path} | Lines: ${startLine}-${endLine}\n`;
-      const fullContent = prefix + chunkBody;
+      const fullContent = (prefix + truncated).substring(0, this.MAX_CHUNK_CHARS);
       const contentHash = this.computeHash(fullContent);
 
       chunks.push({
@@ -292,6 +343,7 @@ export class CodeChunker {
         metadata: { chunkStrategy: 'SLIDING_WINDOW' }
       });
 
+      windowCount++;
       if (endLine >= lines.length) break;
     }
 

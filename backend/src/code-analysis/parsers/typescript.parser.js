@@ -34,7 +34,10 @@ export class TypeScriptParser extends BaseCodeParser {
     try {
       const isTsx = (file.extension || '').toLowerCase() === '.tsx' || (file.path || '').endsWith('.tsx');
       
-      const ast = babelParser.parse(content, {
+      // Safeguard against massive bundled/minified files (cap at 250KB for AST traversal)
+      const parseContent = content.length > 250_000 ? content.substring(0, 250_000) : content;
+
+      const ast = babelParser.parse(parseContent, {
         sourceType: 'module',
         plugins: [
           'typescript',
