@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Mascot } from 'page-mascot';
 import { Logo } from '../components/Logo';
 import { AuthSwitch } from '../components/ui/auth-switch';
 import { useAuth } from '../context/AuthContext';
 import { TextShimmer } from '../components/motion/text-shimmer';
+import { TextReveal } from '../components/motion/text-reveal';
 import {
   ArrowLeft,
   Mail,
@@ -13,11 +15,6 @@ import {
   EyeOff,
   ArrowRight,
   Loader2,
-  CheckCircle2,
-  ShieldCheck,
-  Zap,
-  Network,
-  GitBranch,
 } from 'lucide-react';
 
 interface AuthPageProps {
@@ -110,19 +107,28 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   };
 
   return (
-    <div className="auth-page h-screen w-full bg-[#F7F7F5] text-neutral-900 flex flex-col justify-between relative overflow-hidden font-serif selection:bg-black/10 selection:text-black">
+    <div className="auth-page h-screen w-full bg-[#FAFAFA] text-black flex flex-col justify-between relative overflow-hidden font-sans selection:bg-black selection:text-white">
       
-      {/* Subtle soft gradient background glow */}
-      <div className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[700px] h-[300px] bg-neutral-200/40 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] bg-neutral-200/30 rounded-full blur-[140px] pointer-events-none" />
+      {/* Precision Monochrome Architectural Dot Grid Background */}
+      <div 
+        className="absolute inset-0 pointer-events-none opacity-[0.035]"
+        style={{
+          backgroundImage: 'radial-gradient(#000000 1px, transparent 1px)',
+          backgroundSize: '24px 24px',
+        }}
+      />
 
-      {/* Top Bar Navigation (Clean Apple Light) */}
+      {/* Subtle Ambient Radial Light */}
+      <div className="absolute top-[-15%] left-1/2 -translate-x-1/2 w-[800px] h-[350px] bg-black/[0.02] rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute bottom-[-15%] right-[-10%] w-[600px] h-[600px] bg-black/[0.025] rounded-full blur-[160px] pointer-events-none" />
+
+      {/* Top Bar Navigation (Sleek Monochrome) */}
       <header className="relative z-20 w-full max-w-7xl mx-auto px-6 py-4 flex items-center justify-between flex-shrink-0">
         <button
           onClick={handleBackHome}
-          className="flex items-center gap-2.5 px-4 py-2 rounded-full bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 hover:text-neutral-950 transition-all cursor-pointer group shadow-sm"
+          className="flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-white hover:bg-neutral-50 border border-black/15 text-xs font-mono font-bold tracking-wider uppercase text-black transition-all cursor-pointer group shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:shadow-[0_6px_20px_rgba(0,0,0,0.14)] hover:border-black/40 active:scale-[0.98]"
         >
-          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1" />
           <span>Back to Nexora</span>
         </button>
 
@@ -130,84 +136,82 @@ export const AuthPage: React.FC<AuthPageProps> = ({
           <Logo theme="light" size={26} />
         </a>
 
-        <div className="w-28 hidden sm:block" />
+        {/* Right side alignment spacer */}
+        <div className="w-36 hidden sm:block" />
       </header>
 
-      {/* Main Split Grid Container (No Scrolling) */}
+      {/* Main Showcase Grid */}
       <main className="relative z-20 flex-1 flex items-center justify-center px-4 sm:px-6 py-2 overflow-hidden">
-        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-12 items-center">
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14 items-center">
           
-          {/* Left Column: Clean Apple-style Showcase with Bigger Text & Spacing */}
-          <div className="lg:col-span-6 hidden lg:flex flex-col justify-center space-y-5 pr-4">
+          {/* Left Column: Minimal Showcase with Animated Text & Stable Layout */}
+          <div className="lg:col-span-6 hidden lg:flex flex-col justify-center space-y-6 pr-6">
             
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/[0.04] border border-black/[0.08] text-neutral-800 text-sm font-medium w-fit shadow-2xs">
-              <Zap className="w-4 h-4 text-neutral-900" />
-              <span>Next-Generation Code Intelligence</span>
-            </div>
-
+            {/* Top: Animated Typography */}
             <div className="space-y-3">
-              <h1 className="text-3.5xl sm:text-4xl xl:text-5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
-                Understand your entire software.
-              </h1>
-              <p className="text-base sm:text-lg text-neutral-600 leading-relaxed max-w-lg font-light">
-                Map complex architectures, trace impact blast radius before pushing code, and explore every system connection.
-              </p>
+              <TextReveal
+                as="h1"
+                text={["Understand your", "entire software."]}
+                className="text-4xl sm:text-4.5xl xl:text-5xl font-serif font-normal tracking-tight text-black leading-[1.14]"
+                delay={0.1}
+                stagger={0.06}
+                blur={8}
+              />
+              
+              <TextReveal
+                as="p"
+                text="Map complex architectures, trace blast radius across dependencies, and explore system connections in real time."
+                className="text-sm sm:text-base text-neutral-600 leading-relaxed max-w-md font-light"
+                delay={0.35}
+                stagger={0.02}
+                blur={4}
+              />
             </div>
 
-            {/* Architecture Preview Box with Blinking Green Live Synced Badge */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-white border border-black/[0.08] shadow-[0_4px_24px_rgba(0,0,0,0.04)] space-y-3">
-              <div className="flex items-center justify-between text-base text-neutral-600 border-b border-black/[0.06] pb-2.5">
-                <span className="flex items-center gap-2.5 text-neutral-900 font-semibold text-base">
-                  <Network className="w-4.5 h-4.5 text-neutral-800" />
-                  System Graph Intelligence
-                </span>
+            {/* Center: Museum-grade Mascot Pedestal Stage */}
+            <div>
+              <div className="relative rounded-3xl bg-white border border-black/10 shadow-[0_8px_30px_rgba(0,0,0,0.03)] p-6 flex flex-col items-center justify-center overflow-hidden group">
                 
-                {/* Blinking Green Live Synced Button/Badge */}
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/90 text-xs sm:text-sm font-medium shadow-2xs">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.9)]" />
-                  <span>Live Synced</span>
-                </span>
-              </div>
+                {/* Precision Corner Crosshairs (+) */}
+                <span className="absolute top-3 left-3 text-[10px] font-mono text-neutral-300 select-none">+</span>
+                <span className="absolute top-3 right-3 text-[10px] font-mono text-neutral-300 select-none">+</span>
+                <span className="absolute bottom-3 left-3 text-[10px] font-mono text-neutral-300 select-none">+</span>
+                <span className="absolute bottom-3 right-3 text-[10px] font-mono text-neutral-300 select-none">+</span>
 
-              <div className="space-y-2.5 text-sm font-serif text-neutral-700">
-                <div className="flex items-center gap-2.5">
-                  <GitBranch className="w-4 h-4 text-neutral-500 flex-shrink-0" />
-                  <span>auth-service.ts <span className="text-neutral-400">→</span> user-model.sql</span>
+                {/* Subtle Radial Glow */}
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-56 h-56 rounded-full bg-neutral-100/60 border border-black/[0.04]" />
                 </div>
-                <div className="flex items-center gap-2.5">
-                  <ShieldCheck className="w-4 h-4 text-neutral-700 flex-shrink-0" />
-                  <span className="text-neutral-800 font-medium">0 breaking dependency mutations detected</span>
-                </div>
-              </div>
-            </div>
 
-            {/* Feature Bullets with increased line gap & size */}
-            <div className="space-y-3.5 pt-1">
-              <div className="flex items-center gap-3 text-sm sm:text-base text-neutral-800 font-normal">
-                <CheckCircle2 className="w-4.5 h-4.5 text-neutral-950 flex-shrink-0" />
-                <span>Instant schema & database dependency forecasting</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm sm:text-base text-neutral-800 font-normal">
-                <CheckCircle2 className="w-4.5 h-4.5 text-neutral-950 flex-shrink-0" />
-                <span>Automated blast-radius calculation for pull requests</span>
-              </div>
-              <div className="flex items-center gap-3 text-sm sm:text-base text-neutral-800 font-normal">
-                <CheckCircle2 className="w-4.5 h-4.5 text-neutral-950 flex-shrink-0" />
-                <span>Zero configuration PostgreSQL & GitHub synchronization</span>
+                {/* The Mascot */}
+                <div className="relative z-10 py-1 transition-transform duration-300 group-hover:scale-105">
+                  <Mascot
+                    directions="/mascots/cap-directions.webp"
+                    reactions="/mascots/cap-reactions.webp"
+                    size={210}
+                    label="Cap the Nexora Mascot"
+                  />
+                </div>
+
+                {/* Real-time Indicator Pill */}
+                <div className="relative z-10 mt-2 flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/[0.04] border border-black/[0.06] text-neutral-800 text-[11px] font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                  <span>Cap · Tracking cursor · Click to boop</span>
+                </div>
               </div>
             </div>
 
           </div>
 
-          {/* Right Column: Clean Apple Light Form Card */}
+          {/* Right Column: High-End Black & White Auth Card */}
           <div className="lg:col-span-6 flex justify-center">
             <motion.div
               layout
               transition={{ type: 'spring', stiffness: 450, damping: 35 }}
-              className="w-full max-w-md bg-white border border-black/[0.08] rounded-3xl p-6 sm:p-7 shadow-[0_20px_50px_rgba(0,0,0,0.06),_0_1px_3px_rgba(0,0,0,0.03)] relative"
+              className="w-full max-w-md bg-white border border-black/10 rounded-3xl p-6 sm:p-7 shadow-[0_20px_60px_rgba(0,0,0,0.05),_0_1px_2px_rgba(0,0,0,0.03)] relative"
             >
               
-              {/* Header with smooth crossfade */}
+              {/* Header */}
               <div className="text-center mb-4 min-h-[52px] flex flex-col justify-center">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -217,19 +221,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     exit={{ opacity: 0, y: 6 }}
                     transition={{ duration: 0.18 }}
                   >
-                    <h2 className="text-2xl sm:text-3xl font-serif font-medium text-neutral-950 tracking-tight">
+                    <h2 className="text-2xl sm:text-3xl font-serif font-normal text-black tracking-tight">
                       {mode === 'signup' ? 'Create your account' : 'Welcome back'}
                     </h2>
                     <p className="text-xs sm:text-sm text-neutral-500 mt-1 font-light">
                       {mode === 'signup'
-                        ? 'Join NEXORA and start exploring your software architecture'
+                        ? 'Join Nexora and start exploring your software architecture'
                         : 'Enter your credentials to access your intelligence workspace'}
                     </p>
                   </motion.div>
                 </AnimatePresence>
               </div>
 
-              {/* Apple Light Mode Switcher */}
+              {/* High-Contrast Mode Switcher */}
               <div className="mb-4">
                 <AuthSwitch
                   mode={mode}
@@ -237,13 +241,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 />
               </div>
 
-              {/* Social Login Buttons (Light Theme) */}
+              {/* Social Login Buttons (Official Brand Colors) */}
               <div className="grid grid-cols-2 gap-2.5 mb-3.5">
                 <button
                   type="button"
                   disabled={isLoading}
                   onClick={() => triggerGoogleSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path
@@ -270,22 +274,22 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   type="button"
                   disabled={isLoading}
                   onClick={() => triggerGithubSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/[0.08] text-sm font-medium text-neutral-800 transition-all cursor-pointer shadow-sm active:scale-98 disabled:opacity-60 disabled:cursor-not-allowed"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
                 >
-                  <svg className="w-4 h-4 fill-black" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 fill-[#24292F]" viewBox="0 0 24 24">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
                   </svg>
                   <span>GitHub</span>
                 </button>
               </div>
 
-              {/* Single-line Horizontal Divider */}
+              {/* Single-line Divider */}
               <div className="relative flex items-center justify-center my-3.5 w-full">
-                <div className="border-t border-black/[0.08] flex-1" />
-                <span className="px-2.5 text-xs font-serif text-neutral-400 uppercase tracking-wider whitespace-nowrap flex-shrink-0 select-none">
+                <div className="border-t border-black/10 flex-1" />
+                <span className="px-3 text-[10px] font-mono text-neutral-400 uppercase tracking-widest whitespace-nowrap select-none">
                   or continue with email
                 </span>
-                <div className="border-t border-black/[0.08] flex-1" />
+                <div className="border-t border-black/10 flex-1" />
               </div>
 
               {/* Error Message */}
@@ -295,7 +299,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="mb-3 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-sm font-serif text-center"
+                    className="mb-3 p-2.5 rounded-xl bg-black/[0.04] border border-black/15 text-black text-xs font-mono text-center"
                   >
                     {errorMessage}
                   </motion.div>
@@ -303,7 +307,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
               </AnimatePresence>
 
               {/* Form */}
-              <form onSubmit={handleSubmit} className="space-y-3.5">
+              <form onSubmit={handleSubmit} className="space-y-3">
                 <AnimatePresence initial={false}>
                   {mode === 'signup' && (
                     <motion.div
@@ -313,7 +317,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       transition={{ duration: 0.2 }}
                       className="overflow-hidden"
                     >
-                      <label className="block text-xs font-semibold text-neutral-700 mb-1.5 font-serif">
+                      <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700 mb-1">
                         Full Name
                       </label>
                       <div className="relative">
@@ -327,7 +331,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Rohit"
                           required={mode === 'signup'}
-                          className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
+                          className="w-full pl-10 pr-4 py-2 bg-neutral-50/80 border border-black/10 rounded-xl text-sm text-black placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all disabled:opacity-50"
                         />
                       </div>
                     </motion.div>
@@ -335,7 +339,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </AnimatePresence>
 
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-700 mb-1.5 font-serif">
+                  <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700 mb-1">
                     Email Address
                   </label>
                   <div className="relative">
@@ -349,21 +353,21 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="rohit@nexora.io"
                       required
-                      className="w-full pl-10 pr-4 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full pl-10 pr-4 py-2 bg-neutral-50/80 border border-black/10 rounded-xl text-sm text-black placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all disabled:opacity-50"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-semibold text-neutral-700 font-serif">
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700">
                       Password
                     </label>
                     {mode === 'signin' && (
                       <a
                         href="#forgot"
                         onClick={(e) => { e.preventDefault(); alert('Password reset link sent to your email.'); }}
-                        className="text-xs text-neutral-500 hover:text-black transition-colors font-serif"
+                        className="text-[11px] text-neutral-500 hover:text-black transition-colors font-mono uppercase tracking-wider"
                       >
                         Forgot password?
                       </a>
@@ -380,7 +384,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={mode === 'signup' ? 'At least 6 characters' : '••••••••'}
                       required
-                      className="w-full pl-10 pr-10 py-2.5 bg-neutral-50/80 border border-black/[0.1] rounded-xl text-sm text-neutral-900 placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all font-serif disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="w-full pl-10 pr-10 py-2 bg-neutral-50/80 border border-black/10 rounded-xl text-sm text-black placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all disabled:opacity-50"
                     />
                     <button
                       type="button"
@@ -393,33 +397,31 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   </div>
                 </div>
 
-                {/* Apple-Style Solid Black Submit Button */}
+                {/* Solid Obsidian Black Submit Button */}
                 <motion.button
                   type="submit"
                   disabled={isLoading}
                   whileHover={!isLoading ? { scale: 1.01 } : undefined}
                   whileTap={!isLoading ? { scale: 0.98 } : undefined}
-                  className="w-full mt-2 py-3 px-4 rounded-xl bg-neutral-950 hover:bg-black text-white font-semibold text-sm sm:text-base font-serif flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                  className="w-full mt-2 py-2.5 px-4 rounded-xl bg-black hover:bg-neutral-800 text-white font-medium text-xs sm:text-sm font-mono flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
                 >
-                  <div className="flex items-center gap-2">
-                    <AnimatePresence mode="wait">
-                      <motion.span
-                        key={mode}
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 4 }}
-                        transition={{ duration: 0.15 }}
-                      >
-                        {mode === 'signup' ? 'Create Account' : 'Sign In'}
-                      </motion.span>
-                    </AnimatePresence>
-                    <ArrowRight className="w-4 h-4 text-white" />
-                  </div>
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={mode}
+                      initial={{ opacity: 0, y: -4 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 4 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      {mode === 'signup' ? 'Create Account' : 'Sign In'}
+                    </motion.span>
+                  </AnimatePresence>
+                  <ArrowRight className="w-3.5 h-3.5 text-white" />
                 </motion.button>
               </form>
 
               {/* Bottom footer switcher */}
-              <div className="mt-4 text-center text-xs sm:text-sm text-neutral-500 font-serif">
+              <div className="mt-3.5 text-center text-xs text-neutral-500 font-mono">
                 {mode === 'signup' ? (
                   <span>
                     Already have an account?{' '}
@@ -427,7 +429,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       type="button"
                       disabled={isLoading}
                       onClick={() => handleModeChange('signin')}
-                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
+                      className="text-black hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
                     >
                       Sign In
                     </button>
@@ -439,7 +441,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       type="button"
                       disabled={isLoading}
                       onClick={() => handleModeChange('signup')}
-                      className="text-neutral-950 hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
+                      className="text-black hover:underline underline-offset-4 font-semibold transition-all cursor-pointer disabled:opacity-50"
                     >
                       Create Account
                     </button>
@@ -461,34 +463,28 @@ export const AuthPage: React.FC<AuthPageProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 30, scale: 0.94 }}
             transition={{ type: 'spring', stiffness: 450, damping: 32 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-2.5 rounded-full bg-neutral-950/95 text-white border border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.35)] backdrop-blur-xl pointer-events-none select-none"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-5 py-2.5 rounded-full bg-black text-white border border-white/20 shadow-[0_12px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl pointer-events-none select-none"
           >
             <div className="relative flex items-center justify-center">
-              <Loader2 className="w-4 h-4 animate-spin text-blue-400 flex-shrink-0" />
-              <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
+              <Loader2 className="w-4 h-4 animate-spin text-white flex-shrink-0" />
             </div>
-            <div className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-100 font-serif">
+            <div className="flex items-center gap-1.5 text-xs font-mono text-white">
               <TextShimmer
                 duration={2}
-                baseColor="rgba(212, 212, 216, 0.45)"
+                baseColor="rgba(255, 255, 255, 0.4)"
                 highlightColor="#ffffff"
-                className="font-serif"
+                className="font-mono"
               >
-                {authStatusMessage || 'Authenticating in progress...'}
+                {authStatusMessage || 'Authenticating...'}
               </TextShimmer>
-              <span className="inline-flex gap-1 ml-0.5">
-                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
-                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
-                <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '300ms' }} />
-              </span>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Footer (Compact Apple Minimalist Light) */}
-      <footer className="relative z-20 w-full max-w-7xl mx-auto px-6 py-3 text-center text-xs font-serif text-neutral-400 flex-shrink-0">
-        <span>© 2026 NEXORA • Secure Authentication via Neon PostgreSQL</span>
+      {/* Footer (Monochrome Minimalist) */}
+      <footer className="relative z-20 w-full max-w-7xl mx-auto px-6 py-3 text-center text-[11px] font-mono tracking-wider uppercase text-neutral-400 flex-shrink-0">
+        <span>© 2026 NEXORA SYSTEMS INC. • SECURE MONOCHROME ARCHITECTURE ENGINE</span>
       </footer>
 
     </div>
