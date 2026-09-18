@@ -245,6 +245,43 @@ export function useRepositories(isGitHubConnected = false) {
     }
   };
 
+  // Delete a saved repository
+  const deleteRepository = async (repoId: number): Promise<boolean> => {
+    const currentToken = getAuthToken();
+    if (!currentToken || !repoId) return false;
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/repositories/${repoId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${currentToken}`,
+          Accept: 'application/json'
+        }
+      });
+
+      if (!res.ok) {
+        throw new Error(`Failed to delete repository (HTTP ${res.status})`);
+      }
+
+      const data = await res.json();
+      if (data.success) {
+        setSavedRepositories(prev => prev.filter(r => r.id !== repoId));
+        if (cachedSavedRepos) {
+          cachedSavedRepos = cachedSavedRepos.filter(r => r.id !== repoId);
+        }
+        if (activeSavedRepo?.id === repoId) {
+          setActiveSavedRepo(null);
+        }
+        return true;
+      }
+      return false;
+    } catch (err: any) {
+      console.error('Error deleting repository:', err);
+      setError(err.message || 'Failed to delete repository');
+      return false;
+    }
+  };
+
   // Initial load
   useEffect(() => {
     fetchSavedRepositories();
@@ -279,6 +316,7 @@ export function useRepositories(isGitHubConnected = false) {
     handleNextPage,
     handlePrevPage,
     saveSelectedRepository,
+    deleteRepository,
     refetchGitHub: () => fetchGitHubRepos(searchQuery, page),
     refetchSaved: fetchSavedRepositories
   };

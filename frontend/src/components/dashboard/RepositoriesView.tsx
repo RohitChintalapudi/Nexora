@@ -61,6 +61,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     handleNextPage,
     handlePrevPage,
     saveSelectedRepository,
+    deleteRepository,
     refetchGitHub
   } = useRepositories(isGitHubConnected);
 
@@ -130,6 +131,13 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     await startAnalysis(activeSavedRepo.id);
   };
 
+  const handleDeleteRepo = async (repoId: number) => {
+    const success = await deleteRepository(repoId);
+    if (success) {
+      handleBackToSelection();
+    }
+  };
+
   // If viewing analysis page
   if (subView === 'analysis' && activeSavedRepo) {
     return (
@@ -138,6 +146,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
           repository={activeSavedRepo}
           onBack={() => setSubView('details')}
           onViewProgress={() => setSubView('progress')}
+          onDeleteRepo={handleDeleteRepo}
         />
       </AnalysisErrorBoundary>
     );
@@ -169,6 +178,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         isStartingAnalysis={isStartingAnalysis}
         onViewAnalysisProgress={() => setSubView('progress')}
         onViewAnalysis={() => setSubView('analysis')}
+        onDeleteRepo={handleDeleteRepo}
       />
     );
   }

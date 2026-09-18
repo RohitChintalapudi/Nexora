@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   FolderGit2, 
   Lock, 
@@ -7,14 +7,17 @@ import {
   Plus, 
   ExternalLink,
   Sparkles,
-  Loader2
+  Loader2,
+  Trash2
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
+import { DeleteRepositoryModal } from './DeleteRepositoryModal';
 
 interface RecentRepositoriesProps {
   onConnectClick: () => void;
   onChooseRepoClick?: () => void;
   onViewRepoDetails?: (repo: SavedRepository) => void;
+  onDeleteRepo?: (repoId: number) => Promise<boolean | void>;
   isGitHubConnected?: boolean;
   githubUsername?: string | null;
   isConnecting?: boolean;
@@ -25,11 +28,13 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
   onConnectClick,
   onChooseRepoClick,
   onViewRepoDetails,
+  onDeleteRepo,
   isGitHubConnected = false,
   githubUsername = null,
   isConnecting = false,
   repositories = []
 }) => {
+  const [repoToDelete, setRepoToDelete] = useState<SavedRepository | null>(null);
   const hasRepositories = repositories.length > 0;
 
   return (
@@ -190,10 +195,36 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 )}
+
+                {onDeleteRepo && (
+                  <button
+                    type="button"
+                    onClick={() => setRepoToDelete(repo)}
+                    className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors cursor-pointer"
+                    title={`Delete ${repo.name} and purge analysis`}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </div>
           ))}
         </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {repoToDelete && (
+        <DeleteRepositoryModal
+          isOpen={true}
+          onClose={() => setRepoToDelete(null)}
+          onConfirm={async () => {
+            if (onDeleteRepo) {
+              await onDeleteRepo(repoToDelete.id);
+            }
+          }}
+          repoName={repoToDelete.name}
+          repoFullName={repoToDelete.fullName}
+        />
       )}
     </section>
   );

@@ -26,7 +26,8 @@ export const DashboardPage: React.FC = () => {
 
   const {
     savedRepositories,
-    setActiveSavedRepo
+    setActiveSavedRepo,
+    deleteRepository
   } = useRepositories(isGitHubConnected);
 
   const [activeTab, setActiveTab] = useState<DashboardTab>('dashboard');
@@ -190,6 +191,7 @@ export const DashboardPage: React.FC = () => {
               }
             }}
             onViewRepoDetails={handleViewSavedRepo}
+            onDeleteRepo={deleteRepository}
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}

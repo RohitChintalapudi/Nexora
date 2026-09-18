@@ -1,4 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { 
   Sparkles, 
   Send, 
@@ -15,7 +17,8 @@ import {
   Shield,
   Database,
   Route as RouteIcon,
-  Compass
+  Compass,
+  ExternalLink
 } from 'lucide-react';
 import { useRepositoryChat } from '../../../hooks/useRepositoryChat';
 
@@ -60,269 +63,198 @@ const QUICK_TOPICS: QuickTopic[] = [
 ];
 
 /**
- * Clean markdown table renderer with cell formatting and file links
+ * Premium Code Block with Mac-style window controls and 1-click clipboard copy
  */
-const MarkdownTableRenderer: React.FC<{
-  tableLines: string[];
-  onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void;
-}> = ({ tableLines, onOpenFileModal }) => {
-  if (tableLines.length < 2) return null;
+const CodeBlock: React.FC<{ code: string; language?: string }> = ({ code, language }) => {
+  const [copied, setCopied] = useState(false);
 
-  // Split line into cells
-  const parseRow = (line: string): string[] => {
-    return line
-      .trim()
-      .replace(/^\|/, '')
-      .replace(/\|$/, '')
-      .split('|')
-      .map(c => c.trim());
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
-  const headerCells = parseRow(tableLines[0]);
-  
-  // Find data rows (ignoring separator like |---|---|)
-  const dataRows = tableLines.slice(1).filter(line => {
-    const trimmed = line.trim();
-    return trimmed && !/^\|?[\s-:]+\|?[\s-:]*\|?$/.test(trimmed);
-  }).map(parseRow);
-
   return (
-    <div className="my-3 overflow-hidden rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] bg-white">
-      <div className="overflow-x-auto select-text">
-        <table className="w-full text-left border-collapse text-xs">
-          <thead>
-            <tr className="bg-slate-100/80 border-b border-slate-200">
-              {headerCells.map((h, i) => (
-                <th 
-                  key={i} 
-                  className="px-4 py-3 font-extrabold text-slate-800 uppercase tracking-wider text-[11px] whitespace-nowrap"
-                >
-                  {renderInlineMarkdown(h, onOpenFileModal)}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 font-sans text-slate-700">
-            {dataRows.map((row, rIdx) => (
-              <tr 
-                key={rIdx} 
-                className="hover:bg-blue-50/30 transition-colors even:bg-slate-50/40"
-              >
-                {headerCells.map((_, cIdx) => (
-                  <td 
-                    key={cIdx} 
-                    className="px-4 py-3 leading-relaxed align-top"
-                  >
-                    {renderInlineMarkdown(row[cIdx] || '', onOpenFileModal)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md my-3">
+      <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
+          </div>
+          <span className="font-semibold text-slate-300 ml-2">{language || 'code'}</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleCopy}
+          className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer text-[11px]"
+          title="Copy code"
+        >
+          {copied ? (
+            <>
+              <Check className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-emerald-400 font-sans font-bold">Copied</span>
+            </>
+          ) : (
+            <>
+              <Copy className="w-3.5 h-3.5" />
+              <span className="font-sans">Copy</span>
+            </>
+          )}
+        </button>
       </div>
+      <pre className="p-4 font-mono text-xs text-slate-100 overflow-x-auto select-text leading-relaxed">
+        <code>{code}</code>
+      </pre>
     </div>
   );
 };
 
 /**
- * Full Markdown message formatter (Tables, Code Blocks, Lists, Blockquotes, Headings)
+ * High-fidelity Markdown Message Formatter powered by react-markdown and remark-gfm
  */
 const FormattedMessageContent: React.FC<{ 
   content: string; 
   onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void 
 }> = ({ content, onOpenFileModal }) => {
-  // 1. Separate code blocks first
-  const codeParts = content.split(/(```[\s\S]*?```)/g);
-
   return (
-    <div className="space-y-3.5 text-xs sm:text-sm leading-relaxed text-slate-800">
-      {codeParts.map((codePart, partIdx) => {
-        // Code Block
-        if (codePart.startsWith('```') && codePart.endsWith('```')) {
-          const lines = codePart.slice(3, -3).trim().split('\n');
-          const language = lines[0]?.match(/^[a-zA-Z0-9_-]+$/) ? lines[0] : '';
-          const code = language ? lines.slice(1).join('\n') : lines.join('\n');
+    <div className="text-xs sm:text-sm leading-relaxed text-slate-800 select-text font-sans">
+      <ReactMarkdown
+        remarkPlugins={[remarkGfm]}
+        components={{
+          table: ({ children }) => (
+            <div className="my-3 overflow-hidden rounded-2xl border border-slate-200/90 shadow-[0_2px_12px_rgba(0,0,0,0.02)] bg-white">
+              <div className="overflow-x-auto select-text">
+                <table className="w-full text-left border-collapse text-xs">
+                  {children}
+                </table>
+              </div>
+            </div>
+          ),
+          thead: ({ children }) => <thead className="bg-slate-100/90 border-b border-slate-200">{children}</thead>,
+          tbody: ({ children }) => <tbody className="divide-y divide-slate-100 font-sans text-slate-700">{children}</tbody>,
+          tr: ({ children }) => <tr className="hover:bg-blue-50/30 transition-colors even:bg-slate-50/40">{children}</tr>,
+          th: ({ children }) => (
+            <th className="px-4 py-2.5 font-extrabold text-slate-800 uppercase tracking-wider text-[11px] whitespace-nowrap">
+              {children}
+            </th>
+          ),
+          td: ({ children }) => (
+            <td className="px-4 py-2.5 leading-relaxed align-top">
+              {children}
+            </td>
+          ),
+          code: ({ node, className, children, ...props }: any) => {
+            const isInline = !className && !String(children).includes('\n');
+            const match = /language-(\w+)/.exec(className || '');
+            const codeString = String(children).replace(/\n$/, '');
 
-          return (
-            <div key={partIdx} className="rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 shadow-md my-3">
-              <div className="flex items-center justify-between px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-[11px] font-mono text-slate-400">
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2.5 h-2.5 rounded-full bg-red-500/80 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-amber-500/80 inline-block" />
-                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500/80 inline-block" />
-                  </div>
-                  <span className="font-semibold text-slate-300 ml-2">{language || 'code'}</span>
-                </div>
+            if (!isInline) {
+              const language = match ? match[1] : '';
+              return (
+                <CodeBlock 
+                  code={codeString} 
+                  language={language} 
+                />
+              );
+            }
+
+            // Inline code: check if file path citation
+            const val = codeString.trim();
+            const isFile = (val.includes('/') || val.includes('\\') || /\.[a-zA-Z0-9]{1,8}(?::L?\d+(?:-\d+)?)?$/.test(val)) && !val.includes(' ');
+
+            if (isFile && onOpenFileModal) {
+              const lineMatch = val.match(/:L?(\d+)(?:-(\d+))?$/);
+              const cleanPath = val.replace(/:L?\d+(?:-\d+)?$/, '');
+              const start = lineMatch ? parseInt(lineMatch[1], 10) : undefined;
+              const end = lineMatch && lineMatch[2] ? parseInt(lineMatch[2], 10) : start;
+
+              return (
                 <button
                   type="button"
-                  onClick={() => navigator.clipboard.writeText(code)}
-                  className="hover:text-white transition-colors flex items-center gap-1 cursor-pointer"
-                  title="Copy code"
+                  onClick={() => onOpenFileModal(cleanPath, start, end)}
+                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-blue-200 transition-colors mx-0.5 cursor-pointer align-baseline shadow-2xs"
+                  title={`Inspect ${val}`}
                 >
-                  <Copy className="w-3.5 h-3.5" />
-                  <span>Copy</span>
+                  <FileCode2 className="w-3 h-3 text-blue-600 shrink-0" />
+                  <span>{val}</span>
                 </button>
-              </div>
-              <pre className="p-4 font-mono text-xs text-slate-100 overflow-x-auto select-text leading-relaxed">
-                <code>{code}</code>
-              </pre>
-            </div>
-          );
-        }
-
-        // 2. Parse paragraphs, tables, lists, and callouts
-        const blocks = codePart.split(/\n\n+/);
-
-        return (
-          <div key={partIdx} className="space-y-3">
-            {blocks.map((block, bIdx) => {
-              const trimmed = block.trim();
-              if (!trimmed) return null;
-
-              // Check if block is a Markdown Table
-              const lines = trimmed.split('\n');
-              const isTable = lines.length >= 2 && lines.every(l => l.trim().startsWith('|') || l.trim().includes('|'));
-              if (isTable) {
-                return (
-                  <MarkdownTableRenderer 
-                    key={bIdx} 
-                    tableLines={lines} 
-                    onOpenFileModal={onOpenFileModal} 
-                  />
-                );
-              }
-
-              // Blockquotes / Callout notes
-              if (trimmed.startsWith('>')) {
-                const quoteText = trimmed.replace(/^>\s?/gm, '');
-                return (
-                  <div key={bIdx} className="p-4 rounded-2xl bg-blue-50/50 border-l-4 border-blue-500 text-slate-800 my-2 space-y-1">
-                    <p className="font-sans leading-relaxed">
-                      {renderInlineMarkdown(quoteText, onOpenFileModal)}
-                    </p>
-                  </div>
-                );
-              }
-
-              // Bullet points
-              if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-                const items = trimmed.split(/\n[-*]\s+/).filter(Boolean);
-                return (
-                  <ul key={bIdx} className="space-y-2 pl-4 list-disc text-slate-700">
-                    {items.map((item, iIdx) => (
-                      <li key={iIdx} className="leading-relaxed">
-                        {renderInlineMarkdown(item.replace(/^[-*]\s+/, ''), onOpenFileModal)}
-                      </li>
-                    ))}
-                  </ul>
-                );
-              }
-
-              // Numbered lists
-              if (/^\d+\.\s+/.test(trimmed)) {
-                const items = trimmed.split(/\n\d+\.\s+/).filter(Boolean);
-                return (
-                  <ol key={bIdx} className="space-y-2 pl-4 list-decimal text-slate-700">
-                    {items.map((item, iIdx) => (
-                      <li key={iIdx} className="leading-relaxed">
-                        {renderInlineMarkdown(item.replace(/^\d+\.\s+/, ''), onOpenFileModal)}
-                      </li>
-                    ))}
-                  </ol>
-                );
-              }
-
-              // Section Headings
-              if (trimmed.startsWith('### ')) {
-                return (
-                  <h4 key={bIdx} className="text-sm sm:text-base font-extrabold text-slate-900 pt-3 pb-1 tracking-tight">
-                    {renderInlineMarkdown(trimmed.replace(/^###\s+/, ''), onOpenFileModal)}
-                  </h4>
-                );
-              }
-              if (trimmed.startsWith('## ')) {
-                return (
-                  <h3 key={bIdx} className="text-base sm:text-lg font-extrabold text-slate-900 pt-4 pb-1.5 border-b border-slate-200/80 tracking-tight">
-                    {renderInlineMarkdown(trimmed.replace(/^##\s+/, ''), onOpenFileModal)}
-                  </h3>
-                );
-              }
-              if (trimmed.startsWith('# ')) {
-                return (
-                  <h2 key={bIdx} className="text-lg sm:text-xl font-extrabold text-slate-900 pt-4 pb-2 border-b border-slate-200/80 tracking-tight">
-                    {renderInlineMarkdown(trimmed.replace(/^#\s+/, ''), onOpenFileModal)}
-                  </h2>
-                );
-              }
-
-              // Standard text paragraph
-              return (
-                <p key={bIdx} className="leading-relaxed whitespace-pre-line text-slate-700">
-                  {renderInlineMarkdown(trimmed, onOpenFileModal)}
-                </p>
               );
-            })}
-          </div>
-        );
-      })}
+            }
+
+            return (
+              <code className="font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 mx-0.5">
+                {children}
+              </code>
+            );
+          },
+          blockquote: ({ children }) => (
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/50 border-l-4 border-blue-500 text-slate-800 my-2.5 space-y-1 shadow-2xs">
+              <div className="font-sans leading-relaxed text-xs sm:text-sm">
+                {children}
+              </div>
+            </div>
+          ),
+          h1: ({ children }) => (
+            <h2 className="text-lg sm:text-xl font-extrabold text-slate-900 pt-4 pb-2 border-b border-slate-200/80 tracking-tight">
+              {children}
+            </h2>
+          ),
+          h2: ({ children }) => (
+            <h3 className="text-base sm:text-lg font-extrabold text-slate-900 pt-3.5 pb-1.5 border-b border-slate-200/80 tracking-tight">
+              {children}
+            </h3>
+          ),
+          h3: ({ children }) => (
+            <h4 className="text-sm sm:text-base font-extrabold text-slate-900 pt-2.5 pb-1 tracking-tight">
+              {children}
+            </h4>
+          ),
+          h4: ({ children }) => (
+            <h5 className="text-xs sm:text-sm font-bold text-slate-800 pt-2 pb-0.5 uppercase tracking-wider text-slate-500">
+              {children}
+            </h5>
+          ),
+          ul: ({ children }) => (
+            <ul className="space-y-1.5 pl-5 list-disc text-slate-700 my-2">
+              {children}
+            </ul>
+          ),
+          ol: ({ children }) => (
+            <ol className="space-y-1.5 pl-5 list-decimal text-slate-700 my-2">
+              {children}
+            </ol>
+          ),
+          li: ({ children }) => (
+            <li className="leading-relaxed">
+              {children}
+            </li>
+          ),
+          p: ({ children }) => (
+            <p className="leading-relaxed text-slate-700 my-1.5">
+              {children}
+            </p>
+          ),
+          a: ({ href, children }) => (
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:text-blue-800 underline font-medium inline-flex items-center gap-0.5"
+            >
+              <span>{children}</span>
+              <ExternalLink className="w-3 h-3 inline" />
+            </a>
+          ),
+          hr: () => <hr className="my-3 border-slate-200" />
+        }}
+      >
+        {content}
+      </ReactMarkdown>
     </div>
   );
 };
-
-/**
- * Parse inline bold, italics, and backtick file citations
- */
-function renderInlineMarkdown(
-  text: string, 
-  onOpenFileModal?: (filePath: string, startLine?: number, endLine?: number) => void
-): React.ReactNode {
-  const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g);
-
-  return tokens.map((token, i) => {
-    if (token.startsWith('`') && token.endsWith('`')) {
-      const val = token.slice(1, -1);
-      const isFile = (val.includes('/') || val.includes('\\') || /\.[a-zA-Z0-9]{1,8}(?::L?\d+(?:-\d+)?)?$/.test(val)) && !val.includes(' ');
-
-      if (isFile && onOpenFileModal) {
-        const lineMatch = val.match(/:L?(\d+)(?:-(\d+))?$/);
-        const cleanPath = val.replace(/:L?\d+(?:-\d+)?$/, '');
-        const start = lineMatch ? parseInt(lineMatch[1], 10) : undefined;
-        const end = lineMatch && lineMatch[2] ? parseInt(lineMatch[2], 10) : start;
-
-        return (
-          <button
-            key={i}
-            type="button"
-            onClick={() => onOpenFileModal(cleanPath, start, end)}
-            className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-blue-200 transition-colors mx-0.5 cursor-pointer align-baseline shadow-2xs"
-            title={`Inspect ${val}`}
-          >
-            <FileCode2 className="w-3 h-3 text-blue-600 shrink-0" />
-            <span>{val}</span>
-          </button>
-        );
-      }
-
-      return (
-        <code key={i} className="font-mono text-[11px] font-semibold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-800 border border-slate-200 mx-0.5">
-          {val}
-        </code>
-      );
-    }
-
-    if (token.startsWith('**') && token.endsWith('**')) {
-      return (
-        <strong key={i} className="font-extrabold text-slate-900">
-          {token.slice(2, -2)}
-        </strong>
-      );
-    }
-
-    return token;
-  });
-}
 
 export const AIChatView: React.FC<AIChatViewProps> = ({
   repositoryId,

@@ -31,26 +31,40 @@ export class TransformersEmbeddingProvider extends BaseEmbeddingProvider {
     if (!texts || texts.length === 0) return [];
     const extractor = await this.getExtractor();
 
-    const embeddings = [];
-    for (const text of texts) {
-      const cleanText = (text || '').trim();
-      if (!cleanText) {
-        embeddings.push(new Array(this.dimension).fill(0));
-        continue;
+    const embeddings = new Array(texts.length);
+    const BATCH_CONCURRENCY = 4;
+
+    for (let i = 0; i < texts.length; i += BATCH_CONCURRENCY) {
+      const batchIndices = [];
+      const batchPromises = [];
+
+      for (let j = 0; j < BATCH_CONCURRENCY && (i + j) < texts.length; j++) {
+        const idx = i + j;
+        const cleanText = (texts[idx] || '').trim().substring(0, 1000);
+        batchIndices.push(idx);
+
+        if (!cleanText) {
+          batchPromises.push(Promise.resolve(new Array(this.dimension).fill(0)));
+        } else {
+          batchPromises.push(
+            extractor(cleanText, { pooling: 'mean', normalize: true })
+              .then(output => {
+                const vector = Array.from(output.data);
+                if (vector.length !== this.dimension) {
+                  throw new Error(
+                    `Embedding dimension mismatch: expected ${this.dimension}, received ${vector.length}`
+                  );
+                }
+                return vector;
+              })
+          );
+        }
       }
 
-      const output = await extractor(cleanText, {
-        pooling: 'mean',
-        normalize: true
-      });
-
-      const vector = Array.from(output.data);
-      if (vector.length !== this.dimension) {
-        throw new Error(
-          `Embedding dimension mismatch: expected ${this.dimension}, received ${vector.length}`
-        );
+      const results = await Promise.all(batchPromises);
+      for (let k = 0; k < results.length; k++) {
+        embeddings[batchIndices[k]] = results[k];
       }
-      embeddings.push(vector);
     }
 
     return embeddings;
