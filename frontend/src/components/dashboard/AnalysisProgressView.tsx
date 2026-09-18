@@ -580,7 +580,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                     ? 'bg-emerald-500'
                     : isFailed
                       ? 'bg-red-500'
-                      : 'bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-400'
+                      : 'bg-blue-600'
                 }`}
                 style={{ width: `${progressPercentage}%` }}
               >
