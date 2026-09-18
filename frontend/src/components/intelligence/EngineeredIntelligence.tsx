@@ -361,9 +361,9 @@ export const EngineeredIntelligence: React.FC = () => {
                   }}
                   className={cn(
                     "absolute w-[190px] sm:w-[220px] md:w-[245px] h-[235px] sm:h-[265px] md:h-[285px] rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between overflow-hidden cursor-pointer transition-colors duration-300",
-                    "bg-gradient-to-b from-[#0F172A] to-[#020617] border text-white",
+                    "bg-black border text-white shadow-2xl",
                     isActive 
-                      ? "border-blue-400/50 ring-2 ring-blue-500/30" 
+                      ? "border-white/40 ring-1 ring-white/20" 
                       : "border-white/10 hover:border-white/25"
                   )}
                   style={{
@@ -372,22 +372,22 @@ export const EngineeredIntelligence: React.FC = () => {
                   }}
                 >
                   {/* Card Background Visual Graphic */}
-                  <div className="absolute inset-0 z-0 opacity-90 pointer-events-none">
+                  <div className="absolute inset-0 z-0 opacity-90 pointer-events-none bg-black">
                     <CardVisualArtwork stageIndex={idx} />
                   </div>
 
                   {/* Card Top Pill Badge */}
                   <div className="relative z-10 flex items-center justify-between">
                     <span className={cn(
-                      "text-[9px] font-mono font-bold tracking-wider px-2 py-0.5 rounded-full border backdrop-blur-md",
+                      "text-[9px] font-mono font-bold tracking-wider px-2 py-0.5 rounded-full border backdrop-blur-md bg-black/60",
                       stage.badgeColor
                     )}>
                       STAGE {stage.stepNum}
                     </span>
                     
                     {isActive ? (
-                      <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-blue-500/20 text-blue-300 text-[9px] font-mono border border-blue-400/30">
-                        <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                      <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/10 text-white text-[9px] font-mono border border-white/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         <span>Active</span>
                       </span>
                     ) : (
@@ -398,11 +398,11 @@ export const EngineeredIntelligence: React.FC = () => {
                   </div>
 
                   {/* Card Bottom Meta */}
-                  <div className="relative z-10 mt-auto bg-[#020617]/85 backdrop-blur-md rounded-xl p-2 sm:p-2.5 border border-white/10">
+                  <div className="relative z-10 mt-auto bg-black/90 backdrop-blur-md rounded-xl p-2 sm:p-2.5 border border-white/10">
                     <div className="text-[11px] sm:text-xs font-mono font-bold text-white tracking-wide truncate">
                       {stage.title}
                     </div>
-                    <div className="text-[9px] font-mono text-blue-300/80 truncate mt-0.5">
+                    <div className="text-[9px] font-mono text-neutral-400 truncate mt-0.5">
                       {stage.subtitle}
                     </div>
                   </div>
