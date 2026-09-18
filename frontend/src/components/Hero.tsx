@@ -5,6 +5,7 @@ import { HaddybhaiyaShader } from './HaddybhaiyaShader';
 import { useAuth } from '../context/AuthContext';
 import { TextReveal } from './motion/text-reveal';
 import { TextShimmer } from './motion/text-shimmer';
+import { NumberTicker } from './motion/number-ticker';
 
 export const Hero: React.FC = () => {
   const [gpuFailed, setGpuFailed] = useState(false);
@@ -307,7 +308,7 @@ export const Hero: React.FC = () => {
             Authentication flow mapped
           </div>
           <div className="text-[11px] font-serif text-neutral-300 leading-relaxed mb-2.5">
-            Identified 12 related files across API Gateway and PostgreSQL connectors.
+            Identified <NumberTicker value={12} blur duration={0.8} /> related files across API Gateway and PostgreSQL connectors.
           </div>
           <div className="w-full h-1 bg-white/[0.1] rounded-full overflow-hidden">
             <motion.div

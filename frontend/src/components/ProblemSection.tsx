@@ -11,6 +11,7 @@ import {
   ArrowUpRight
 } from 'lucide-react';
 import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface ToolItem {
   id: string;
@@ -93,6 +94,20 @@ export const ProblemSection: React.FC = () => {
   const handleMouseLeave = () => {
     setHoveredIdx(null);
     setIsCoreHovered(false);
+  };
+
+  const renderMeta = (meta: string) => {
+    const match = meta.match(/^(\d+)\s+(.*)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      const label = match[2];
+      return (
+        <span>
+          <NumberTicker value={num} blur duration={0.8} /> {label}
+        </span>
+      );
+    }
+    return <span>{meta}</span>;
   };
 
   return (
@@ -318,7 +333,7 @@ export const ProblemSection: React.FC = () => {
                   {/* Card Footer: Metadata Tag */}
                   <div className="w-full pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
                     <span className="text-[10px] font-mono text-neutral-500 bg-neutral-100/80 px-2 py-0.5 rounded-md">
-                      {tool.meta}
+                      {renderMeta(tool.meta)}
                     </span>
                     <ArrowUpRight className="w-3 h-3 text-neutral-300 group-hover:text-blue-600 transition-colors" />
                   </div>
@@ -357,7 +372,7 @@ export const ProblemSection: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-700 font-serif font-medium">{tool.desc}</div>
                 <div className="text-[10px] text-neutral-500 font-mono bg-neutral-100/70 px-2 py-0.5 rounded-md self-start">
-                  {tool.meta}
+                  {renderMeta(tool.meta)}
                 </div>
               </div>
             ))}
@@ -419,7 +434,7 @@ export const ProblemSection: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-700 font-serif font-medium">{tool.desc}</div>
                 <div className="text-[10px] text-neutral-500 font-mono bg-neutral-100/70 px-2 py-0.5 rounded-md self-start">
-                  {tool.meta}
+                  {renderMeta(tool.meta)}
                 </div>
               </div>
             ))}

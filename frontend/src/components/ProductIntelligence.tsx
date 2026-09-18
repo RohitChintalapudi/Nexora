@@ -19,6 +19,7 @@ import {
   FileText,
 } from 'lucide-react';
 import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface NodeItem {
   id: string;
@@ -175,8 +176,8 @@ export const ProductIntelligence: React.FC = () => {
                     <div className="text-[11px] font-bold text-blue-600 uppercase tracking-wider font-serif">Synthesized Flow Path</div>
                     <div className="text-neutral-800 bg-white border border-black/[0.08] rounded-xl p-4 shadow-2xs space-y-2.5">
                       <div className="font-semibold text-neutral-950 text-sm sm:text-base font-serif flex items-center justify-between">
-                        <span>4 connected execution layers detected</span>
-                        <span className="text-xs text-neutral-500 font-normal">240ms resolution</span>
+                        <span><NumberTicker value={4} blur duration={0.8} /> connected execution layers detected</span>
+                        <span className="text-xs text-neutral-500 font-normal"><NumberTicker value={240} blur duration={0.9} />ms resolution</span>
                       </div>
                       <div className="font-mono text-xs sm:text-sm space-y-2 text-neutral-700 bg-neutral-50/70 p-3 rounded-lg border border-black/[0.04]">
                         <div className="flex items-center gap-2.5">
@@ -210,7 +211,7 @@ export const ProductIntelligence: React.FC = () => {
                 <div className="border-t border-black/[0.06] px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
                   <span className="flex items-center gap-1.5">
                     <Activity className="w-3.5 h-3.5 text-neutral-500" />
-                    <span>12 connected repository files mapped</span>
+                    <span><NumberTicker value={12} blur duration={0.8} /> connected repository files mapped</span>
                   </span>
                   <span className="text-blue-600 font-semibold hover:underline cursor-pointer flex items-center gap-1">
                     Inspect Graph <ArrowRight className="w-3.5 h-3.5" />
@@ -681,7 +682,7 @@ export const ProductIntelligence: React.FC = () => {
                         <span>Structured Mental Model</span>
                       </div>
                       <span className="text-[10px] font-mono text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">
-                        8 System Dimensions
+                        <NumberTicker value={8} blur duration={0.8} /> System Dimensions
                       </span>
                     </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface FAQItem {
   question: string;
@@ -76,7 +77,13 @@ export const FAQSection: React.FC = () => {
                   onClick={() => toggleFAQ(idx)}
                   className="w-full flex items-center justify-between p-5 sm:p-6 text-left font-serif font-semibold text-base sm:text-lg text-neutral-900 hover:text-neutral-950 transition-colors select-none cursor-pointer"
                 >
-                  <span>{faq.question}</span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-neutral-400 font-mono text-sm">
+                      <NumberTicker value={idx + 1} pad={2} blur duration={0.9} />
+                    </span>
+                    <span className="text-neutral-300 font-mono text-sm">—</span>
+                    <span>{faq.question.replace(/^\d+\s*—\s*/, '')}</span>
+                  </span>
                   <span className={`text-sm text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>
                     ▼
                   </span>
