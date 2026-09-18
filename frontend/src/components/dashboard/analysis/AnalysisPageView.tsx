@@ -865,7 +865,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   </span>
                 )}
 
-                {/* View Switcher: Interactive Diagram vs Matrix */}
+                {/* View Switcher: Interactive Diagram vs Relationships */}
                 <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200">
                   <button
                     type="button"
@@ -876,7 +876,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    Tree Diagram
+                    Tree Flow
                   </button>
                   <button
                     type="button"
@@ -887,7 +887,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
-                    <span>Communication Matrix</span>
+                    <span>Relationships</span>
                     {Array.isArray(analysis.architecture?.relationships) && analysis.architecture.relationships.length > 0 && (
                       <span
                         className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
@@ -968,7 +968,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
               /* TAB CONTENT: ADVANCED INTERACTIVE COMPONENT COMMUNICATION MATRIX */
               <div className="space-y-3 pt-2">
                 <h3 className="text-xs font-extrabold uppercase tracking-wider text-slate-400">
-                  Component Communication & Relationships Matrix
+                  Component Relationships & Call Flow
                 </h3>
                 <ComponentCommunicationMatrix
                   relationships={analysis.architecture?.relationships}
