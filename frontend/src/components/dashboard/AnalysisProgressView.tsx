@@ -300,6 +300,107 @@ function formatDuration(seconds: number): string {
   return s > 0 ? `${m}m ${s}s` : `${m} minutes`;
 }
 
+/**
+ * Animated Twisting Hourglass with trickling sand particles & smooth continuous 180° flip
+ */
+const TwistingHourglass: React.FC<{ size?: number; className?: string }> = ({ size = 20, className = '' }) => {
+  return (
+    <div className={`relative inline-flex items-center justify-center shrink-0 ${className}`} style={{ width: size, height: size }}>
+      <svg
+        viewBox="0 0 24 24"
+        width={size}
+        height={size}
+        className="animate-hourglass-twist"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <style>{`
+          @keyframes hourglass-spin-twist {
+            0% { transform: rotate(0deg); }
+            38% { transform: rotate(0deg); }
+            50% { transform: rotate(180deg); }
+            88% { transform: rotate(180deg); }
+            100% { transform: rotate(360deg); }
+          }
+          @keyframes sand-trickle {
+            0% { stroke-dashoffset: 0; opacity: 1; }
+            50% { stroke-dashoffset: -8; opacity: 0.9; }
+            100% { stroke-dashoffset: -16; opacity: 1; }
+          }
+          @keyframes sand-top-drain {
+            0% { transform: scaleY(1); opacity: 1; }
+            38% { transform: scaleY(0.2); opacity: 0.9; }
+            48% { transform: scaleY(0); opacity: 0.5; }
+            52% { transform: scaleY(0); opacity: 0.5; }
+            60% { transform: scaleY(0.9); opacity: 1; }
+            100% { transform: scaleY(1); opacity: 1; }
+          }
+          @keyframes sand-bottom-fill {
+            0% { transform: scaleY(0.15); opacity: 0.7; }
+            38% { transform: scaleY(1); opacity: 1; }
+            48% { transform: scaleY(1); opacity: 1; }
+            52% { transform: scaleY(0); opacity: 0.4; }
+            88% { transform: scaleY(0.15); opacity: 0.7; }
+            100% { transform: scaleY(0.15); opacity: 0.7; }
+          }
+          .animate-hourglass-twist {
+            animation: hourglass-spin-twist 4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+            transform-origin: 12px 12px;
+          }
+          .animate-sand-drip {
+            stroke-dasharray: 3 2;
+            animation: sand-trickle 0.8s linear infinite;
+          }
+          .animate-top-sand-drain {
+            transform-origin: 12px 10px;
+            animation: sand-top-drain 4s ease-in-out infinite;
+          }
+          .animate-bottom-sand-fill {
+            transform-origin: 12px 21px;
+            animation: sand-bottom-fill 4s ease-in-out infinite;
+          }
+        `}</style>
+
+        {/* Outer Hourglass Frame */}
+        <path
+          d="M5 3h14M5 21h14M6 3v3.5c0 2 1.5 3.5 3 4.5v2c-1.5 1-3 2.5-3 4.5V21M18 3v3.5c0 2-1.5 3.5-3 4.5v2c1.5 1 3 2.5 3 4.5V21"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="text-blue-600"
+        />
+
+        {/* Top Sand Reservoir (Draining) */}
+        <path
+          d="M7.8 6.5h8.4c-.6 1.8-2.2 2.8-4.2 3.2-2-.4-3.6-1.4-4.2-3.2z"
+          fill="currentColor"
+          className="text-blue-500 animate-top-sand-drain"
+        />
+
+        {/* Trickling Sand Droplets in Center Neck */}
+        <line
+          x1="12"
+          y1="10"
+          x2="12"
+          y2="15"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          className="text-blue-400 animate-sand-drip"
+        />
+
+        {/* Bottom Sand Reservoir (Filling) */}
+        <path
+          d="M7.8 20.5h8.4c-.6-1.8-2.2-2.8-4.2-3.2-2 .4-3.6 1.4-4.2 3.2z"
+          fill="currentColor"
+          className="text-blue-500 animate-bottom-sand-fill"
+        />
+      </svg>
+    </div>
+  );
+};
+
 export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
   repository,
   job,
@@ -543,11 +644,11 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
 
               {/* Estimated Time Remaining (or Total Time if completed) */}
               {isCompleted ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 shadow-2xs">
-                  <Timer className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 shadow-2xs">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
                   <div className="flex flex-col">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-600 leading-none">
-                      Total Time
+                      Finished In
                     </span>
                     <span className="text-xs font-mono font-extrabold text-emerald-950">
                       {formatDuration(elapsedSeconds)}
@@ -555,11 +656,11 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                   </div>
                 </div>
               ) : isRunning ? (
-                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-blue-50 border border-blue-200 text-blue-900 shadow-2xs">
-                  <Hourglass className="w-3.5 h-3.5 text-blue-600 animate-spin stroke-[2.5]" style={{ animationDuration: '3s' }} />
+                <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-blue-50/90 border border-blue-200 text-blue-900 shadow-2xs">
+                  <TwistingHourglass size={20} />
                   <div className="flex flex-col">
                     <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 leading-none">
-                      Est. Remaining
+                      Est. Time
                     </span>
                     <span className="text-xs font-mono font-extrabold text-blue-950">
                       {formatRemainingTime(estimatedRemainingSeconds)}
