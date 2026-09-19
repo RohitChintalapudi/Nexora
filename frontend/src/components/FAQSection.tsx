@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface FAQItem {
   question: string;
@@ -40,20 +42,20 @@ export const FAQSection: React.FC = () => {
     <section className="relative py-12 md:py-16 bg-[#F7F7F5] content-layer" id="faq">
       <div className="max-w-4xl mx-auto px-6">
         
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center max-w-2xl mx-auto mb-16 md:mb-20"
-        >
+        <div className="text-center max-w-2xl mx-auto mb-16 md:mb-20">
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-4">
             FAQ
           </span>
-          <h2 className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
-            Frequently Asked Questions
-          </h2>
-        </motion.div>
+          <TextReveal
+            as="h2"
+            text="Frequently Asked Questions"
+            delay={0.05}
+            stagger={0.05}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]"
+          />
+        </div>
 
         <div className="space-y-4 max-w-2xl mx-auto">
           {faqs.map((faq, idx) => {
@@ -75,7 +77,13 @@ export const FAQSection: React.FC = () => {
                   onClick={() => toggleFAQ(idx)}
                   className="w-full flex items-center justify-between p-5 sm:p-6 text-left font-serif font-semibold text-base sm:text-lg text-neutral-900 hover:text-neutral-950 transition-colors select-none cursor-pointer"
                 >
-                  <span>{faq.question}</span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-neutral-400 font-mono text-sm">
+                      <NumberTicker value={idx + 1} pad={2} blur duration={0.9} />
+                    </span>
+                    <span className="text-neutral-300 font-mono text-sm">—</span>
+                    <span>{faq.question.replace(/^\d+\s*—\s*/, '')}</span>
+                  </span>
                   <span className={`text-sm text-neutral-400 transition-transform duration-300 ${isOpen ? 'rotate-180 text-blue-500' : ''}`}>
                     ▼
                   </span>

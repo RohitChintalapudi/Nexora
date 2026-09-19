@@ -1,5 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface StepItem {
   num: string;
@@ -61,9 +63,15 @@ export const HowItWorks: React.FC = () => {
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             How It Works
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]">
-            From repository to understanding.
-          </h2>
+          <TextReveal
+            as="h2"
+            text="From repository to understanding."
+            delay={0.05}
+            stagger={0.05}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12]"
+          />
         </div>
 
         <div className="relative max-w-5xl mx-auto">
@@ -105,7 +113,7 @@ export const HowItWorks: React.FC = () => {
                 className="flex flex-col items-center md:items-start text-center md:text-left group"
               >
                 <div className="w-14 h-14 rounded-full bg-white border border-black/[0.06] shadow-sm flex items-center justify-center font-serif font-bold text-base text-neutral-900 group-hover:border-blue-500 group-hover:text-blue-600 transition-all duration-300 mb-4 relative select-none z-10">
-                  {step.num}
+                  <NumberTicker value={idx + 1} pad={2} blur duration={1.1} />
                   <span className="absolute -inset-1 rounded-full border border-blue-500/15 opacity-0 group-hover:opacity-100 transition-opacity duration-300 scale-105" />
                 </div>
 

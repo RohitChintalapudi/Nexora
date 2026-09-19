@@ -18,6 +18,8 @@ import {
   Package,
   FileText,
 } from 'lucide-react';
+import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface NodeItem {
   id: string;
@@ -83,12 +85,24 @@ export const ProductIntelligence: React.FC = () => {
 
         {/* Section Header with tighter padding */}
         <div className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.14] mb-3">
-            Three pillars of total software clarity.
-          </h2>
-          <p className="text-sm sm:text-base text-neutral-600 font-serif leading-relaxed max-w-2xl mx-auto font-light">
-            NEXORA parses your codebase into an interconnected graph—allowing you to query internal mechanics, visualize complex systems, and forecast mutation blast radius.
-          </p>
+          <TextReveal
+            as="h2"
+            text="Three pillars of total software clarity."
+            delay={0.05}
+            stagger={0.05}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.14] mb-3"
+          />
+          <TextReveal
+            as="p"
+            text="NEXORA parses your codebase into an interconnected graph—allowing you to query internal mechanics, visualize complex systems, and forecast mutation blast radius."
+            delay={0.25}
+            stagger={0.02}
+            blur={5}
+            yOffset="15%"
+            className="text-sm sm:text-base text-neutral-600 font-serif leading-relaxed max-w-2xl mx-auto font-light"
+          />
         </div>
 
         {/* Pillar 01 — UNDERSTAND */}
@@ -101,13 +115,25 @@ export const ProductIntelligence: React.FC = () => {
                 <span>01 — UNDERSTAND</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
-                AI-powered codebase intelligence.
-              </h3>
+              <TextReveal
+                as="h3"
+                text="AI-powered codebase intelligence."
+                delay={0.1}
+                stagger={0.05}
+                blur={6}
+                yOffset="18%"
+                className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]"
+              />
               
-              <p className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light">
-                Ask questions about your project and receive answers grounded in your actual AST and execution graph. NEXORA understands services, functions, controllers, and their cross-system relationships.
-              </p>
+              <TextReveal
+                as="p"
+                text="Ask questions about your project and receive answers grounded in your actual AST and execution graph. NEXORA understands services, functions, controllers, and their cross-system relationships."
+                delay={0.3}
+                stagger={0.02}
+                blur={5}
+                yOffset="15%"
+                className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light"
+              />
               
               <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
@@ -150,8 +176,8 @@ export const ProductIntelligence: React.FC = () => {
                     <div className="text-[11px] font-bold text-blue-600 uppercase tracking-wider font-serif">Synthesized Flow Path</div>
                     <div className="text-neutral-800 bg-white border border-black/[0.08] rounded-xl p-4 shadow-2xs space-y-2.5">
                       <div className="font-semibold text-neutral-950 text-sm sm:text-base font-serif flex items-center justify-between">
-                        <span>4 connected execution layers detected</span>
-                        <span className="text-xs text-neutral-500 font-normal">240ms resolution</span>
+                        <span><NumberTicker value={4} blur duration={0.8} /> connected execution layers detected</span>
+                        <span className="text-xs text-neutral-500 font-normal"><NumberTicker value={240} blur duration={0.9} />ms resolution</span>
                       </div>
                       <div className="font-mono text-xs sm:text-sm space-y-2 text-neutral-700 bg-neutral-50/70 p-3 rounded-lg border border-black/[0.04]">
                         <div className="flex items-center gap-2.5">
@@ -185,7 +211,7 @@ export const ProductIntelligence: React.FC = () => {
                 <div className="border-t border-black/[0.06] px-6 py-3 bg-neutral-50/70 flex items-center justify-between text-xs sm:text-sm font-serif text-neutral-600">
                   <span className="flex items-center gap-1.5">
                     <Activity className="w-3.5 h-3.5 text-neutral-500" />
-                    <span>12 connected repository files mapped</span>
+                    <span><NumberTicker value={12} blur duration={0.8} /> connected repository files mapped</span>
                   </span>
                   <span className="text-blue-600 font-semibold hover:underline cursor-pointer flex items-center gap-1">
                     Inspect Graph <ArrowRight className="w-3.5 h-3.5" />
@@ -465,13 +491,25 @@ export const ProductIntelligence: React.FC = () => {
                 <span>02 — VISUALIZE</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
-                See how your architecture flows.
-              </h3>
+              <TextReveal
+                as="h3"
+                text="See how your architecture flows."
+                delay={0.1}
+                stagger={0.05}
+                blur={6}
+                yOffset="18%"
+                className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]"
+              />
               
-              <p className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light">
-                Explore request pathways, service boundaries, caching layers, and database transactions with live interactive architecture flows.
-              </p>
+              <TextReveal
+                as="p"
+                text="Explore request pathways, service boundaries, caching layers, and database transactions with live interactive architecture flows."
+                delay={0.3}
+                stagger={0.02}
+                blur={5}
+                yOffset="15%"
+                className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light"
+              />
               
               <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
@@ -504,13 +542,25 @@ export const ProductIntelligence: React.FC = () => {
                 <span>03 — ARCHITECTURE</span>
               </div>
 
-              <h3 className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]">
-                See how the system is built.
-              </h3>
+              <TextReveal
+                as="h3"
+                text="See how the system is built."
+                delay={0.1}
+                stagger={0.05}
+                blur={6}
+                yOffset="18%"
+                className="text-2.5xl sm:text-3xl font-serif font-normal tracking-tight text-neutral-950 leading-[1.18]"
+              />
               
-              <p className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light">
-                NEXORA turns an unfamiliar repository into a structured mental model — revealing the technologies, architecture, components, application flow, APIs, important files, and relationships that make the system work.
-              </p>
+              <TextReveal
+                as="p"
+                text="NEXORA turns an unfamiliar repository into a structured mental model — revealing the technologies, architecture, components, application flow, APIs, important files, and relationships that make the system work."
+                delay={0.3}
+                stagger={0.02}
+                blur={5}
+                yOffset="15%"
+                className="text-neutral-600 font-serif text-sm sm:text-base leading-relaxed font-light"
+              />
               
               <ul className="space-y-2.5 pt-1 font-serif text-sm sm:text-base text-neutral-800">
                 <li className="flex items-center gap-3">
@@ -632,7 +682,7 @@ export const ProductIntelligence: React.FC = () => {
                         <span>Structured Mental Model</span>
                       </div>
                       <span className="text-[10px] font-mono text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded">
-                        8 System Dimensions
+                        <NumberTicker value={8} blur duration={0.8} /> System Dimensions
                       </span>
                     </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FileCode2, Sparkles, ArrowRight } from 'lucide-react';
+import { TextReveal } from './motion/text-reveal';
 
 interface MockResponse {
   question: string;
@@ -105,12 +106,24 @@ export const handleStripeWebhook = async (req: Request, res: Response) => {
           <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-3">
             AI Codebase Intelligence
           </span>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-3">
-            Ask questions. Get answers from your actual code.
-          </h2>
-          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed max-w-xl mx-auto">
-            NEXORA reads files, traces definitions, and tracks dependencies so that every answer is grounded in the structural context of your actual repository.
-          </p>
+          <TextReveal
+            as="h2"
+            text="Ask questions. Get answers from your actual code."
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-3"
+          />
+          <TextReveal
+            as="p"
+            text="NEXORA reads files, traces definitions, and tracks dependencies so that every answer is grounded in the structural context of your actual repository."
+            delay={0.3}
+            stagger={0.02}
+            blur={5}
+            yOffset="15%"
+            className="text-neutral-500 text-sm sm:text-base leading-relaxed max-w-xl mx-auto"
+          />
         </div>
 
         {/* AI Workspace Mockup Grid */}

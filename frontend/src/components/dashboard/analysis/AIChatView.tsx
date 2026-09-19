@@ -21,6 +21,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useRepositoryChat } from '../../../hooks/useRepositoryChat';
+import { TextShimmer } from '../../motion/text-shimmer';
 
 interface AIChatViewProps {
   repositoryId: number | string;
@@ -145,7 +146,7 @@ const FormattedMessageContent: React.FC<{
               {children}
             </td>
           ),
-          code: ({ node, className, children, ...props }: any) => {
+          code: ({ className, children }: any) => {
             const isInline = !className && !String(children).includes('\n');
             const match = /language-(\w+)/.exec(className || '');
             const codeString = String(children).replace(/\n$/, '');
@@ -513,8 +514,15 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
               <Bot className="w-4 h-4" />
             </div>
             <div className="p-4 rounded-3xl rounded-tl-xs bg-white border border-slate-200/80 shadow-xs flex items-center gap-3 text-xs text-slate-600">
-              <Loader2 className="w-4 h-4 text-blue-600 animate-spin" />
-              <span>Analyzing code chunks, symbols, and synthesizing response...</span>
+              <Loader2 className="w-4 h-4 text-blue-600 animate-spin shrink-0" />
+              <TextShimmer
+                duration={2.2}
+                baseColor="rgba(51, 65, 85, 0.45)"
+                highlightColor="#0f172a"
+                className="text-xs text-slate-700 font-medium"
+              >
+                Analyzing code chunks, symbols, and synthesizing response...
+              </TextShimmer>
             </div>
           </div>
         )}

@@ -10,6 +10,8 @@ import {
   Layers,
   ArrowUpRight
 } from 'lucide-react';
+import { TextReveal } from './motion/text-reveal';
+import { NumberTicker } from './motion/number-ticker';
 
 interface ToolItem {
   id: string;
@@ -94,6 +96,20 @@ export const ProblemSection: React.FC = () => {
     setIsCoreHovered(false);
   };
 
+  const renderMeta = (meta: string) => {
+    const match = meta.match(/^(\d+)\s+(.*)$/);
+    if (match) {
+      const num = parseInt(match[1], 10);
+      const label = match[2];
+      return (
+        <span>
+          <NumberTicker value={num} blur duration={0.8} /> {label}
+        </span>
+      );
+    }
+    return <span>{meta}</span>;
+  };
+
   return (
     <section className="relative py-14 md:py-20 bg-[#F7F7F5] border-t border-black/[0.035] content-layer overflow-hidden" id="problem">
       {/* Background Subtle Tech Dot Matrix Grid */}
@@ -113,13 +129,24 @@ export const ProblemSection: React.FC = () => {
             <Layers className="w-3.5 h-3.5" />
             The Unified Graph Problem
           </div>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-5">
-            Modern software is connected.<br />
-            Your tools shouldn't be fragmented.
-          </h2>
-          <p className="text-neutral-500 text-sm sm:text-base leading-relaxed font-sans max-w-2xl mx-auto">
-            Developers constantly switch between repositories, documentation wikis, architecture diagrams, issue trackers, and terminals just to understand how a single request flows. NEXORA unifies every signal into one live, queryable system graph.
-          </p>
+          <TextReveal
+            as="h2"
+            text={["Modern software is connected.", "Your tools shouldn't be fragmented."]}
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-3xl sm:text-4xl md:text-5xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.12] mb-5"
+          />
+          <TextReveal
+            as="p"
+            text="Developers constantly switch between repositories, documentation wikis, architecture diagrams, issue trackers, and terminals just to understand how a single request flows. NEXORA unifies every signal into one live, queryable system graph."
+            delay={0.35}
+            stagger={0.02}
+            blur={5}
+            yOffset="16%"
+            className="text-neutral-500 text-sm sm:text-base leading-relaxed font-sans max-w-2xl mx-auto"
+          />
         </div>
 
         {/* ========================================================= */}
@@ -306,7 +333,7 @@ export const ProblemSection: React.FC = () => {
                   {/* Card Footer: Metadata Tag */}
                   <div className="w-full pt-1.5 border-t border-black/[0.04] flex items-center justify-between">
                     <span className="text-[10px] font-mono text-neutral-500 bg-neutral-100/80 px-2 py-0.5 rounded-md">
-                      {tool.meta}
+                      {renderMeta(tool.meta)}
                     </span>
                     <ArrowUpRight className="w-3 h-3 text-neutral-300 group-hover:text-blue-600 transition-colors" />
                   </div>
@@ -345,7 +372,7 @@ export const ProblemSection: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-700 font-serif font-medium">{tool.desc}</div>
                 <div className="text-[10px] text-neutral-500 font-mono bg-neutral-100/70 px-2 py-0.5 rounded-md self-start">
-                  {tool.meta}
+                  {renderMeta(tool.meta)}
                 </div>
               </div>
             ))}
@@ -407,7 +434,7 @@ export const ProblemSection: React.FC = () => {
                 </div>
                 <div className="text-xs text-neutral-700 font-serif font-medium">{tool.desc}</div>
                 <div className="text-[10px] text-neutral-500 font-mono bg-neutral-100/70 px-2 py-0.5 rounded-md self-start">
-                  {tool.meta}
+                  {renderMeta(tool.meta)}
                 </div>
               </div>
             ))}

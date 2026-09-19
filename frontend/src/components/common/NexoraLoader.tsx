@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { TextShimmer } from '../motion/text-shimmer';
 
 export interface NexoraLoaderProps {
   message?: string;
@@ -158,21 +159,27 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
         </div>
 
         {message && (
-          <p 
+          <TextShimmer 
+            as="p"
+            duration={2.2}
+            baseColor="rgba(30, 41, 59, 0.45)"
+            highlightColor="#0f172a"
             className="text-xs font-bold text-slate-800"
-            style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
           >
             {message}
-          </p>
+          </TextShimmer>
         )}
 
         {subMessage && (
-          <p 
-            className="text-[11px] font-medium text-slate-500 leading-relaxed"
-            style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
+          <TextShimmer 
+            as="p"
+            duration={2.8}
+            baseColor="rgba(100, 116, 139, 0.5)"
+            highlightColor="#1e293b"
+            className="text-[11px] font-medium text-slate-500 leading-relaxed block"
           >
             {subMessage}
-          </p>
+          </TextShimmer>
         )}
       </div>
 
@@ -230,12 +237,15 @@ export const NexoraLoader: React.FC<NexoraLoaderProps> = ({
             strokeLinecap="round"
           />
         </svg>
-        <span 
+        <TextShimmer 
+          as="span"
+          duration={2}
+          baseColor="rgba(15, 23, 42, 0.45)"
+          highlightColor="#000000"
           className="text-xs font-bold text-slate-900"
-          style={{ fontFamily: "'Times New Roman', Times, 'Nimbus Roman No9 L', Georgia, serif" }}
         >
           {message}
-        </span>
+        </TextShimmer>
       </div>
     );
   }

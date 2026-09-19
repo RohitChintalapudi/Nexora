@@ -14,6 +14,7 @@ import {
   Zap,
   HardDrive
 } from 'lucide-react';
+import { TextReveal } from './motion/text-reveal';
 
 export const CollaborationSection: React.FC = () => {
   const [activeNode, setActiveNode] = useState<string>('auth');
@@ -31,13 +32,25 @@ export const CollaborationSection: React.FC = () => {
               <span>Team Intelligence</span>
             </div>
             
-            <h2 className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-4">
-              Understand software together.
-            </h2>
+            <TextReveal
+              as="h2"
+              text="Understand software together."
+              delay={0.05}
+              stagger={0.05}
+              blur={6}
+              yOffset="20%"
+              className="text-3xl sm:text-4xl font-sans font-normal tracking-tight text-neutral-900 leading-[1.15] mb-4"
+            />
             
-            <p className="text-neutral-500 text-sm sm:text-base leading-relaxed mb-6">
-              Explore complex system architectures, discuss structure decisions, and review code impacts side-by-side. NEXORA synchronizes your workspace in real-time so your entire engineering team shares the same codebase mental model.
-            </p>
+            <TextReveal
+              as="p"
+              text="Explore complex system architectures, discuss structure decisions, and review code impacts side-by-side. NEXORA synchronizes your workspace in real-time so your entire engineering team shares the same codebase mental model."
+              delay={0.25}
+              stagger={0.02}
+              blur={5}
+              yOffset="15%"
+              className="text-neutral-500 text-sm sm:text-base leading-relaxed mb-6"
+            />
 
             <div className="space-y-3 font-sans text-xs sm:text-sm text-neutral-700">
               <div className="flex items-start gap-3 p-2.5 rounded-xl bg-white/70 border border-black/[0.04]">

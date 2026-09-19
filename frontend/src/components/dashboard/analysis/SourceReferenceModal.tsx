@@ -8,6 +8,7 @@ import {
   Loader2, 
   AlertCircle 
 } from 'lucide-react';
+import { TextShimmer } from '../../motion/text-shimmer';
 import type { SourceFilePreview } from '../../../types/analysis';
 
 interface SourceReferenceModalProps {
@@ -175,7 +176,14 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
           {isLoading ? (
             <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-400">
               <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-              <span className="text-xs font-sans">Loading source file preview...</span>
+              <TextShimmer
+                duration={2}
+                baseColor="rgba(148, 163, 184, 0.45)"
+                highlightColor="#ffffff"
+                className="text-xs font-sans"
+              >
+                Loading source file preview...
+              </TextShimmer>
             </div>
           ) : !fileData || !fileData.content ? (
             <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-400 p-6 text-center">

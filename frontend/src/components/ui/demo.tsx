@@ -1,4 +1,5 @@
 import { InteractiveHoverButton } from "@/components/ui/interactive-hover-button";
+import { TextRevealPreview } from "@/components/motion/text-reveal";
 
 function InteractiveHoverButtonDemo() {
   return (
@@ -8,4 +9,5 @@ function InteractiveHoverButtonDemo() {
   );
 }
 
-export { InteractiveHoverButtonDemo };
+export { InteractiveHoverButtonDemo, TextRevealPreview };
+

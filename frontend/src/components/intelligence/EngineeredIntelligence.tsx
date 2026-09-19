@@ -1,726 +1,809 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  FileCode2, 
   Search, 
   Layers, 
   CheckCircle2, 
   Database, 
   Server, 
-  Sparkles,
-  Cpu
+  Cpu,
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  Code2,
+  Network,
+  FileCheck,
+  X,
+  ArrowRight
 } from 'lucide-react';
+import { TextReveal } from '../motion/text-reveal';
+import { cn } from '@/lib/utils';
 
 interface StageData {
   id: string;
   stepNum: string;
+  stepNumber: number;
   title: string;
   headline: string;
+  subtitle: string;
   description: string;
   bullet: string;
+  accentColor: string;
+  badgeColor: string;
+  glowColor: string;
+  details: {
+    capabilities: string[];
+    technicalOutput: string;
+    sampleCode?: string;
+  };
 }
 
 const STAGES: StageData[] = [
   {
     id: 'code-intelligence',
     stepNum: '01',
+    stepNumber: 1,
     title: 'Code Intelligence',
     headline: 'First, understand the code.',
+    subtitle: 'Deterministic AST Symbol Parsing',
     description: 'NEXORA analyzes source structure to identify symbols, declarations, imports, exports, routes, and relationships across the entire repository.',
-    bullet: 'Deterministic AST Symbol Parsing'
+    bullet: 'Deterministic AST Symbol Parsing',
+    accentColor: 'from-blue-500 to-cyan-400',
+    badgeColor: 'bg-blue-500/20 text-blue-300 border-blue-500/30',
+    glowColor: 'rgba(59, 130, 246, 0.35)',
+    details: {
+      capabilities: [
+        'Full AST Parsing for TypeScript, Python, Go, Rust, Java, C++',
+        'Deterministic Symbol Extractor: Classes, Methods, Types, Functions',
+        'Declaration & Interface Resolution across module boundaries',
+        'Route, Controller & Middleware Signature Detection'
+      ],
+      technicalOutput: 'Extracted 4,820 symbols and 384 routes with 100% deterministic accuracy.',
+      sampleCode: `// AST Symbol Extraction Pipeline
+interface SymbolMap {
+  id: "src/auth/auth.service.ts#validateUser";
+  type: "FunctionDeclaration";
+  visibility: "export";
+  dependencies: ["@/db/client", "jsonwebtoken"];
+}`
+    }
   },
   {
     id: 'semantic-search',
     stepNum: '02',
+    stepNumber: 2,
     title: 'Semantic Search',
     headline: 'Then, find the context that matters.',
+    subtitle: 'Vector Indexing & Semantic Retrieval',
     description: 'Meaningful code is transformed into searchable representations so relevant parts of the repository can be retrieved when they matter.',
-    bullet: 'Vector Indexing & Semantic Retrieval'
+    bullet: 'Vector Indexing & Semantic Retrieval',
+    accentColor: 'from-indigo-500 to-violet-400',
+    badgeColor: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30',
+    glowColor: 'rgba(99, 102, 241, 0.35)',
+    details: {
+      capabilities: [
+        'Dense 1536-dimensional Code & Docstring Embedding generation',
+        'Hybrid Sparse-Dense Retrieval with Cosine Re-ranking',
+        'Intent Classification: Architecture, Bug, Feature, Data Flow',
+        'Context-aware chunking preserving syntax boundary integrity'
+      ],
+      technicalOutput: 'Top 3 candidates retrieved in 18ms with 0.94 cosine similarity.',
+      sampleCode: `// Hybrid Cosine Vector Query
+const query = "Where is authentication handled and verified?";
+const results = await vectorIndex.query({
+  vector: embed(query),
+  filter: { astType: ["controller", "service"] },
+  topK: 5
+});`
+    }
   },
   {
     id: 'dependency-relationships',
     stepNum: '03',
+    stepNumber: 3,
     title: 'Dependency Relationships',
     headline: 'See how the pieces connect.',
+    subtitle: 'Directed Inter-Module Graph',
     description: 'Imports, exports, routes, and other structural relationships reveal how files and modules depend on one another across execution paths.',
-    bullet: 'Directed Inter-Module Graph'
+    bullet: 'Directed Inter-Module Graph',
+    accentColor: 'from-purple-500 to-fuchsia-400',
+    badgeColor: 'bg-purple-500/20 text-purple-300 border-purple-500/30',
+    glowColor: 'rgba(168, 85, 247, 0.35)',
+    details: {
+      capabilities: [
+        'End-to-end Call Graph generation from HTTP ingress to DB',
+        'Cyclic Dependency & Dead Code Path Detection',
+        'Module Coupling & Cohesion Analysis',
+        'Cross-service RPC & REST endpoint contract linking'
+      ],
+      technicalOutput: 'Assembled 4-node deterministic invocation chain with 0 circular loops.',
+      sampleCode: `// Directed Dependency Graph
+Router("/api/v2/login")
+  └── AuthController.handleLogin()
+        └── AuthService.validateJWT()
+              └── PostgreSQL.users_schema.findUnique()`
+    }
   },
   {
     id: 'repository-context',
     stepNum: '04',
+    stepNumber: 4,
     title: 'Repository Context',
     headline: 'Ground every answer in the repository.',
+    subtitle: 'Verified Evidence Grounding',
     description: 'Relevant source snippets and deterministic codebase facts provide the verified context needed for accurate, evidence-backed answers.',
-    bullet: 'Verified Evidence Grounding'
+    bullet: 'Verified Evidence Grounding',
+    accentColor: 'from-amber-500 to-orange-400',
+    badgeColor: 'bg-amber-500/20 text-amber-300 border-amber-500/30',
+    glowColor: 'rgba(245, 158, 11, 0.35)',
+    details: {
+      capabilities: [
+        'Exact line-range AST citation grounding (L42–L50)',
+        'Zero-Hallucination verification against live repo index',
+        'Config, Environment & Schema Fact Validation',
+        'Dynamic Context Window token budget optimizer'
+      ],
+      technicalOutput: '100% verified citation coverage with verified AST code anchors.',
+      sampleCode: `// Grounded Evidence Verification
+export const validateUser = async (email: string, hash: string) => {
+  // [CITED: src/services/auth.service.ts L42-L50]
+  const user = await db.users.findUnique({ where: { email } });
+  return jwt.sign({ id: user.id }, SECRET);
+};`
+    }
   },
   {
     id: 'architecture-mapping',
     stepNum: '05',
+    stepNumber: 5,
     title: 'Architecture Mapping',
     headline: 'Then turn structure into understanding.',
+    subtitle: 'Automated System Mental Model',
     description: 'NEXORA combines deterministic codebase facts with relevant repository context to produce a structured view of the application’s architecture and behavior.',
-    bullet: 'Automated System Mental Model'
+    bullet: 'Automated System Mental Model',
+    accentColor: 'from-emerald-500 to-teal-400',
+    badgeColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30',
+    glowColor: 'rgba(16, 185, 129, 0.35)',
+    details: {
+      capabilities: [
+        'Automated System Architecture synthesis & visual topology',
+        'Framework & Library Ecosystem classification',
+        'Data Flow & Ingress/Egress lifecycle modeling',
+        'Living, interactive system documentation updated per commit'
+      ],
+      technicalOutput: 'Generated 6-dimensional architecture map across frontend, API, and DB.',
+      sampleCode: `// Synthesized System Mental Model
+SystemArchitecture: {
+  layers: ["Frontend (Next.js)", "API Gateway (Fastify)", "Domain Core", "PostgreSQL"],
+  dataFlow: "Client -> Ingress -> Middleware -> Controller -> Service -> Storage",
+  securityBoundary: "JWT HS256 with RBAC Guard"
+}`
+    }
   }
 ];
 
 export const EngineeredIntelligence: React.FC = () => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const [activeStageIndex, setActiveStageIndex] = useState(0);
+  const [selectedStageForModal, setSelectedStageForModal] = useState<StageData | null>(null);
 
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end end']
-  });
+  const totalStages = STAGES.length;
 
-  const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 90,
-    damping: 24,
-    restDelta: 0.0005
-  });
+  const handleNext = useCallback(() => {
+    setActiveStageIndex((prev) => (prev + 1) % totalStages);
+  }, [totalStages]);
 
-  // Track active stage index (0 to 4) based on scroll progress
+  const handlePrev = useCallback(() => {
+    setActiveStageIndex((prev) => (prev - 1 + totalStages) % totalStages);
+  }, [totalStages]);
+
+  // Keyboard navigation support
   useEffect(() => {
-    return smoothProgress.on('change', (p) => {
-      let index = 0;
-      if (p >= 0.78) index = 4;
-      else if (p >= 0.58) index = 3;
-      else if (p >= 0.38) index = 2;
-      else if (p >= 0.18) index = 1;
-      else index = 0;
-      setActiveStageIndex(index);
-    });
-  }, [smoothProgress]);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrev();
+      } else if (e.key === 'ArrowRight') {
+        handleNext();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleNext, handlePrev]);
 
   const activeStage = STAGES[activeStageIndex];
 
+  // Proportional, compact 3D curved arc positioning
+  const getCardTransform = (index: number) => {
+    let diff = index - activeStageIndex;
+    
+    // Normalize difference for cyclic carousel representation
+    if (diff > 2) diff -= totalStages;
+    if (diff < -2) diff += totalStages;
+
+    switch (diff) {
+      case 0:
+        return {
+          x: 0,
+          y: -26,
+          rotate: 0,
+          scale: 1.05,
+          zIndex: 40,
+          opacity: 1,
+          filter: 'brightness(1.05) saturate(1.05)',
+          boxShadow: `0 20px 45px -12px rgba(15, 23, 42, 0.4), 0 0 32px ${activeStage.glowColor}`,
+          pointerEvents: 'auto' as const,
+        };
+      case -1:
+        return {
+          x: -140,
+          y: -2,
+          rotate: -13,
+          scale: 0.9,
+          zIndex: 30,
+          opacity: 0.88,
+          filter: 'brightness(0.78) saturate(0.9)',
+          boxShadow: '0 12px 28px -8px rgba(15, 23, 42, 0.3)',
+          pointerEvents: 'auto' as const,
+        };
+      case 1:
+        return {
+          x: 140,
+          y: -2,
+          rotate: 13,
+          scale: 0.9,
+          zIndex: 30,
+          opacity: 0.88,
+          filter: 'brightness(0.78) saturate(0.9)',
+          boxShadow: '0 12px 28px -8px rgba(15, 23, 42, 0.3)',
+          pointerEvents: 'auto' as const,
+        };
+      case -2:
+        return {
+          x: -250,
+          y: 26,
+          rotate: -24,
+          scale: 0.76,
+          zIndex: 20,
+          opacity: 0.58,
+          filter: 'brightness(0.55) saturate(0.8)',
+          boxShadow: '0 8px 20px -6px rgba(15, 23, 42, 0.22)',
+          pointerEvents: 'auto' as const,
+        };
+      case 2:
+        return {
+          x: 250,
+          y: 26,
+          rotate: 24,
+          scale: 0.76,
+          zIndex: 20,
+          opacity: 0.58,
+          filter: 'brightness(0.55) saturate(0.8)',
+          boxShadow: '0 8px 20px -6px rgba(15, 23, 42, 0.22)',
+          pointerEvents: 'auto' as const,
+        };
+      default:
+        return {
+          x: diff > 0 ? 360 : -360,
+          y: 60,
+          rotate: diff > 0 ? 30 : -30,
+          scale: 0.6,
+          zIndex: 10,
+          opacity: 0,
+          filter: 'brightness(0.3)',
+          boxShadow: 'none',
+          pointerEvents: 'none' as const,
+        };
+    }
+  };
+
   return (
     <section 
-      ref={containerRef} 
-      className="relative h-[340vh] bg-[#F7F7F5] text-neutral-900 border-t border-black/[0.035] content-layer" 
+      className="relative w-full bg-[#F7F7F5] text-neutral-900 py-12 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 overflow-hidden select-none border-t border-black/[0.04]" 
       id="foundation"
     >
-      {/* Sticky Viewport Stage */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between items-center px-4 sm:px-6 md:px-12 py-6 sm:py-10 select-none">
+      {/* Ambient Blue & Indigo Background Glows */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-blue-500/8 blur-[110px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[480px] h-[240px] bg-indigo-500/6 blur-[100px] rounded-full pointer-events-none" />
+
+      <div className="w-full max-w-6xl mx-auto flex flex-col items-center relative z-10">
         
-        {/* Section Header */}
-        <div className="w-full max-w-7xl mx-auto flex flex-col items-center text-center z-20 mb-2 sm:mb-4">
-          <span className="text-xs font-sans font-bold uppercase tracking-wider text-neutral-400 block mb-1.5">
-            Engineered for Intelligence
-          </span>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-sans font-normal tracking-tight text-neutral-900">
-            Built on the structure of your software.
-          </h2>
-          <p className="text-neutral-500 text-xs sm:text-sm max-w-xl mx-auto mt-1">
-            NEXORA doesn't treat a repository as a wall of text. It extracts structure, relationships, and context before generating an understanding of the system.
-          </p>
+        {/* Section Header (Compact & Balanced) */}
+        <div className="flex flex-col items-center text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+          <TextReveal
+            as="h2"
+            text="Built on the structure of your software."
+            delay={0.05}
+            stagger={0.045}
+            blur={6}
+            yOffset="20%"
+            className="text-2xl sm:text-3xl md:text-4xl font-sans font-medium tracking-tight text-neutral-900"
+          />
+          
+          <TextReveal
+            as="p"
+            text="NEXORA doesn't treat a repository as a wall of text. It extracts structure, relationships, and context before generating an understanding of the system."
+            delay={0.25}
+            stagger={0.02}
+            blur={5}
+            yOffset="15%"
+            className="text-neutral-600 text-xs sm:text-sm max-w-xl mx-auto mt-2 leading-relaxed"
+          />
         </div>
 
-        {/* Main Grid: Left Dynamic System Visualizer + Right Narrative & Progress */}
-        <div className="w-full max-w-7xl mx-auto flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 items-center justify-center my-auto min-h-0">
-          
-          {/* Left Column: Interactive Reverse-Engineering Canvas (Sticky Display) */}
-          <div className="lg:col-span-7 h-[380px] sm:h-[430px] md:h-[460px] w-full flex items-center justify-center">
-            <div className="w-full h-full rounded-3xl bg-[#0C0D12] border border-white/[0.09] shadow-2xl p-4 sm:p-6 flex flex-col justify-between relative overflow-hidden text-white">
-              
-              {/* Top Pipeline Status Bar */}
-              <div className="flex items-center justify-between border-b border-white/[0.08] pb-3 select-none">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ff5f56]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#ffbd2e]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#27c93f]" />
-                  <span className="text-[11px] font-mono text-white/40 ml-2">nexora-reverse-engineering</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-blue-400 bg-blue-950/60 border border-blue-800/60 px-2 py-0.5 rounded-full flex items-center gap-1.5">
-                    <Cpu className="w-3 h-3 text-blue-400" />
-                    <span>Stage {activeStage.stepNum}: {activeStage.title}</span>
-                  </span>
-                </div>
-              </div>
-
-              {/* Central Dynamic Transformation Arena */}
-              <div className="relative flex-1 w-full flex items-center justify-center overflow-hidden my-2">
-                <AnimatePresence mode="wait">
-                  {activeStageIndex === 0 && (
-                    <Stage01CodeIntelligence key="stage-01" />
-                  )}
-                  {activeStageIndex === 1 && (
-                    <Stage02SemanticSearch key="stage-02" />
-                  )}
-                  {activeStageIndex === 2 && (
-                    <Stage03DependencyRelationships key="stage-03" />
-                  )}
-                  {activeStageIndex === 3 && (
-                    <Stage04RepositoryContext key="stage-04" />
-                  )}
-                  {activeStageIndex === 4 && (
-                    <Stage05ArchitectureMapping key="stage-05" />
-                  )}
-                </AnimatePresence>
-              </div>
-
-              {/* Bottom Stage Progress Sublabel */}
-              <div className="border-t border-white/[0.08] pt-2.5 flex items-center justify-between text-[11px] font-mono text-white/40 select-none">
-                <span className="flex items-center gap-1.5 text-blue-400/90">
-                  <Sparkles className="w-3 h-3 text-blue-400" />
-                  <span>{activeStage.bullet}</span>
-                </span>
-                <span>Deterministic Facts &rarr; Graph Synthesizer</span>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Right Column: Explanatory Content & Step Navigation */}
-          <div className="lg:col-span-5 flex flex-col justify-center gap-4 sm:gap-5">
+        {/* ------------------------------------------------------------------ */}
+        {/* 3D CURVED ARC / FAN CAROUSEL DECK (COMPACT PROPORTIONAL SIZE)      */}
+        {/* ------------------------------------------------------------------ */}
+        <div className="relative w-full h-[270px] sm:h-[300px] md:h-[320px] flex items-center justify-center my-2">
+          <div className="relative w-full max-w-4xl h-full flex items-center justify-center">
             
-            {/* Step Navigation Indicators (3 in Row 1, 2 in Row 2) */}
-            <div className="flex flex-col gap-2.5 w-full select-none">
-              
-              {/* Row 1: First 3 Properties */}
-              <div className="grid grid-cols-3 gap-2 sm:gap-2.5">
-                {STAGES.slice(0, 3).map((s, idx) => {
-                  const isPassed = activeStageIndex > idx;
-                  const isActive = activeStageIndex === idx;
+            {STAGES.map((stage, idx) => {
+              const transform = getCardTransform(idx);
+              const isActive = idx === activeStageIndex;
 
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setActiveStageIndex(idx)}
-                      className={`text-left p-3 sm:p-3.5 rounded-xl border transition-all duration-300 flex flex-col justify-between min-h-[76px] sm:min-h-[82px] relative cursor-pointer group ${
-                        isActive
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-[0_4px_16px_rgba(37,99,235,0.25)] ring-2 ring-blue-600/30'
-                          : isPassed
-                          ? 'bg-emerald-50/90 text-emerald-950 border-emerald-300/90 hover:bg-emerald-50 shadow-xs'
-                          : 'bg-white/90 border-black/[0.06] text-neutral-600 hover:border-black/20 hover:bg-white'
-                      }`}
-                    >
-                      {/* Top Header: Step Number & Dedicated Status/Tick Badge */}
-                      <div className="flex items-center justify-between w-full mb-1">
-                        <span className={`text-[10px] font-mono font-bold tracking-wider ${
-                          isActive ? 'text-blue-100' : isPassed ? 'text-emerald-700' : 'text-neutral-400'
-                        }`}>
-                          STAGE {s.stepNum}
-                        </span>
+              return (
+                <motion.div
+                  key={stage.id}
+                  onClick={() => setActiveStageIndex(idx)}
+                  animate={{
+                    x: transform.x,
+                    y: transform.y,
+                    rotate: transform.rotate,
+                    scale: transform.scale,
+                    opacity: transform.opacity,
+                    zIndex: transform.zIndex,
+                    filter: transform.filter,
+                    boxShadow: transform.boxShadow,
+                  }}
+                  transition={{
+                    type: 'spring',
+                    stiffness: 260,
+                    damping: 24,
+                    mass: 0.8
+                  }}
+                  className={cn(
+                    "absolute w-[190px] sm:w-[220px] md:w-[245px] h-[235px] sm:h-[265px] md:h-[285px] rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between overflow-hidden cursor-pointer transition-colors duration-300",
+                    "bg-black border text-white shadow-2xl",
+                    isActive 
+                      ? "border-white/40 ring-1 ring-white/20" 
+                      : "border-white/10 hover:border-white/25"
+                  )}
+                  style={{
+                    transformOrigin: '50% 120%',
+                    pointerEvents: transform.pointerEvents,
+                  }}
+                >
+                  {/* Card Background Visual Graphic */}
+                  <div className="absolute inset-0 z-0 opacity-90 pointer-events-none bg-black">
+                    <CardVisualArtwork stageIndex={idx} />
+                  </div>
 
-                        {/* Status / Complete Tick on Card */}
-                        {isPassed ? (
-                          <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px] font-bold shadow-xs">
-                            ✓
-                          </div>
-                        ) : isActive ? (
-                          <div className="flex items-center gap-1 bg-white/20 px-1.5 py-0.5 rounded-full">
-                            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                            <span className="text-[8px] font-mono font-bold text-white uppercase tracking-wider">Live</span>
-                          </div>
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-neutral-300 group-hover:border-neutral-400 transition-colors" />
-                        )}
-                      </div>
-
-                      {/* Bottom Title: Clean & Well-Structured */}
-                      <span className={`text-xs sm:text-[13px] font-sans font-semibold leading-tight mt-auto ${
-                        isActive ? 'text-white' : isPassed ? 'text-emerald-950' : 'text-neutral-800'
-                      }`}>
-                        {s.title}
+                  {/* Card Top Pill Badge */}
+                  <div className="relative z-10 flex items-center justify-between">
+                    <span className={cn(
+                      "text-[9px] font-mono font-bold tracking-wider px-2 py-0.5 rounded-full border backdrop-blur-md bg-black/60",
+                      stage.badgeColor
+                    )}>
+                      STAGE {stage.stepNum}
+                    </span>
+                    
+                    {isActive ? (
+                      <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-white/10 text-white text-[9px] font-mono border border-white/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span>Active</span>
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Row 2: Next 2 Properties */}
-              <div className="grid grid-cols-2 gap-2 sm:gap-2.5">
-                {STAGES.slice(3, 5).map((s, idx) => {
-                  const actualIdx = idx + 3;
-                  const isPassed = activeStageIndex > actualIdx;
-                  const isActive = activeStageIndex === actualIdx;
-
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      onClick={() => setActiveStageIndex(actualIdx)}
-                      className={`text-left p-3 sm:p-3.5 rounded-xl border transition-all duration-300 flex flex-col justify-between min-h-[76px] sm:min-h-[82px] relative cursor-pointer group ${
-                        isActive
-                          ? 'bg-blue-600 text-white border-blue-600 shadow-[0_4px_16px_rgba(37,99,235,0.25)] ring-2 ring-blue-600/30'
-                          : isPassed
-                          ? 'bg-emerald-50/90 text-emerald-950 border-emerald-300/90 hover:bg-emerald-50 shadow-xs'
-                          : 'bg-white/90 border-black/[0.06] text-neutral-600 hover:border-black/20 hover:bg-white'
-                      }`}
-                    >
-                      {/* Top Header: Step Number & Dedicated Status/Tick Badge */}
-                      <div className="flex items-center justify-between w-full mb-1">
-                        <span className={`text-[10px] font-mono font-bold tracking-wider ${
-                          isActive ? 'text-blue-100' : isPassed ? 'text-emerald-700' : 'text-neutral-400'
-                        }`}>
-                          STAGE {s.stepNum}
-                        </span>
-
-                        {/* Status / Complete Tick on Card */}
-                        {isPassed ? (
-                          <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[11px] font-bold shadow-xs">
-                            ✓
-                          </div>
-                        ) : isActive ? (
-                          <div className="flex items-center gap-1 bg-white/20 px-1.5 py-0.5 rounded-full">
-                            <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
-                            <span className="text-[8px] font-mono font-bold text-white uppercase tracking-wider">Live</span>
-                          </div>
-                        ) : (
-                          <span className="w-4 h-4 rounded-full border border-neutral-300 group-hover:border-neutral-400 transition-colors" />
-                        )}
-                      </div>
-
-                      {/* Bottom Title: Clean & Well-Structured */}
-                      <span className={`text-xs sm:text-[13px] font-sans font-semibold leading-tight mt-auto ${
-                        isActive ? 'text-white' : isPassed ? 'text-emerald-950' : 'text-neutral-800'
-                      }`}>
-                        {s.title}
+                    ) : (
+                      <span className="text-[9px] font-mono text-white/40">
+                        {idx + 1}/5
                       </span>
-                    </button>
-                  );
-                })}
-              </div>
+                    )}
+                  </div>
 
-            </div>
+                  {/* Card Bottom Meta */}
+                  <div className="relative z-10 mt-auto bg-black/90 backdrop-blur-md rounded-xl p-2 sm:p-2.5 border border-white/10">
+                    <div className="text-[11px] sm:text-xs font-mono font-bold text-white tracking-wide truncate">
+                      {stage.title}
+                    </div>
+                    <div className="text-[9px] font-mono text-neutral-400 truncate mt-0.5">
+                      {stage.subtitle}
+                    </div>
+                  </div>
 
-            {/* Active Stage Narrative Card */}
+                  {/* Subtle Glass Sheen */}
+                  <div className="absolute inset-0 bg-gradient-to-tr from-white/[0.02] via-white/[0.05] to-transparent pointer-events-none" />
+                </motion.div>
+              );
+            })}
+
+          </div>
+        </div>
+
+        {/* ------------------------------------------------------------------ */}
+        {/* INFORMATION & FLANKING ARROW NAVIGATION (COMPACT & BALANCED)       */}
+        {/* ------------------------------------------------------------------ */}
+        <div className="flex items-center justify-center gap-3 sm:gap-6 md:gap-8 mt-4 sm:mt-6 w-full max-w-2xl px-3">
+          
+          {/* Left Arrow Button */}
+          <button
+            type="button"
+            onClick={handlePrev}
+            aria-label="Previous stage"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-neutral-50 active:scale-95 border border-neutral-200/90 flex items-center justify-center text-neutral-800 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_14px_rgba(37,99,235,0.15)] hover:border-blue-300 cursor-pointer shrink-0"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-700" />
+          </button>
+
+          {/* Center Title, Subtitle, Description */}
+          <div className="flex flex-col items-center text-center flex-1 max-w-md min-h-[95px] sm:min-h-[85px] justify-center">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeStage.id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.25, ease: 'easeOut' }}
-                className="bg-white rounded-2xl p-6 sm:p-7 border border-black/[0.06] shadow-[0_4px_24px_rgba(0,0,0,0.03)] flex flex-col gap-3.5"
+                initial={{ opacity: 0, y: 6, scale: 0.98 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -6, scale: 0.98 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="flex flex-col items-center"
               >
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-blue-600 uppercase tracking-wider">
-                  <span>Step {activeStage.stepNum}</span>
-                  <span>&bull;</span>
-                  <span>{activeStage.title}</span>
+                {/* Large Title */}
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-sans font-bold text-neutral-900 tracking-tight">
+                  {activeStage.title}
+                </h3>
+                
+                {/* Subtitle with Pin Icon */}
+                <div className="flex items-center gap-1 text-[11px] sm:text-xs text-blue-600 mt-1 font-mono font-medium">
+                  <MapPin className="w-3 h-3 text-blue-600 shrink-0" />
+                  <span>Stage {activeStage.stepNum} &bull; {activeStage.bullet}</span>
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-sans font-normal text-neutral-900 tracking-tight leading-snug">
-                  {activeStage.headline}
-                </h3>
-
-                <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed font-sans">
+                {/* Narrative Summary */}
+                <p className="text-neutral-600 text-xs mt-1.5 leading-relaxed max-w-sm">
                   {activeStage.description}
                 </p>
-
-                <div className="mt-1 pt-3 border-t border-black/[0.04] flex items-center justify-between text-xs font-mono text-neutral-500">
-                  <span className="flex items-center gap-1 text-emerald-600 font-semibold">
-                    <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Active Pipeline Phase</span>
-                  </span>
-                  <span>{activeStageIndex + 1} of 5</span>
-                </div>
               </motion.div>
             </AnimatePresence>
-
           </div>
+
+          {/* Right Arrow Button */}
+          <button
+            type="button"
+            onClick={handleNext}
+            aria-label="Next stage"
+            className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-white hover:bg-neutral-50 active:scale-95 border border-neutral-200/90 flex items-center justify-center text-neutral-800 transition-all shadow-[0_2px_10px_rgba(0,0,0,0.06)] hover:shadow-[0_4px_14px_rgba(37,99,235,0.15)] hover:border-blue-300 cursor-pointer shrink-0"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-700" />
+          </button>
 
         </div>
 
-        {/* Footer Payoff Banner */}
-        <div className="z-20 text-center pb-2 select-none">
-          <p className="text-xs font-mono text-neutral-400 tracking-wide uppercase">
-            Progressive Code Transformation &bull; <span className="text-neutral-800 font-bold">From raw code to a mental model.</span>
-          </p>
+        {/* ------------------------------------------------------------------ */}
+        {/* EXPLORE PILL BUTTON & STAGE PROGRESS INDICATORS                    */}
+        {/* ------------------------------------------------------------------ */}
+        <div className="mt-4 flex flex-col items-center gap-3.5">
+          {/* Explore Button */}
+          <button
+            type="button"
+            onClick={() => setSelectedStageForModal(activeStage)}
+            className="px-6 py-2 rounded-full bg-blue-600 text-white hover:bg-blue-700 active:scale-95 font-medium text-xs transition-all shadow-[0_3px_14px_rgba(37,99,235,0.22)] cursor-pointer flex items-center gap-1.5 font-sans tracking-wide hover:shadow-[0_4px_18px_rgba(37,99,235,0.32)]"
+          >
+            <span>Explore Stage {activeStage.stepNum}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Slide Dots Progress Indicator */}
+          <div className="flex items-center gap-1.5">
+            {STAGES.map((s, idx) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => setActiveStageIndex(idx)}
+                aria-label={`Go to stage ${idx + 1}`}
+                className={cn(
+                  "h-1.5 rounded-full transition-all duration-300 cursor-pointer",
+                  activeStageIndex === idx 
+                    ? "w-6 bg-blue-600 shadow-[0_0_8px_rgba(37,99,235,0.5)]" 
+                    : "w-1.5 bg-neutral-300 hover:bg-neutral-400"
+                )}
+              />
+            ))}
+          </div>
         </div>
 
       </div>
+
+      {/* ------------------------------------------------------------------ */}
+      {/* DETAILED INSPECTION MODAL (TRIGGERED BY EXPLORE BUTTON)            */}
+      {/* ------------------------------------------------------------------ */}
+      <AnimatePresence>
+        {selectedStageForModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 select-text">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedStageForModal(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+
+            {/* Modal Card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.94, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.94, y: 20 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-2xl bg-[#0F172A] border border-white/15 rounded-3xl p-6 sm:p-8 text-white shadow-2xl overflow-hidden z-10"
+            >
+              {/* Close Button */}
+              <button
+                type="button"
+                onClick={() => setSelectedStageForModal(null)}
+                className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white/70 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              {/* Modal Header */}
+              <div className="flex items-center gap-2.5 mb-2">
+                <span className={cn("text-xs font-mono font-bold px-2.5 py-0.5 rounded-full border", selectedStageForModal.badgeColor)}>
+                  STAGE {selectedStageForModal.stepNum}
+                </span>
+                <span className="text-xs font-mono text-neutral-400">
+                  {selectedStageForModal.bullet}
+                </span>
+              </div>
+
+              <h3 className="text-2xl font-bold tracking-tight text-white font-sans mt-1">
+                {selectedStageForModal.title}
+              </h3>
+              <p className="text-sm text-neutral-300 mt-1 leading-relaxed">
+                {selectedStageForModal.description}
+              </p>
+
+              {/* Capabilities List */}
+              <div className="my-5 space-y-2">
+                <span className="text-xs font-mono uppercase font-bold text-neutral-400 tracking-wider">
+                  Transformation Capabilities
+                </span>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {selectedStageForModal.details.capabilities.map((cap, i) => (
+                    <div key={i} className="flex items-start gap-2 p-2.5 rounded-xl bg-white/[0.06] border border-white/[0.08] text-xs text-neutral-200">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0 mt-0.5" />
+                      <span>{cap}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Code Snippet / Output */}
+              {selectedStageForModal.details.sampleCode && (
+                <div className="space-y-1.5">
+                  <span className="text-xs font-mono uppercase font-bold text-neutral-400 tracking-wider">
+                    Pipeline Execution Sample
+                  </span>
+                  <div className="p-3.5 rounded-xl bg-[#07080B] border border-white/10 font-mono text-xs text-neutral-300 overflow-x-auto">
+                    <pre className="m-0 leading-relaxed">
+                      <code>{selectedStageForModal.details.sampleCode}</code>
+                    </pre>
+                  </div>
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-mono text-neutral-400">
+                <span className="text-emerald-400 font-semibold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{selectedStageForModal.details.technicalOutput}</span>
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedStageForModal(null)}
+                  className="px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                >
+                  Done
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
     </section>
   );
 };
 
 /* -------------------------------------------------------------------------- */
-/* STAGE 01: Code Intelligence (Raw Files -> Scanner -> Extracted Tokens)     */
+/* COMPACT CARD ARTWORK RENDERERS FOR EACH OF THE 5 STAGES                    */
 /* -------------------------------------------------------------------------- */
-const Stage01CodeIntelligence: React.FC = () => {
+const CardVisualArtwork: React.FC<{ stageIndex: number }> = ({ stageIndex }) => {
+  switch (stageIndex) {
+    case 0:
+      return <Stage01Artwork />;
+    case 1:
+      return <Stage02Artwork />;
+    case 2:
+      return <Stage03Artwork />;
+    case 3:
+      return <Stage04Artwork />;
+    case 4:
+      return <Stage05Artwork />;
+    default:
+      return null;
+  }
+};
+
+/* Stage 01: Code Intelligence Graphic */
+const Stage01Artwork: React.FC = () => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="w-full h-full flex flex-col justify-center relative px-2"
-    >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
-        
-        {/* Left: Source File Tree with Scanning Line */}
-        <div className="p-3.5 rounded-xl bg-[#07080B] border border-white/[0.08] relative overflow-hidden font-mono text-xs text-neutral-300">
-          {/* Animated Scanning Beam */}
-          <motion.div 
-            className="absolute left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_8px_#3B82F6]"
-            animate={{ top: ['0%', '100%', '0%'] }}
-            transition={{ duration: 2.8, repeat: Infinity, ease: 'linear' }}
-          />
-          
-          <div className="text-[10px] text-white/40 uppercase font-bold mb-2 flex items-center gap-1.5">
-            <FileCode2 className="w-3 h-3 text-blue-400" />
-            <span>Parsing src/ directory</span>
-          </div>
+    <div className="w-full h-full p-3 flex flex-col justify-center relative font-mono overflow-hidden">
+      {/* Laser Scanning Line */}
+      <motion.div 
+        className="absolute left-0 right-0 h-[1.5px] bg-gradient-to-r from-transparent via-blue-400 to-transparent shadow-[0_0_10px_#3B82F6] z-10"
+        animate={{ top: ['15%', '85%', '15%'] }}
+        transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+      />
 
-          <div className="space-y-1 text-[11px]">
-            <div className="text-blue-300 font-medium">📁 src/auth/</div>
-            <div className="pl-3 text-white/80">📄 auth.service.ts</div>
-            <div className="pl-3 text-white/80">📄 auth.controller.ts</div>
-            <div className="text-blue-300 font-medium mt-1">📁 src/api/</div>
-            <div className="pl-3 text-white/80">📄 routes.ts</div>
-            <div className="text-blue-300 font-medium mt-1">📁 src/db/</div>
-            <div className="pl-3 text-white/80">📄 client.ts</div>
-          </div>
+      <div className="p-2.5 rounded-lg bg-[#090A0E]/90 border border-blue-500/20 text-[9px] space-y-0.5 text-neutral-300">
+        <div className="flex items-center gap-1 text-blue-400 font-bold border-b border-white/[0.08] pb-0.5 mb-1">
+          <Code2 className="w-3 h-3" />
+          <span>src/auth/service.ts</span>
         </div>
-
-        {/* Right: Extracted AST Tokens Breakdown */}
-        <div className="flex flex-col gap-2">
-          <div className="text-[10px] font-mono text-white/40 uppercase font-bold px-1">
-            Extracted Symbols &amp; Tokens
-          </div>
-          
-          <div className="space-y-1.5 font-mono text-[11px]">
-            <motion.div 
-              initial={{ x: 10, opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }} 
-              transition={{ delay: 0.1 }}
-              className="p-2 rounded-lg bg-blue-950/40 border border-blue-500/30 text-blue-200 flex items-center justify-between"
-            >
-              <span>function login()</span>
-              <span className="text-[9px] bg-blue-500/20 px-1.5 py-0.5 rounded text-blue-300">Method</span>
-            </motion.div>
-
-            <motion.div 
-              initial={{ x: 10, opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }} 
-              transition={{ delay: 0.2 }}
-              className="p-2 rounded-lg bg-indigo-950/40 border border-indigo-500/30 text-indigo-200 flex items-center justify-between"
-            >
-              <span>class UserService</span>
-              <span className="text-[9px] bg-indigo-500/20 px-1.5 py-0.5 rounded text-indigo-300">Class</span>
-            </motion.div>
-
-            <motion.div 
-              initial={{ x: 10, opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }} 
-              transition={{ delay: 0.3 }}
-              className="p-2 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-emerald-200 flex items-center justify-between"
-            >
-              <span>POST /auth/login</span>
-              <span className="text-[9px] bg-emerald-500/20 px-1.5 py-0.5 rounded text-emerald-300">Route</span>
-            </motion.div>
-
-            <motion.div 
-              initial={{ x: 10, opacity: 0 }} 
-              animate={{ x: 0, opacity: 1 }} 
-              transition={{ delay: 0.4 }}
-              className="p-2 rounded-lg bg-amber-950/40 border border-amber-500/30 text-amber-200 flex items-center justify-between"
-            >
-              <span>import &#123; db &#125;</span>
-              <span className="text-[9px] bg-amber-500/20 px-1.5 py-0.5 rounded text-amber-300">Import</span>
-            </motion.div>
-          </div>
-        </div>
-
+        <div className="text-white/90"><span className="text-blue-400">export class</span> <span className="text-amber-300">AuthService</span> &#123;</div>
+        <div className="pl-2 text-white/80"><span className="text-purple-400">async</span> <span className="text-indigo-300">login</span>() &#123;</div>
+        <div className="pl-3.5 text-white/70">const u = <span className="text-blue-400">await</span> db.find();</div>
+        <div className="pl-3.5 text-white/70">return jwt.sign(&#123; u &#125;);</div>
+        <div className="pl-2 text-white/80">&#125;</div>
+        <div className="text-white/90">&#125;</div>
       </div>
-    </motion.div>
+
+      {/* Floating Extracted AST badges */}
+      <div className="flex flex-wrap gap-1 mt-1.5">
+        <span className="px-1.5 py-0.5 rounded bg-blue-950/80 border border-blue-500/30 text-[8px] text-blue-300">
+          fn login()
+        </span>
+        <span className="px-1.5 py-0.5 rounded bg-indigo-950/80 border border-indigo-500/30 text-[8px] text-indigo-300">
+          class AuthService
+        </span>
+      </div>
+    </div>
   );
 };
 
-/* -------------------------------------------------------------------------- */
-/* STAGE 02: Semantic Search (Vector Cloud + Query Highlight)                 */
-/* -------------------------------------------------------------------------- */
-const Stage02SemanticSearch: React.FC = () => {
+/* Stage 02: Semantic Search Graphic */
+const Stage02Artwork: React.FC = () => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="w-full h-full flex flex-col justify-between py-2 px-2"
-    >
-      {/* Search Query Prompt Box */}
-      <div className="p-3 rounded-xl bg-[#07080B] border border-blue-500/40 flex items-center justify-between shadow-lg">
-        <div className="flex items-center gap-2 text-xs font-mono text-white">
-          <Search className="w-4 h-4 text-blue-400" />
-          <span className="text-white font-medium">"Where is authentication handled?"</span>
+    <div className="w-full h-full p-3 flex flex-col justify-center relative font-mono overflow-hidden">
+      {/* Search Input Simulation */}
+      <div className="p-1.5 rounded-lg bg-indigo-950/50 border border-indigo-500/40 text-[9px] text-indigo-200 flex items-center gap-1 mb-1.5 shadow-md">
+        <Search className="w-2.5 h-2.5 text-indigo-400 shrink-0" />
+        <span className="truncate">"where is JWT verified?"</span>
+      </div>
+
+      {/* Vector Clusters */}
+      <div className="space-y-1 text-[9px]">
+        <motion.div 
+          animate={{ x: [0, 3, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity }}
+          className="p-1.5 rounded-md bg-[#090A0E]/90 border border-indigo-400/40 text-indigo-200 flex items-center justify-between"
+        >
+          <span className="truncate">auth.service.ts</span>
+          <span className="text-[8px] font-bold text-indigo-400 bg-indigo-500/20 px-1 rounded">0.94</span>
+        </motion.div>
+
+        <motion.div 
+          animate={{ x: [0, -3, 0] }}
+          transition={{ duration: 2.5, repeat: Infinity, delay: 0.4 }}
+          className="p-1.5 rounded-md bg-[#090A0E]/90 border border-violet-400/40 text-violet-200 flex items-center justify-between"
+        >
+          <span className="truncate">jwt.guard.ts</span>
+          <span className="text-[8px] font-bold text-violet-400 bg-violet-500/20 px-1 rounded">0.91</span>
+        </motion.div>
+      </div>
+
+      <div className="text-[8px] text-indigo-300 text-center mt-1.5 font-mono">
+        Cosine Re-ranking &bull; 1536-dim
+      </div>
+    </div>
+  );
+};
+
+/* Stage 03: Dependency Relationships Graphic */
+const Stage03Artwork: React.FC = () => {
+  return (
+    <div className="w-full h-full p-3 flex flex-col justify-center relative font-mono overflow-hidden">
+      <div className="flex items-center justify-between text-[8px] text-purple-300 uppercase font-bold mb-1.5">
+        <span className="flex items-center gap-1">
+          <Network className="w-2.5 h-2.5 text-purple-400" />
+          <span>Call Chain</span>
+        </span>
+        <span className="text-white/40">Directed</span>
+      </div>
+
+      <div className="space-y-0.5 text-[8.5px]">
+        <div className="p-1 rounded bg-blue-950/70 border border-blue-500/40 text-blue-200 text-center">
+          POST /api/v2/login
         </div>
-        <span className="text-[9px] font-mono bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded-full">
-          Vector Cosine Search
+        <div className="flex justify-center text-purple-400 text-[8px]">&darr;</div>
+        <div className="p-1 rounded bg-indigo-950/70 border border-indigo-500/40 text-indigo-200 text-center">
+          AuthController.login()
+        </div>
+        <div className="flex justify-center text-purple-400 text-[8px]">&darr;</div>
+        <div className="p-1 rounded bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-center">
+          PostgreSQL (users_table)
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* Stage 04: Repository Context Graphic */
+const Stage04Artwork: React.FC = () => {
+  return (
+    <div className="w-full h-full p-3 flex flex-col justify-center relative font-mono overflow-hidden">
+      <div className="flex items-center justify-between text-[8px] text-amber-300 uppercase font-bold mb-1.5">
+        <span className="flex items-center gap-1">
+          <FileCheck className="w-2.5 h-2.5 text-amber-400" />
+          <span>Evidence Grounding</span>
+        </span>
+        <span className="text-emerald-400 font-semibold">Verified</span>
+      </div>
+
+      <div className="p-2 rounded-lg bg-[#090A0E]/90 border border-amber-500/30 text-[8.5px] text-neutral-300 space-y-0.5">
+        <div className="flex items-center justify-between text-[8px] text-white/50 border-b border-white/10 pb-0.5">
+          <span className="text-amber-300 font-bold">auth.service.ts</span>
+          <span>L42–L50</span>
+        </div>
+        <div className="text-emerald-300 text-[8px] font-medium">✓ AST Anchor Resolved</div>
+        <div className="text-white/80 pl-1 border-l border-amber-400/40 truncate">
+          const user = await db.users.findUnique();
+        </div>
+      </div>
+
+      <div className="mt-1.5 p-1 rounded bg-emerald-950/50 border border-emerald-500/30 text-[8px] text-emerald-300 text-center flex items-center justify-center gap-1">
+        <CheckCircle2 className="w-2.5 h-2.5" />
+        <span>100% Deterministic Fact</span>
+      </div>
+    </div>
+  );
+};
+
+/* Stage 05: Architecture Mapping Graphic */
+const Stage05Artwork: React.FC = () => {
+  return (
+    <div className="w-full h-full p-3 flex flex-col justify-center relative font-mono overflow-hidden">
+      <div className="text-center mb-1.5">
+        <span className="px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-[8px] text-emerald-300 font-bold uppercase tracking-wider">
+          System Architecture Map
         </span>
       </div>
 
-      {/* Vector Embeddings Map Representation */}
-      <div className="relative flex-1 my-3 rounded-xl bg-[#07080B]/60 border border-white/[0.06] p-3 flex items-center justify-around">
-        
-        {/* Irrelevant Subdued Nodes */}
-        <div className="flex flex-col items-center opacity-25">
-          <div className="w-3 h-3 rounded-full bg-neutral-600 mb-1" />
-          <span className="text-[9px] font-mono text-neutral-400">invoice.job.ts</span>
+      <div className="grid grid-cols-2 gap-1 text-[8px]">
+        <div className="p-1.5 rounded-md bg-[#090A0E]/90 border border-blue-500/30 text-center flex flex-col items-center">
+          <Layers className="w-3 h-3 text-blue-400 mb-0.5" />
+          <span className="font-bold text-white">Frontend</span>
+          <span className="text-white/40 text-[7px]">Next.js</span>
         </div>
 
-        {/* Highlighted Relevant Nodes Moving Toward Center */}
-        <motion.div 
-          animate={{ scale: [1, 1.06, 1] }} 
-          transition={{ duration: 2, repeat: Infinity }}
-          className="flex flex-col items-center p-2 rounded-xl bg-blue-950/80 border border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.3)]"
-        >
-          <div className="w-3.5 h-3.5 rounded-full bg-blue-400 mb-1 flex items-center justify-center text-[8px] font-bold text-black">✓</div>
-          <span className="text-[10px] font-mono font-bold text-blue-200">auth.service.ts</span>
-          <span className="text-[8px] font-mono text-blue-400">Score 0.94</span>
-        </motion.div>
-
-        <motion.div 
-          animate={{ scale: [1, 1.06, 1] }} 
-          transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-          className="flex flex-col items-center p-2 rounded-xl bg-indigo-950/80 border border-indigo-400 shadow-[0_0_15px_rgba(99,102,241,0.3)]"
-        >
-          <div className="w-3.5 h-3.5 rounded-full bg-indigo-400 mb-1 flex items-center justify-center text-[8px] font-bold text-black">✓</div>
-          <span className="text-[10px] font-mono font-bold text-indigo-200">auth.controller.ts</span>
-          <span className="text-[8px] font-mono text-indigo-400">Score 0.91</span>
-        </motion.div>
-
-        <div className="flex flex-col items-center opacity-25">
-          <div className="w-3 h-3 rounded-full bg-neutral-600 mb-1" />
-          <span className="text-[9px] font-mono text-neutral-400">email.util.ts</span>
+        <div className="p-1.5 rounded-md bg-[#090A0E]/90 border border-indigo-500/30 text-center flex flex-col items-center">
+          <Server className="w-3 h-3 text-indigo-400 mb-0.5" />
+          <span className="font-bold text-white">Gateway</span>
+          <span className="text-white/40 text-[7px]">Fastify</span>
         </div>
 
-        <motion.div 
-          animate={{ scale: [1, 1.06, 1] }} 
-          transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-          className="flex flex-col items-center p-2 rounded-xl bg-emerald-950/80 border border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-        >
-          <div className="w-3.5 h-3.5 rounded-full bg-emerald-400 mb-1 flex items-center justify-center text-[8px] font-bold text-black">✓</div>
-          <span className="text-[10px] font-mono font-bold text-emerald-200">routes.ts</span>
-          <span className="text-[8px] font-mono text-emerald-400">Score 0.88</span>
-        </motion.div>
+        <div className="p-1.5 rounded-md bg-[#090A0E]/90 border border-purple-500/30 text-center flex flex-col items-center">
+          <Cpu className="w-3 h-3 text-purple-400 mb-0.5" />
+          <span className="font-bold text-white">Services</span>
+          <span className="text-white/40 text-[7px]">Auth</span>
+        </div>
 
+        <div className="p-1.5 rounded-md bg-[#090A0E]/90 border border-emerald-500/30 text-center flex flex-col items-center">
+          <Database className="w-3 h-3 text-emerald-400 mb-0.5" />
+          <span className="font-bold text-white">Storage</span>
+          <span className="text-white/40 text-[7px]">Postgres</span>
+        </div>
       </div>
 
-      <div className="text-[10px] font-mono text-neutral-400 text-center">
-        Identified 3 relevant context candidates across 142 total repository files.
+      <div className="text-[8px] text-neutral-400 text-center mt-1.5 font-mono">
+        Mental Model Synthesizer
       </div>
-    </motion.div>
-  );
-};
-
-/* -------------------------------------------------------------------------- */
-/* STAGE 03: Dependency Relationships (Discovered Network Graph)               */
-/* -------------------------------------------------------------------------- */
-const Stage03DependencyRelationships: React.FC = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="w-full h-full flex flex-col justify-center px-2"
-    >
-      <div className="text-[10px] font-mono text-white/40 uppercase font-bold mb-3 text-center">
-        Tracing Execution &amp; Call Pathways
-      </div>
-
-      <div className="flex items-center justify-between relative px-2 sm:px-4">
-        
-        {/* Node 1: Route */}
-        <div className="flex flex-col items-center z-10">
-          <div className="p-2.5 rounded-xl bg-blue-950 border border-blue-400 text-center shadow-md">
-            <span className="text-[9px] font-mono uppercase text-blue-400 block font-bold">Route</span>
-            <span className="text-xs font-mono text-white font-medium">routes.ts</span>
-          </div>
-          <span className="text-[9px] font-mono text-white/40 mt-1">/api/v2/login</span>
-        </div>
-
-        {/* Animated Connector Arrow 1 */}
-        <div className="flex-1 flex flex-col items-center px-1">
-          <svg className="w-full h-4" viewBox="0 0 60 12" fill="none">
-            <line x1="0" y1="6" x2="60" y2="6" stroke="#3B82F6" strokeWidth="1.5" strokeDasharray="3 3" />
-            <motion.circle cx="30" cy="6" r="2.5" fill="#60A5FA" animate={{ cx: [0, 60] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }} />
-          </svg>
-          <span className="text-[8px] font-mono text-blue-300">calls</span>
-        </div>
-
-        {/* Node 2: Controller */}
-        <div className="flex flex-col items-center z-10">
-          <div className="p-2.5 rounded-xl bg-indigo-950 border border-indigo-400 text-center shadow-md">
-            <span className="text-[9px] font-mono uppercase text-indigo-400 block font-bold">Controller</span>
-            <span className="text-xs font-mono text-white font-medium">AuthController</span>
-          </div>
-          <span className="text-[9px] font-mono text-white/40 mt-1">handleLogin()</span>
-        </div>
-
-        {/* Animated Connector Arrow 2 */}
-        <div className="flex-1 flex flex-col items-center px-1">
-          <svg className="w-full h-4" viewBox="0 0 60 12" fill="none">
-            <line x1="0" y1="6" x2="60" y2="6" stroke="#818CF8" strokeWidth="1.5" strokeDasharray="3 3" />
-            <motion.circle cx="30" cy="6" r="2.5" fill="#A5B4FC" animate={{ cx: [0, 60] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.3 }} />
-          </svg>
-          <span className="text-[8px] font-mono text-indigo-300">imports</span>
-        </div>
-
-        {/* Node 3: Service */}
-        <div className="flex flex-col items-center z-10">
-          <div className="p-2.5 rounded-xl bg-purple-950 border border-purple-400 text-center shadow-md">
-            <span className="text-[9px] font-mono uppercase text-purple-400 block font-bold">Service</span>
-            <span className="text-xs font-mono text-white font-medium">AuthService</span>
-          </div>
-          <span className="text-[9px] font-mono text-white/40 mt-1">validateJWT()</span>
-        </div>
-
-        {/* Animated Connector Arrow 3 */}
-        <div className="flex-1 flex flex-col items-center px-1">
-          <svg className="w-full h-4" viewBox="0 0 60 12" fill="none">
-            <line x1="0" y1="6" x2="60" y2="6" stroke="#34D399" strokeWidth="1.5" strokeDasharray="3 3" />
-            <motion.circle cx="30" cy="6" r="2.5" fill="#6EE7B7" animate={{ cx: [0, 60] }} transition={{ duration: 1.5, repeat: Infinity, ease: 'linear', delay: 0.6 }} />
-          </svg>
-          <span className="text-[8px] font-mono text-emerald-300">queries</span>
-        </div>
-
-        {/* Node 4: Database Model */}
-        <div className="flex flex-col items-center z-10">
-          <div className="p-2.5 rounded-xl bg-emerald-950 border border-emerald-400 text-center shadow-md">
-            <span className="text-[9px] font-mono uppercase text-emerald-400 block font-bold">Database</span>
-            <span className="text-xs font-mono text-white font-medium">PostgreSQL</span>
-          </div>
-          <span className="text-[9px] font-mono text-white/40 mt-1">users_schema</span>
-        </div>
-
-      </div>
-
-      <div className="mt-4 p-2 rounded-lg bg-white/[0.04] border border-white/[0.06] text-[10px] font-mono text-neutral-300 text-center">
-        Discovered 4-node deterministic invocation chain from HTTP ingress to SQL persistence.
-      </div>
-    </motion.div>
-  );
-};
-
-/* -------------------------------------------------------------------------- */
-/* STAGE 04: Repository Context (Grounded Evidence Window)                     */
-/* -------------------------------------------------------------------------- */
-const Stage04RepositoryContext: React.FC = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="w-full h-full flex flex-col justify-center px-2 space-y-2.5"
-    >
-      <div className="flex items-center justify-between text-[10px] font-mono text-white/50 px-1">
-        <span className="uppercase font-bold text-blue-400">Context Window &bull; Grounded Evidence</span>
-        <span className="text-emerald-400">Verified AST Lines</span>
-      </div>
-
-      {/* Snippet 1: auth.service.ts */}
-      <div className="p-3 rounded-xl bg-[#07080B] border border-white/[0.08] text-xs font-mono">
-        <div className="flex items-center justify-between text-[10px] text-white/40 border-b border-white/[0.06] pb-1.5 mb-1.5">
-          <span className="text-blue-300 font-semibold">src/services/auth.service.ts</span>
-          <span>Lines L42–L50</span>
-        </div>
-        <pre className="text-[11px] text-neutral-300 leading-relaxed overflow-x-auto m-0">
-          <code>{`export const validateUser = async (email, hash) => {
-  const user = await db.users.findUnique({ where: { email } });
-  return jwt.sign({ id: user.id }, SECRET);
-};`}</code>
-        </pre>
-      </div>
-
-      {/* Snippet 2: routes.ts */}
-      <div className="p-3 rounded-xl bg-[#07080B] border border-white/[0.08] text-xs font-mono">
-        <div className="flex items-center justify-between text-[10px] text-white/40 border-b border-white/[0.06] pb-1.5 mb-1.5">
-          <span className="text-indigo-300 font-semibold">src/api/routes.ts</span>
-          <span>Lines L18–L24</span>
-        </div>
-        <pre className="text-[11px] text-neutral-300 leading-relaxed overflow-x-auto m-0">
-          <code>{`router.post("/login", AuthController.handleLogin);
-router.use("/secure/*", JWTMiddleware.requireAuth);`}</code>
-        </pre>
-      </div>
-
-      <div className="text-[10px] font-mono text-emerald-400 text-center flex items-center justify-center gap-1.5">
-        <CheckCircle2 className="w-3.5 h-3.5" />
-        <span>Evidence-backed grounding assembled for deterministic AI synthesis.</span>
-      </div>
-    </motion.div>
-  );
-};
-
-/* -------------------------------------------------------------------------- */
-/* STAGE 05: Architectural Understanding (Reconstructed System Blocks)        */
-/* -------------------------------------------------------------------------- */
-const Stage05ArchitectureMapping: React.FC = () => {
-  return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.25 }}
-      className="w-full h-full flex flex-col justify-between py-1 px-2"
-    >
-      {/* Top Application Crown */}
-      <div className="text-center">
-        <span className="px-3 py-1 rounded-full bg-blue-950/80 border border-blue-500/40 text-[11px] font-mono text-blue-300 font-bold uppercase tracking-wider shadow-md">
-          Application Architecture Model
-        </span>
-      </div>
-
-      {/* Structured Reconstructed Subsystem Blocks */}
-      <div className="grid grid-cols-4 gap-2 my-2 items-center text-center">
-        
-        {/* Block 1: Frontend */}
-        <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col items-center">
-          <div className="w-6 h-6 rounded-lg bg-blue-500/10 text-blue-400 flex items-center justify-center mb-1">
-            <Layers className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-[11px] font-mono font-bold text-white">Frontend</span>
-          <span className="text-[9px] text-white/40">React &bull; Next</span>
-        </div>
-
-        {/* Block 2: API Gateway */}
-        <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col items-center">
-          <div className="w-6 h-6 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center mb-1">
-            <Server className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-[11px] font-mono font-bold text-white">API Gateway</span>
-          <span className="text-[9px] text-white/40">REST &bull; Routes</span>
-        </div>
-
-        {/* Block 3: Services */}
-        <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col items-center">
-          <div className="w-6 h-6 rounded-lg bg-purple-500/10 text-purple-400 flex items-center justify-center mb-1">
-            <Cpu className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-[11px] font-mono font-bold text-white">Services</span>
-          <span className="text-[9px] text-white/40">Auth &bull; Billing</span>
-        </div>
-
-        {/* Block 4: Storage */}
-        <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/[0.08] flex flex-col items-center">
-          <div className="w-6 h-6 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center mb-1">
-            <Database className="w-3.5 h-3.5" />
-          </div>
-          <span className="text-[11px] font-mono font-bold text-white">Databases</span>
-          <span className="text-[9px] text-white/40">Postgres &bull; Redis</span>
-        </div>
-
-      </div>
-
-      {/* Discovered Architectural Dimensions Pills */}
-      <div className="flex flex-wrap items-center justify-center gap-1.5 font-mono text-[9px] text-white/60">
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-blue-300">ARCHITECTURE</span>
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-indigo-300">TECHNOLOGY STACK</span>
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-purple-300">COMPONENTS</span>
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-emerald-300">APPLICATION FLOW</span>
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-amber-300">APIs</span>
-        <span className="px-2 py-0.5 rounded bg-white/[0.05] border border-white/[0.06] text-cyan-300">DEPENDENCIES</span>
-      </div>
-
-      <div className="text-[11px] font-sans text-center text-white/80 font-medium pt-1">
-        From raw code to a structured mental model.
-      </div>
-    </motion.div>
+    </div>
   );
 };
 

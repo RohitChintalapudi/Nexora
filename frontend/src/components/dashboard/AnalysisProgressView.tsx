@@ -30,12 +30,11 @@ import {
   Activity,
   ArrowRight,
   Clock,
-  Timer,
-  Hourglass,
   Gauge
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import type { AnalysisJob, AnalysisStage } from '../../hooks/useAnalysisJob';
+import { TextShimmer } from '../motion/text-shimmer';
 
 interface AnalysisProgressViewProps {
   repository: SavedRepository;
@@ -587,7 +586,9 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
             ) : (
               <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-2xs">
                 <Loader2 className="w-4 h-4 text-blue-600 animate-spin stroke-[2.5]" />
-                <span>Analyzing Codebase...</span>
+                <TextShimmer duration={2} baseColor="rgba(30, 64, 175, 0.45)" highlightColor="#1e40af">
+                  Analyzing Codebase...
+                </TextShimmer>
               </span>
             )}
           </div>
@@ -615,7 +616,14 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                       ? 'Analysis Completed Successfully' 
                       : isFailed 
                         ? 'Analysis Interrupted' 
-                        : `Step ${Math.min(22, Math.max(1, currentStageIndex))} of 22: ${activeStep.title}`}
+                        : (
+                          <>
+                            Step {Math.min(22, Math.max(1, currentStageIndex))} of 22:{' '}
+                            <TextShimmer duration={2.2} baseColor="rgba(15, 23, 42, 0.45)" highlightColor="#0f172a">
+                              {activeStep.title}
+                            </TextShimmer>
+                          </>
+                        )}
                   </h3>
                 </div>
                 <p className="text-[11px] text-slate-500 line-clamp-1">

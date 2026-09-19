@@ -6,8 +6,6 @@ import {
   Layers,
   FileCode,
   Compass,
-  GitFork,
-  Network,
   Copy,
   Check,
   ChevronDown,
@@ -16,8 +14,7 @@ import {
   Code2,
   Box,
   Shield,
-  Database,
-  ExternalLink
+  Database
 } from 'lucide-react';
 import type { ArchitectureRelationship } from '../../../types/analysis';
 

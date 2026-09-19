@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
+import { TextShimmer } from './motion/text-shimmer';
 import { Logo } from './Logo';
 import { Eye, EyeOff, Lock, Mail, User as UserIcon, X, Loader2, ArrowRight } from 'lucide-react';
 
@@ -339,7 +340,14 @@ export const AuthModal: React.FC = () => {
                   <span className="absolute w-2 h-2 rounded-full bg-blue-400/50 animate-ping" />
                 </div>
                 <div className="flex items-center gap-1.5 text-xs sm:text-sm font-medium text-neutral-100 font-serif">
-                  <span>{authStatusMessage || 'Authenticating in progress...'}</span>
+                  <TextShimmer
+                    duration={2}
+                    baseColor="rgba(212, 212, 216, 0.45)"
+                    highlightColor="#ffffff"
+                    className="font-serif"
+                  >
+                    {authStatusMessage || 'Authenticating in progress...'}
+                  </TextShimmer>
                   <span className="inline-flex gap-1 ml-0.5">
                     <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '0ms' }} />
                     <span className="w-1 h-1 rounded-full bg-blue-400 animate-bounce" style={{ animationDelay: '150ms' }} />
