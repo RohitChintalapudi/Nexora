@@ -42,6 +42,9 @@ const getUserProfile = async (user) => {
     else authProvider = 'oauth';
   }
 
+  const finalGithubUsername = githubUsername || user.github_username || null;
+  const xUsername = user.x_username || null;
+
   return {
     id: user.id,
     name: user.name,
@@ -49,7 +52,8 @@ const getUserProfile = async (user) => {
     avatarUrl: user.avatar_url,
     createdAt: user.created_at,
     githubConnected,
-    githubUsername,
+    githubUsername: finalGithubUsername,
+    xUsername,
     hasPassword,
     authProvider
   };
@@ -588,3 +592,56 @@ export const changePassword = async (req, res) => {
     });
   }
 };
+
+export const updateProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, githubUsername, xUsername } = req.body;
+
+    if (name !== undefined) {
+      if (typeof name !== 'string' || !name.trim() || name.trim().length < 2) {
+        return res.status(400).json({
+          success: false,
+          message: 'Display name must be at least 2 characters long'
+        });
+      }
+    }
+
+    // Clean up social handles if full URLs were pasted
+    const cleanGithub = githubUsername !== undefined
+      ? (githubUsername ? githubUsername.trim().replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/^@/, '') : '')
+      : undefined;
+
+    const cleanX = xUsername !== undefined
+      ? (xUsername ? xUsername.trim().replace(/^https?:\/\/(www\.)?(x|twitter)\.com\//i, '').replace(/^@/, '') : '')
+      : undefined;
+
+    const updatedUser = await UserModel.updateProfile(userId, {
+      name: name !== undefined ? name.trim() : undefined,
+      githubUsername: cleanGithub,
+      xUsername: cleanX
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: 'User account not found'
+      });
+    }
+
+    const profile = await getUserProfile(updatedUser);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      user: profile
+    });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Server error while updating profile'
+    });
+  }
+};
+

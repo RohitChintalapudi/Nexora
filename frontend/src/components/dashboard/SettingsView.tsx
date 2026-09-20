@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { 
   Shield, 
@@ -33,10 +33,56 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onDisconnectGitHub,
   isConnecting = false
 }) => {
-  const { user, logout, changePassword } = useAuth();
+  const { user, logout, updateProfile, changePassword } = useAuth();
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
   const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+  // Profile Form State
+  const [name, setName] = useState(user?.name || '');
+  const [githubInput, setGithubInput] = useState(user?.githubUsername || '');
+  const [xInput, setXInput] = useState(user?.xUsername || '');
+  const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
+  const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
+  const [profileError, setProfileError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || '');
+      setGithubInput(user.githubUsername || '');
+      setXInput(user.xUsername || '');
+    }
+  }, [user]);
+
+  const handleUpdateProfileSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setProfileSuccess(null);
+    setProfileError(null);
+
+    if (!name.trim() || name.trim().length < 2) {
+      setProfileError('Display name must be at least 2 characters long.');
+      return;
+    }
+
+    setIsUpdatingProfile(true);
+    try {
+      const result = await updateProfile({
+        name: name.trim(),
+        githubUsername: githubInput.trim(),
+        xUsername: xInput.trim(),
+      });
+
+      if (result.success) {
+        setProfileSuccess(result.message || 'Profile updated successfully!');
+      } else {
+        setProfileError(result.message || 'Failed to update profile.');
+      }
+    } catch (err: any) {
+      setProfileError(err.message || 'An unexpected error occurred while saving profile.');
+    } finally {
+      setIsUpdatingProfile(false);
+    }
+  };
 
   // Change Password Form State
   const [currentPassword, setCurrentPassword] = useState('');
@@ -142,43 +188,131 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         </p>
       </div>
 
-      {/* Account Details Section */}
+      {/* Account Details & Social Profiles Section */}
       <section className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-red-500 text-white flex items-center justify-center font-extrabold text-sm shadow-sm">
-            {user?.name ? user.name.slice(0, 2).toUpperCase() : 'PT'}
+            {name ? name.slice(0, 2).toUpperCase() : 'PT'}
           </div>
           <div>
-            <h2 className="text-base font-extrabold text-slate-900">Platform Account</h2>
-            <p className="text-xs font-medium text-slate-400">Personal details and authentication bindings</p>
+            <h2 className="text-base font-extrabold text-slate-900">Platform Profile</h2>
+            <p className="text-xs font-medium text-slate-400">Personal details and social account links</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div className="space-y-1.5">
-            <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
-              Display Name
-            </label>
-            <input
-              type="text"
-              readOnly
-              value={user?.name || 'Platform Team'}
-              className="w-full px-4 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 select-all focus:outline-none"
-            />
+        {profileSuccess && (
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{profileSuccess}</span>
+          </div>
+        )}
+
+        {profileError && (
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+            <span>{profileError}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleUpdateProfileSubmit} className="space-y-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {/* Display Name (Editable) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                Display Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Your full name"
+                required
+                className="w-full px-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all"
+              />
+            </div>
+
+            {/* Email Address (Read-only) */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                  Email Address
+                </label>
+                <span className="text-[10px] font-mono text-slate-400">Primary (Read-only)</span>
+              </div>
+              <input
+                type="email"
+                readOnly
+                value={user?.email || 'user@nexora.dev'}
+                className="w-full px-4 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200/80 rounded-xl text-slate-600 select-all focus:outline-none font-mono cursor-not-allowed"
+              />
+            </div>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
-              Email Address
-            </label>
-            <input
-              type="email"
-              readOnly
-              value={user?.email || 'user@nexora.dev'}
-              className="w-full px-4 py-2.5 text-sm font-bold bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 select-all focus:outline-none font-mono"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-1">
+            {/* GitHub Account Link (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                GitHub Account <span className="text-slate-400 font-normal lowercase">(optional)</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={githubInput}
+                  onChange={(e) => setGithubInput(e.target.value)}
+                  placeholder="github-username"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
+                />
+              </div>
+            </div>
+
+            {/* X (Twitter) Account Link (Optional) */}
+            <div className="space-y-1.5">
+              <label className="block text-xs font-extrabold uppercase tracking-wider text-slate-700">
+                X (Twitter) Account <span className="text-slate-400 font-normal lowercase">(optional)</span>
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={xInput}
+                  onChange={(e) => setXInput(e.target.value)}
+                  placeholder="x-username"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
+                />
+              </div>
+            </div>
           </div>
-        </div>
+
+          {/* Submit Button */}
+          <div className="flex justify-end pt-2">
+            <button
+              type="submit"
+              disabled={isUpdatingProfile}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.3)] transition-all cursor-pointer disabled:opacity-60"
+            >
+              {isUpdatingProfile ? (
+                <>
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                  <span>Saving Profile...</span>
+                </>
+              ) : (
+                <>
+                  <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                  <span>Save Profile</span>
+                </>
+              )}
+            </button>
+          </div>
+        </form>
       </section>
 
       {/* Security & Password Management Section */}

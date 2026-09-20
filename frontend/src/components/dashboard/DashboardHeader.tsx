@@ -1,5 +1,4 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface DashboardHeaderProps {
@@ -25,15 +24,6 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       
       {/* Left: Headline & Subtitle */}
       <div className="space-y-2">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-bold shadow-2xs">
-          <Sparkles className="w-3.5 h-3.5 stroke-[2.5]" />
-          <span>Code Intelligence Workspace</span>
-          <span className="w-1 h-1 rounded-full bg-blue-400" />
-          <span className="font-mono text-[11px] text-blue-600 font-semibold">
-            {isGitHubConnected ? 'GitHub Authorized' : 'M2 Active'}
-          </span>
-        </div>
-
         <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900">
           Welcome, {displayName}
         </h1>

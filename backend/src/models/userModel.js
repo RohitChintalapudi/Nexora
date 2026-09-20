@@ -6,7 +6,7 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
     
     const rows = await sql`
-      SELECT id, name, email, password, google_id, github_id, avatar_url, created_at
+      SELECT id, name, email, password, google_id, github_id, avatar_url, github_username, x_username, created_at
       FROM users
       WHERE LOWER(email) = LOWER(${email.trim()})
       LIMIT 1;
@@ -19,7 +19,7 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
 
     const rows = await sql`
-      SELECT id, name, email, password, google_id, github_id, avatar_url, created_at
+      SELECT id, name, email, password, google_id, github_id, avatar_url, github_username, x_username, created_at
       FROM users
       WHERE id = ${id}
       LIMIT 1;
@@ -35,7 +35,24 @@ export const UserModel = {
       UPDATE users
       SET password = ${hashedPassword}, updated_at = CURRENT_TIMESTAMP
       WHERE id = ${id}
-      RETURNING id, name, email, google_id, github_id, avatar_url, created_at;
+      RETURNING id, name, email, google_id, github_id, avatar_url, github_username, x_username, created_at;
+    `;
+    return rows[0] || null;
+  },
+
+  async updateProfile(id, { name, githubUsername, xUsername }) {
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
+
+    const rows = await sql`
+      UPDATE users
+      SET 
+        name = COALESCE(${name ? name.trim() : null}, name),
+        github_username = ${githubUsername !== undefined ? (githubUsername && githubUsername.trim() ? githubUsername.trim() : null) : null},
+        x_username = ${xUsername !== undefined ? (xUsername && xUsername.trim() ? xUsername.trim() : null) : null},
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ${id}
+      RETURNING id, name, email, password, google_id, github_id, avatar_url, github_username, x_username, created_at, updated_at;
     `;
     return rows[0] || null;
   },
@@ -45,7 +62,7 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
 
     const rows = await sql`
-      SELECT id, name, email, avatar_url, google_id, created_at
+      SELECT id, name, email, avatar_url, google_id, github_username, x_username, created_at
       FROM users
       WHERE google_id = ${googleId}
       LIMIT 1;
@@ -58,7 +75,7 @@ export const UserModel = {
     if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
 
     const rows = await sql`
-      SELECT id, name, email, avatar_url, github_id, created_at
+      SELECT id, name, email, avatar_url, github_id, github_username, x_username, created_at
       FROM users
       WHERE github_id = ${githubId}
       LIMIT 1;
@@ -84,7 +101,7 @@ export const UserModel = {
 
     // Check if user exists by email
     const existing = await sql`
-      SELECT id, name, email, google_id, avatar_url, created_at
+      SELECT id, name, email, google_id, avatar_url, github_username, x_username, created_at
       FROM users
       WHERE LOWER(email) = LOWER(${email.trim()})
       LIMIT 1;
@@ -99,7 +116,7 @@ export const UserModel = {
           avatar_url = COALESCE(avatar_url, ${avatarUrl || null}),
           updated_at = CURRENT_TIMESTAMP
         WHERE id = ${existing[0].id}
-        RETURNING id, name, email, avatar_url, google_id, created_at;
+        RETURNING id, name, email, avatar_url, google_id, github_username, x_username, created_at;
       `;
       return updated[0];
     }
@@ -108,7 +125,7 @@ export const UserModel = {
     const created = await sql`
       INSERT INTO users (name, email, google_id, avatar_url)
       VALUES (${name.trim()}, ${email.trim().toLowerCase()}, ${googleId}, ${avatarUrl || null})
-      RETURNING id, name, email, avatar_url, google_id, created_at;
+      RETURNING id, name, email, avatar_url, google_id, github_username, x_username, created_at;
     `;
     return created[0];
   },
@@ -119,7 +136,7 @@ export const UserModel = {
 
     // Check if user exists by email
     const existing = await sql`
-      SELECT id, name, email, github_id, avatar_url, created_at
+      SELECT id, name, email, github_id, avatar_url, github_username, x_username, created_at
       FROM users
       WHERE LOWER(email) = LOWER(${email.trim()})
       LIMIT 1;
@@ -134,7 +151,7 @@ export const UserModel = {
           avatar_url = COALESCE(avatar_url, ${avatarUrl || null}),
           updated_at = CURRENT_TIMESTAMP
         WHERE id = ${existing[0].id}
-        RETURNING id, name, email, avatar_url, github_id, created_at;
+        RETURNING id, name, email, avatar_url, github_id, github_username, x_username, created_at;
       `;
       return updated[0];
     }
@@ -143,7 +160,7 @@ export const UserModel = {
     const created = await sql`
       INSERT INTO users (name, email, github_id, avatar_url)
       VALUES (${name.trim()}, ${email.trim().toLowerCase()}, ${githubId}, ${avatarUrl || null})
-      RETURNING id, name, email, avatar_url, github_id, created_at;
+      RETURNING id, name, email, avatar_url, github_id, github_username, x_username, created_at;
     `;
     return created[0];
   }

@@ -6,6 +6,8 @@ import { AuthSwitch } from '../components/ui/auth-switch';
 import { useAuth } from '../context/AuthContext';
 import { TextShimmer } from '../components/motion/text-shimmer';
 import { TextReveal } from '../components/motion/text-reveal';
+import { PasswordStrengthIndicator } from '../components/ui/PasswordStrengthIndicator';
+import { validateEmail } from '../lib/auth-validation';
 import {
   ArrowLeft,
   Mail,
@@ -15,6 +17,7 @@ import {
   EyeOff,
   ArrowRight,
   Loader2,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface AuthPageProps {
@@ -34,6 +37,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authStatusMessage, navigateTo } = useAuth();
+
+  const isEmailValid = email.trim().length > 0 && validateEmail(email).isValid;
 
   useEffect(() => {
     setMode(initialMode);
@@ -59,13 +64,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     e.preventDefault();
     setErrorMessage(null);
 
+    const emailCheck = validateEmail(email);
+
     if (mode === 'signup') {
-      if (!name.trim()) {
-        setErrorMessage('Please enter your full name');
+      if (!name.trim() || name.trim().length < 2) {
+        setErrorMessage('Please enter your full name (at least 2 characters)');
         return;
       }
-      if (!email.trim() || !email.includes('@')) {
-        setErrorMessage('Please enter a valid email address');
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
+        return;
+      }
+      if (!password) {
+        setErrorMessage('Please enter a password for your account');
         return;
       }
       if (password.length < 6) {
@@ -73,7 +84,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         return;
       }
 
-      const res = await register(name, email, password);
+      const res = await register(name.trim(), email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Registration failed');
       } else {
@@ -81,7 +92,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       }
     } else {
       if (!email.trim()) {
-        setErrorMessage('Please enter your email');
+        setErrorMessage('Please enter your email address');
+        return;
+      }
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
         return;
       }
       if (!password) {
@@ -89,7 +104,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         return;
       }
 
-      const res = await login(email, password);
+      const res = await login(email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Invalid email or password');
       } else {
@@ -196,7 +211,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 {/* Real-time Indicator Pill */}
                 <div className="relative z-10 mt-2 flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/[0.04] border border-black/[0.06] text-neutral-800 text-[11px] font-mono">
                   <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
-                  <span>Cap · Tracking cursor · Click to boop</span>
+                  <span>Click to play</span>
                 </div>
               </div>
             </div>
@@ -247,7 +262,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   type="button"
                   disabled={isLoading}
                   onClick={() => triggerGoogleSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs sm:text-sm font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
                 >
                   <svg className="w-4 h-4" viewBox="0 0 24 24">
                     <path
@@ -274,7 +289,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   type="button"
                   disabled={isLoading}
                   onClick={() => triggerGithubSignIn()}
-                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+                  className="flex items-center justify-center gap-2.5 py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 border border-black/10 text-xs sm:text-sm font-mono font-medium text-neutral-900 transition-all cursor-pointer shadow-xs active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
                 >
                   <svg className="w-4 h-4 fill-[#24292F]" viewBox="0 0 24 24">
                     <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
@@ -339,9 +354,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </AnimatePresence>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700 mb-1">
-                    Email Address
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700">
+                      Email Address
+                    </label>
+                    {email.trim().length > 0 && isEmailValid && (
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-600">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Valid email
+                      </span>
+                    )}
+                  </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                       <Mail className="w-4 h-4" />
@@ -382,7 +405,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={password}
                       disabled={isLoading}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder={mode === 'signup' ? 'At least 6 characters' : '••••••••'}
+                      placeholder={mode === 'signup' ? 'Create a strong password' : '••••••••'}
                       required
                       className="w-full pl-10 pr-10 py-2 bg-neutral-50/80 border border-black/10 rounded-xl text-sm text-black placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all disabled:opacity-50"
                     />
@@ -395,6 +418,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+
+                  {/* Password Strength Category 4-Dots Indicator */}
+                  {mode === 'signup' && (
+                    <PasswordStrengthIndicator
+                      password={password}
+                      theme="light"
+                    />
+                  )}
                 </div>
 
                 {/* Solid Obsidian Black Submit Button */}
@@ -403,7 +434,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                   disabled={isLoading}
                   whileHover={!isLoading ? { scale: 1.01 } : undefined}
                   whileTap={!isLoading ? { scale: 0.98 } : undefined}
-                  className="w-full mt-2 py-2.5 px-4 rounded-xl bg-black hover:bg-neutral-800 text-white font-medium text-xs sm:text-sm font-mono flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-wider"
+                  className="w-full mt-2 py-2.5 px-4 rounded-xl bg-black hover:bg-neutral-800 text-white font-medium text-xs sm:text-sm font-mono flex items-center justify-center gap-2 shadow-[0_4px_16px_rgba(0,0,0,0.15)] transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed tracking-wide"
                 >
                   <AnimatePresence mode="wait">
                     <motion.span
