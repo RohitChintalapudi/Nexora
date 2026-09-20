@@ -74,18 +74,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <header className="sticky top-0 z-40 bg-[#F1F5F9]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5 border-b border-slate-200/60 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Left: Original NEXORA Logo (Directly on navbar, not inside card) */}
-          <div className="flex items-center">
-            <button
-              type="button"
-              onClick={() => {
-                onTabChange('dashboard');
-                navigateTo('dashboard');
-              }}
-              className="flex items-center cursor-pointer focus:outline-none group"
-            >
-              <Logo theme="light" size={26} />
-            </button>
+          {/* Left: Original NEXORA Logo (Static display, non-clickable) */}
+          <div className="flex items-center select-none cursor-default">
+            <Logo theme="light" size={26} />
           </div>
 
           {/* Center: White & Royal Blue Segmented Navigation Pill */}
@@ -111,16 +102,20 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
           {/* Right: GitHub Integration & Profile Section */}
           <div className="flex items-center gap-2.5">
-            {/* GitHub Connection Status / Action */}
+            {/* GitHub Connection Status / Action Capsule */}
             {isGitHubConnected ? (
-              <div className="flex items-center gap-1.5 p-1 pl-2.5 pr-1 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] text-xs">
-                {/* GitHub Green Pulsing Dot & Username */}
-                <div className="flex items-center gap-1.5 pr-1">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
-                  <span className="font-mono font-bold text-slate-800 text-[11px] max-w-[100px] sm:max-w-[130px] truncate">
-                    @{githubUsername}
-                  </span>
+              <div className="flex items-center gap-2 p-1 pl-1.5 pr-2 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.03)] h-[38px]">
+                {/* GitHub Icon Circle with Status Dot */}
+                <div className="relative w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center shrink-0">
+                  <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                  </svg>
+                  <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 border-2 border-white" />
                 </div>
+
+                <span className="font-mono font-bold text-slate-800 text-xs max-w-[100px] sm:max-w-[130px] truncate">
+                  @{githubUsername}
+                </span>
 
                 {/* Disconnect Button */}
                 {onDisconnectClick && (
@@ -139,12 +134,16 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 type="button"
                 onClick={onConnectClick}
                 disabled={isConnecting}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-xs transition-all cursor-pointer disabled:opacity-60 shrink-0"
+                className="inline-flex items-center gap-2 p-1 pl-1.5 pr-4 rounded-full bg-slate-900 hover:bg-black active:scale-[0.98] text-white border border-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-md transition-all cursor-pointer disabled:opacity-60 shrink-0 h-[38px]"
               >
-                <svg className="w-3.5 h-3.5 fill-current" viewBox="0 0 24 24">
-                  <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
-                </svg>
-                <span>{isConnecting ? 'Connecting...' : 'Connect GitHub'}</span>
+                <div className="w-7 h-7 rounded-full bg-white/12 flex items-center justify-center shrink-0">
+                  <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                  </svg>
+                </div>
+                <span className="text-xs font-bold tracking-tight">
+                  {isConnecting ? 'Connecting...' : 'Connect GitHub'}
+                </span>
               </button>
             ) : null}
 
