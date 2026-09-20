@@ -43,6 +43,8 @@ export const initDB = async () => {
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS google_id VARCHAR(255);`;
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS github_id VARCHAR(255);`;
       await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS avatar_url TEXT;`;
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS github_username VARCHAR(255);`;
+      await db`ALTER TABLE users ADD COLUMN IF NOT EXISTS x_username VARCHAR(255);`;
     } catch {
       // Ignore migration errors if already configured
     }

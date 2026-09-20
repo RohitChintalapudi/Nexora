@@ -8,6 +8,7 @@ export interface User {
   createdAt?: string;
   githubConnected?: boolean;
   githubUsername?: string | null;
+  xUsername?: string | null;
   hasPassword?: boolean;
   authProvider?: 'email' | 'google' | 'github' | 'oauth';
 }
@@ -29,6 +30,7 @@ interface AuthContextType {
   closeAuthModal: () => void;
   login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
   register: (name: string, email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  updateProfile: (profileData: { name: string; githubUsername?: string; xUsername?: string }) => Promise<{ success: boolean; message?: string; user?: User }>;
   changePassword: (currentPassword: string, newPassword: string, confirmPassword?: string) => Promise<{ success: boolean; message?: string }>;
   loginWithGoogle: (payload: { credential?: string; accessToken?: string }) => Promise<{ success: boolean; message?: string }>;
   triggerGoogleSignIn: () => void;
@@ -470,6 +472,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfile = async (profileData: { name: string; githubUsername?: string; xUsername?: string }) => {
+    try {
+      const activeToken = token || localStorage.getItem('nexora_token');
+      if (!activeToken) {
+        return { success: false, message: 'Authentication required' };
+      }
+
+      const res = await fetch(`${API_BASE_URL}/api/auth/profile`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${activeToken}`,
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        return { success: false, message: data.message || 'Failed to update profile' };
+      }
+
+      if (data.user) {
+        setUser((prev) => ({
+          ...(prev || {}),
+          ...data.user,
+        }));
+      }
+
+      return { success: true, message: data.message || 'Profile updated successfully', user: data.user };
+    } catch (err: any) {
+      return { success: false, message: err.message || 'Network error while updating profile' };
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('nexora_token');
     syncGitHubLocalCache(false, null);
@@ -497,6 +533,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         closeAuthModal,
         login,
         register,
+        updateProfile,
         changePassword,
         loginWithGoogle,
         triggerGoogleSignIn,
