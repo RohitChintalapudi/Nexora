@@ -6,6 +6,8 @@ import { AuthSwitch } from '../components/ui/auth-switch';
 import { useAuth } from '../context/AuthContext';
 import { TextShimmer } from '../components/motion/text-shimmer';
 import { TextReveal } from '../components/motion/text-reveal';
+import { PasswordStrengthIndicator } from '../components/ui/PasswordStrengthIndicator';
+import { validateEmail } from '../lib/auth-validation';
 import {
   ArrowLeft,
   Mail,
@@ -15,6 +17,7 @@ import {
   EyeOff,
   ArrowRight,
   Loader2,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface AuthPageProps {
@@ -34,6 +37,8 @@ export const AuthPage: React.FC<AuthPageProps> = ({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const { login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authStatusMessage, navigateTo } = useAuth();
+
+  const isEmailValid = email.trim().length > 0 && validateEmail(email).isValid;
 
   useEffect(() => {
     setMode(initialMode);
@@ -59,13 +64,19 @@ export const AuthPage: React.FC<AuthPageProps> = ({
     e.preventDefault();
     setErrorMessage(null);
 
+    const emailCheck = validateEmail(email);
+
     if (mode === 'signup') {
-      if (!name.trim()) {
-        setErrorMessage('Please enter your full name');
+      if (!name.trim() || name.trim().length < 2) {
+        setErrorMessage('Please enter your full name (at least 2 characters)');
         return;
       }
-      if (!email.trim() || !email.includes('@')) {
-        setErrorMessage('Please enter a valid email address');
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
+        return;
+      }
+      if (!password) {
+        setErrorMessage('Please enter a password for your account');
         return;
       }
       if (password.length < 6) {
@@ -73,7 +84,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         return;
       }
 
-      const res = await register(name, email, password);
+      const res = await register(name.trim(), email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Registration failed');
       } else {
@@ -81,7 +92,11 @@ export const AuthPage: React.FC<AuthPageProps> = ({
       }
     } else {
       if (!email.trim()) {
-        setErrorMessage('Please enter your email');
+        setErrorMessage('Please enter your email address');
+        return;
+      }
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
         return;
       }
       if (!password) {
@@ -89,7 +104,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
         return;
       }
 
-      const res = await login(email, password);
+      const res = await login(email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Invalid email or password');
       } else {
@@ -339,9 +354,17 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                 </AnimatePresence>
 
                 <div>
-                  <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700 mb-1">
-                    Email Address
-                  </label>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block text-[11px] font-mono uppercase tracking-wider text-neutral-700">
+                      Email Address
+                    </label>
+                    {email.trim().length > 0 && isEmailValid && (
+                      <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-600">
+                        <CheckCircle2 className="w-3 h-3" />
+                        Valid email
+                      </span>
+                    )}
+                  </div>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                       <Mail className="w-4 h-4" />
@@ -382,7 +405,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       value={password}
                       disabled={isLoading}
                       onChange={(e) => setPassword(e.target.value)}
-                      placeholder={mode === 'signup' ? 'At least 6 characters' : '••••••••'}
+                      placeholder={mode === 'signup' ? 'Create a strong password' : '••••••••'}
                       required
                       className="w-full pl-10 pr-10 py-2 bg-neutral-50/80 border border-black/10 rounded-xl text-sm text-black placeholder-neutral-400 focus:bg-white focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-all disabled:opacity-50"
                     />
@@ -395,6 +418,14 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
                   </div>
+
+                  {/* Password Strength Category 4-Dots Indicator */}
+                  {mode === 'signup' && (
+                    <PasswordStrengthIndicator
+                      password={password}
+                      theme="light"
+                    />
+                  )}
                 </div>
 
                 {/* Solid Obsidian Black Submit Button */}

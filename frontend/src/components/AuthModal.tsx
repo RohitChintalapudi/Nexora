@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { TextShimmer } from './motion/text-shimmer';
 import { Logo } from './Logo';
-import { Eye, EyeOff, Lock, Mail, User as UserIcon, X, Loader2, ArrowRight } from 'lucide-react';
+import { PasswordStrengthIndicator } from './ui/PasswordStrengthIndicator';
+import { validateEmail } from '../lib/auth-validation';
+import { Eye, EyeOff, Lock, Mail, User as UserIcon, X, Loader2, ArrowRight, CheckCircle2 } from 'lucide-react';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, authModalTab, closeAuthModal, openAuthModal, login, register, triggerGoogleSignIn, triggerGithubSignIn, isLoading, authStatusMessage } = useAuth();
@@ -14,25 +16,33 @@ export const AuthModal: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const isEmailValid = email.trim().length > 0 && validateEmail(email).isValid;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
 
+    const emailCheck = validateEmail(email);
+
     if (authModalTab === 'register') {
-      if (!name.trim()) {
-        setErrorMessage('Please enter your full name');
+      if (!name.trim() || name.trim().length < 2) {
+        setErrorMessage('Please enter your full name (at least 2 characters)');
         return;
       }
-      if (!email.trim() || !email.includes('@')) {
-        setErrorMessage('Please enter a valid email address');
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
+        return;
+      }
+      if (!password) {
+        setErrorMessage('Please enter a password');
         return;
       }
       if (password.length < 6) {
-        setErrorMessage('Password must be at least 6 characters');
+        setErrorMessage('Password must be at least 6 characters long');
         return;
       }
 
-      const res = await register(name, email, password);
+      const res = await register(name.trim(), email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Registration failed');
       } else {
@@ -42,7 +52,11 @@ export const AuthModal: React.FC = () => {
       }
     } else {
       if (!email.trim()) {
-        setErrorMessage('Please enter your email');
+        setErrorMessage('Please enter your email address');
+        return;
+      }
+      if (!emailCheck.isValid) {
+        setErrorMessage(emailCheck.error || 'Please enter a valid email address');
         return;
       }
       if (!password) {
@@ -50,7 +64,7 @@ export const AuthModal: React.FC = () => {
         return;
       }
 
-      const res = await login(email, password);
+      const res = await login(email.trim(), password);
       if (!res.success) {
         setErrorMessage(res.message || 'Invalid email or password');
       } else {
@@ -231,9 +245,17 @@ export const AuthModal: React.FC = () => {
               )}
 
               <div>
-                <label className="block text-xs font-medium text-neutral-300 mb-1.5 font-sans">
-                  Email Address
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-medium text-neutral-300 font-sans">
+                    Email Address
+                  </label>
+                  {email.trim().length > 0 && isEmailValid && (
+                    <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-400">
+                      <CheckCircle2 className="w-3 h-3" />
+                      Valid email
+                    </span>
+                  )}
+                </div>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-neutral-400">
                     <Mail className="w-4 h-4" />
@@ -263,7 +285,7 @@ export const AuthModal: React.FC = () => {
                     value={password}
                     disabled={isLoading}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder={authModalTab === 'register' ? 'At least 6 characters' : '••••••••'}
+                    placeholder={authModalTab === 'register' ? 'Create a strong password' : '••••••••'}
                     required
                     className="w-full pl-10 pr-10 py-2.5 bg-white/[0.05] border border-white/[0.1] rounded-xl text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-all font-sans disabled:opacity-60 disabled:cursor-not-allowed"
                   />
@@ -276,6 +298,14 @@ export const AuthModal: React.FC = () => {
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
                 </div>
+
+                {/* Password Strength Category 4-Dots Indicator */}
+                {authModalTab === 'register' && (
+                  <PasswordStrengthIndicator
+                    password={password}
+                    theme="dark"
+                  />
+                )}
               </div>
 
               {/* Submit button */}
