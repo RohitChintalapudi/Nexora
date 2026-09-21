@@ -43,10 +43,10 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
               <LogOut className="w-5 h-5 stroke-[2.2]" />
             </div>
             <div>
-              <h3 id="logout-modal-title" className="text-base font-extrabold text-slate-900">
+              <h3 id="logout-modal-title" className="text-lg font-extrabold text-slate-900">
                 Confirm Logout
               </h3>
-              <p className="text-xs font-semibold text-slate-400">
+              <p className="text-sm font-semibold text-slate-500">
                 Session Management
               </p>
             </div>
@@ -65,7 +65,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
         <div className="p-6 space-y-4">
           <div className="flex items-start gap-3 p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
             <AlertCircle className="w-5 h-5 text-amber-500 shrink-0 mt-0.5" />
-            <p className="text-xs font-medium text-slate-600 leading-relaxed">
+            <p className="text-sm font-semibold text-slate-700 leading-relaxed">
               Are you sure you want to log out of NEXORA? You will need to sign in again to access your connected codebases and architecture maps.
             </p>
           </div>
