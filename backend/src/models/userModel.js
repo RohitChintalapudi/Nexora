@@ -8,7 +8,7 @@ export const UserModel = {
     const rows = await sql`
       SELECT id, name, email, password, google_id, github_id, avatar_url, github_username, x_username, created_at
       FROM users
-      WHERE LOWER(email) = LOWER(${email.trim()})
+      WHERE email = ${email.trim().toLowerCase()}
       LIMIT 1;
     `;
     return rows[0] || null;

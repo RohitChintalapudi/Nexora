@@ -399,6 +399,7 @@ curl http://localhost:5000/api/health
 PORT=5000
 CLIENT_URL=http://localhost:5173
 JWT_SECRET=your_strong_jwt_secret_key
+BCRYPT_ROUNDS=10                      # native bcrypt cost (lower = faster, e.g. 8)
 
 # PostgreSQL (Neon with pgvector)
 DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
