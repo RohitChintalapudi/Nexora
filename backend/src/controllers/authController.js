@@ -1,8 +1,10 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 import { UserModel } from '../models/userModel.js';
 import { GithubAccountModel } from '../models/githubAccountModel.js';
+
+const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS || '10', 10);
 
 const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
@@ -18,14 +20,18 @@ const generateToken = (id) => {
 };
 
 /**
- * Format user response object with integrated GitHub connection status
+ * Format user response object with integrated GitHub connection status.
+ * A preloaded GitHub account can be passed in to avoid a second DB round-trip
+ * during fast-path auth flows (login / register).
  */
-const getUserProfile = async (user) => {
+const getUserProfile = async (user, preloadedGithubAccount) => {
   let githubConnected = false;
   let githubUsername = null;
 
   try {
-    const ghAcc = await GithubAccountModel.findByUserId(user.id);
+    const ghAcc = preloadedGithubAccount !== undefined
+      ? preloadedGithubAccount
+      : await GithubAccountModel.findByUserId(user.id);
     if (ghAcc && ghAcc.access_token) {
       githubConnected = true;
       githubUsername = ghAcc.username || null;
@@ -87,7 +93,7 @@ export const register = async (req, res) => {
     }
 
     // Hash password
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
     const hashedPassword = await bcrypt.hash(password, salt);
 
     // Create user in DB
@@ -98,7 +104,8 @@ export const register = async (req, res) => {
     });
 
     const token = generateToken(user.id);
-    const userProfile = await getUserProfile({ ...user, password: hashedPassword });
+    // New user has no github_accounts row yet — skip that DB round-trip
+    const userProfile = await getUserProfile({ ...user, password: hashedPassword }, null);
 
     return res.status(201).json({
       success: true,
@@ -134,8 +141,11 @@ export const login = async (req, res) => {
       });
     }
 
-    // Check password
-    const isMatch = await bcrypt.compare(password, user.password);
+    // Run CPU-bound bcrypt compare in parallel with the GitHub status DB query
+    const [isMatch, githubAccount] = await Promise.all([
+      bcrypt.compare(password, user.password),
+      GithubAccountModel.findByUserId(user.id).catch(() => null)
+    ]);
     if (!isMatch) {
       return res.status(401).json({
         success: false,
@@ -144,7 +154,7 @@ export const login = async (req, res) => {
     }
 
     const token = generateToken(user.id);
-    const userProfile = await getUserProfile(user);
+    const userProfile = await getUserProfile(user, githubAccount);
 
     return res.status(200).json({
       success: true,
@@ -575,7 +585,7 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(BCRYPT_ROUNDS);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     await UserModel.updatePassword(userId, hashedPassword);

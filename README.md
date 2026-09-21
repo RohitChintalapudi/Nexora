@@ -27,7 +27,6 @@ NEXORA indexes entire software repositories, parses AST syntax structures, extra
 - [WOW Factors](#wow-factors)
 - [Key Features](#key-features)
 - [How It Works — The Analysis Pipeline](#how-it-works--the-analysis-pipeline)
-- [System Architecture](#system-architecture)
 - [LangGraph AI Workflow](#langgraph-ai-workflow)
 - [Technology Stack](#technology-stack)
 - [Repository Structure](#repository-structure)
@@ -204,46 +203,6 @@ flowchart TB
 | M11 | Hardening & E2E | Multi-tenant isolation & security test suite (15/15 passing) |
 
 > **Note:** The analysis job queue is currently **in-process** (sequential). Jobs are lost on server restart. Upstash Redis is used for caching, not queueing.
-
----
-
-## System Architecture
-
-```mermaid
-flowchart LR
-    subgraph Frontend[Frontend · Vite + React 19 + TS]
-        LP[Landing Page] --> NM[Navbar / Auth Modal]
-        NM --> AUTH[AuthContext · JWT mgmt]
-        DASH[Dashboard] --> REP[Repositories View]
-        REP --> AV[Analysis Progress]
-        AV --> AN[AnalysisPage · 13 Sections]
-        AN --> AI[AI Chat]
-        AN --> AFD[Architecture Flow Diagram<br/>React Flow + dagre]
-        AN --> CCM[Component Communication Matrix]
-    end
-
-    subgraph Backend[Backend · Express · ESM]
-        R[REST API] --> CTRL[Controllers]
-        CTRL --> SVC[Services]
-        SVC --> AIENG[LangGraph AI Engine]
-        SVC --> RAG[RAG Service]
-        SVC --> EMB[Local Embeddings]
-        SVC --> MW[Auth · Rate-Limit · Middleware]
-    end
-
-    subgraph Data[Data Layer]
-        PG[(PostgreSQL · Neon]]
-        VEC[(pgvector · HNSW)]
-        REDIS[(Upstash Redis Cache)]
-    end
-
-    Frontend -->|HTTPS /api/*| Backend
-    Backend --> PG
-    Backend --> VEC
-    Backend --> REDIS
-    Backend -->|Groq API| GROQ[Groq LLM]
-    Backend -->|GitHub OAuth + API| GITHUB[GitHub]
-```
 
 ---
 
@@ -440,6 +399,7 @@ curl http://localhost:5000/api/health
 PORT=5000
 CLIENT_URL=http://localhost:5173
 JWT_SECRET=your_strong_jwt_secret_key
+BCRYPT_ROUNDS=10                      # native bcrypt cost (lower = faster, e.g. 8)
 
 # PostgreSQL (Neon with pgvector)
 DATABASE_URL=postgresql://username:password@ep-sample-pooler.aws.neon.tech/neondb?sslmode=require
