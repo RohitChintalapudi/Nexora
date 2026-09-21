@@ -43,7 +43,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
           />
 
           <motion.div
-            className="relative w-full max-w-md overflow-hidden bg-white shadow-2xl"
+            className="relative w-full max-w-md overflow-hidden rounded-2xl bg-white shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="logout-modal-title"
@@ -70,7 +70,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
             {/* Content */}
             <div className="px-6 py-6 space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                <div className="w-9 h-9 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
                   <LogOut className="w-4.5 h-4.5 stroke-[2.2]" />
                 </div>
                 <div>
