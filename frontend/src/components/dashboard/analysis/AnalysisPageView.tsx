@@ -35,6 +35,7 @@ import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
 import { NexoraLoader } from '../../common/NexoraLoader';
 import { SourceReferenceModal } from './SourceReferenceModal';
 import { AIChatView } from './AIChatView';
+import { TreeNav } from '../../spectrumui/tree-nav';
 import { ArchitectureFlowDiagram } from './ArchitectureFlowDiagram';
 import { ComponentCommunicationMatrix } from './ComponentCommunicationMatrix';
 import { DeleteRepositoryModal } from '../DeleteRepositoryModal';
@@ -686,31 +687,24 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         
         {/* LEFT COLUMN: STICKY SECTION NAVIGATION SIDEBAR */}
-        <div className="hidden md:block md:col-span-3 sticky top-24 space-y-2">
-          <div className="bg-white rounded-3xl border border-slate-200/80 p-3 shadow-[0_2px_16px_rgba(0,0,0,0.02)] space-y-1">
-            <div className="px-3.5 py-2 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
+        <div className="hidden md:block md:col-span-3 sticky top-24">
+          <div className="bg-white rounded-3xl border border-slate-200/80 p-3 shadow-[0_2px_16px_rgba(0,0,0,0.02)]">
+            <div className="px-3.5 py-2 pb-3 text-[10px] font-extrabold uppercase tracking-wider text-slate-400">
               Analysis Sections
             </div>
 
-            {NAV_SECTIONS.map((section) => {
-              const Icon = section.icon;
-              const isActive = activeSection === section.id;
-              return (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => scrollToSection(section.id)}
-                  className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-left transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.3)]'
-                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-50'
-                  }`}
-                >
-                  <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} />
-                  <span className="truncate">{section.label}</span>
-                </button>
-              );
-            })}
+            <TreeNav
+              items={NAV_SECTIONS.map((section) => ({
+                label: section.label,
+                href: `#${section.id}`,
+                icon: section.icon,
+              }))}
+              activeHref={`#${activeSection}`}
+              onSelect={(item, event) => {
+                event.preventDefault();
+                scrollToSection(item.href.replace('#', ''));
+              }}
+            />
           </div>
         </div>
 
