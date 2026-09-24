@@ -1,27 +1,17 @@
 "use client";
 import {
-  Angry,
   Check,
-  Frown,
-  Laugh,
   Loader2,
   MessageSquareHeart,
-  Smile,
   X
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../context/AuthContext";
+import { LikeButton } from "../spectrumui/like-button";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
-
-const FEEDBACK_OPTIONS = [
-  { happiness: 4, emoji: Laugh, color: "text-green-600", activeColor: "text-green-600", label: "Love it" },
-  { happiness: 3, emoji: Smile, color: "text-green-400", activeColor: "text-green-500", label: "Pretty good" },
-  { happiness: 2, emoji: Frown, color: "text-yellow-500", activeColor: "text-yellow-500", label: "Needs work" },
-  { happiness: 1, emoji: Angry, color: "text-red-500", activeColor: "text-red-600", label: "Frustrated" },
-];
 
 const containerVariants: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.96 },
@@ -47,16 +37,16 @@ export const FeedbackWidget: React.FC = () => {
   const { token } = useAuth();
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [happiness, setHappiness] = useState<number | null>(null);
+  const [liked, setLiked] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!happiness && textRef.current) {
+    if (!liked && textRef.current) {
       textRef.current.value = "";
     }
-  }, [happiness]);
+  }, [liked]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -70,14 +60,14 @@ export const FeedbackWidget: React.FC = () => {
   }, [isOpen]);
 
   const resetWidget = () => {
-    setHappiness(null);
+    setLiked(false);
     setSubmitted(false);
     setSubmitError(null);
     if (textRef.current) textRef.current.value = "";
   };
 
   const handleSubmit = async () => {
-    if (!happiness) return;
+    if (!liked) return;
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -91,7 +81,7 @@ export const FeedbackWidget: React.FC = () => {
           Accept: 'application/json'
         },
         body: JSON.stringify({
-          happiness,
+          happiness: 4,
           feedback: textRef.current?.value || "",
           page: window.location.pathname.startsWith('/repositories') ? 'repositories' : 'dashboard'
         })
@@ -115,8 +105,6 @@ export const FeedbackWidget: React.FC = () => {
     }
   };
 
-  const selectedOption = FEEDBACK_OPTIONS.find((o) => o.happiness === happiness);
-
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3">
       <AnimatePresence>
@@ -139,7 +127,7 @@ export const FeedbackWidget: React.FC = () => {
                     Love our service?
                   </div>
                   <div className="text-[11px] font-medium text-slate-500 mt-0.5">
-                    {selectedOption?.label ? `You selected: ${selectedOption.label}` : 'Tap an emoji to get started'}
+                    {liked ? 'Tap the heart to tell us how you feel' : 'Do you love it? Tap the heart and tell us'}
                   </div>
                 </div>
                 <button
@@ -155,40 +143,23 @@ export const FeedbackWidget: React.FC = () => {
               <div className="px-5 py-4">
                 {!submitted ? (
                   <>
-                    {/* Emoji rating row */}
-                    <div className="flex items-center justify-center gap-1">
-                      {FEEDBACK_OPTIONS.map((option) => {
-                        const EmojiIcon = option.emoji;
-                        const isSelected = happiness === option.happiness;
-                        return (
-                          <button
-                            key={option.happiness}
-                            type="button"
-                            onClick={() =>
-                              setHappiness((prev) =>
-                                option.happiness === prev ? null : option.happiness,
-                              )
-                            }
-                            aria-label={option.label}
-                            className={cn(
-                              "flex h-11 w-11 items-center justify-center rounded-full transition-all scale-100",
-                              isSelected
-                                ? option.activeColor
-                                : "text-slate-400 hover:text-slate-600 hover:bg-slate-100",
-                            )}
-                          >
-                            <EmojiIcon size={22} />
-                          </button>
-                        );
-                      })}
+                    {/* Heart rating toggle */}
+                    <div className="flex items-center justify-center py-1">
+                      <LikeButton
+                        liked={liked}
+                        onLikedChange={(next) => setLiked(next)}
+                        label="Love it"
+                        size="lg"
+                        className="px-6"
+                      />
                     </div>
 
                     {/* Expandable textarea */}
                     <motion.div
-                      aria-hidden={happiness ? false : true}
+                      aria-hidden={liked ? false : true}
                       initial={{ height: 0, y: 12, opacity: 0 }}
                       transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.28 }}
-                      animate={happiness ? { height: "auto", y: 0, opacity: 1 } : {}}
+                      animate={liked ? { height: "auto", y: 0, opacity: 1 } : {}}
                       className="px-1"
                     >
                       <textarea
@@ -214,10 +185,10 @@ export const FeedbackWidget: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleSubmit}
-                          disabled={!happiness || isSubmitting}
+                          disabled={!liked || isSubmitting}
                           className={cn(
                             "inline-flex items-center justify-center gap-1.5 rounded-lg border bg-blue-600 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:cursor-not-allowed",
-                            isSubmitting || !happiness
+                            isSubmitting || !liked
                               ? "bg-slate-300 border-slate-200 text-slate-500"
                               : "hover:bg-blue-700 active:scale-[0.98] shadow-[0_4px_14px_rgba(37,99,235,0.3)]",
                           )}
