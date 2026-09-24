@@ -83,7 +83,6 @@ export function TreeNav({
   // Rail length is the only measurement that renders; everything that moves is
   // a motion value, so hovering never re-renders the list.
   const [end, setEnd] = useState(0);
-  const [measured, setMeasured] = useState(false);
 
   const centerY = useMotionValue(0);
   const visibility = useMotionValue(0);
@@ -120,7 +119,6 @@ export function TreeNav({
         .map((el) => (el ? el.offsetTop + el.offsetHeight / 2 : 0));
       centersRef.current = next;
       setEnd(next.length > 0 ? next[next.length - 1] : 0);
-      setMeasured(true);
       // A re-measure is a layout change, not motion: settle instantly.
       moveTo(hoveredRef.current ?? activeRef.current, true);
     };
@@ -164,7 +162,7 @@ export function TreeNav({
           style={{ insetInlineStart: RAIL_X - 2, top: end - 2 }}
         />
         <motion.span
-          className="absolute top-0 w-px origin-top bg-slate-900 will-change-transform dark:bg-slate-100"
+          className="absolute top-0 w-px origin-top bg-blue-600 will-change-transform dark:bg-blue-400"
           style={{
             insetInlineStart: RAIL_X - 0.5,
             height: end,
@@ -173,7 +171,7 @@ export function TreeNav({
           }}
         />
         <motion.span
-          className="absolute top-0 rounded-[1px] bg-slate-900 will-change-transform dark:bg-slate-100"
+          className="absolute top-0 rounded-[1px] bg-blue-600 will-change-transform dark:bg-blue-400"
           style={{
             insetInlineStart: RAIL_X - MARKER / 2,
             width: MARKER,
@@ -185,11 +183,12 @@ export function TreeNav({
         />
       </span>
 
-      {/* One shared background: rests on the active row, follows the pointer,
-          springs back on leave. */}
+      {/* One shared background: a light blue tint that slides to the hovered row
+          and springs back on leave. The active row paints its own solid blue
+          underneath, so the tint never washes it out. */}
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-slate-900/5 will-change-transform dark:bg-white/5"
+        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-blue-600/10 will-change-transform dark:bg-blue-400/20"
         style={{ height: ROW_H, y: pillY, opacity: visibility }}
       />
 
@@ -215,11 +214,10 @@ export function TreeNav({
               onBlur={leave}
               className={cn(
                 "flex h-8 items-center gap-2 rounded-lg px-3 text-[13px] leading-5 antialiased transition-colors duration-150 ease-out",
-                // Before the first measurement the pill has no position yet, so
-                // the active row paints its own background for that one frame.
-                isActive && !measured && "bg-slate-900/5 dark:bg-white/5",
+                // Before the first measurement the sliding pill has no position
+                // yet, so the active row paints its own background immediately.
                 isActive
-                  ? "font-medium text-slate-900 dark:text-slate-100"
+                  ? "bg-blue-600 font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)] dark:bg-blue-500"
                   : "font-normal text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
               )}
             >
@@ -228,7 +226,7 @@ export function TreeNav({
                   className={cn(
                     "h-4 w-4 shrink-0",
                     isActive
-                      ? "text-slate-900 dark:text-slate-100"
+                      ? "text-white"
                       : "text-slate-400 hover:enabled:text-slate-900",
                   )}
                 />
