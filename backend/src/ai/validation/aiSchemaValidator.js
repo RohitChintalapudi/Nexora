@@ -3,6 +3,7 @@
  * Ensures all Groq/LLM responses conform strictly to typed schemas.
  * Fallback to deterministic M6 codebase facts if LLM returns partial/invalid responses.
  */
+import { filterGenericUncertainties } from '../../utils/filterUncertainties.js';
 
 export class AISchemaValidator {
   /**
@@ -206,7 +207,7 @@ export class AISchemaValidator {
       }));
 
     const rawUncertainties = Array.isArray(data?.uncertainties) ? data.uncertainties : [];
-    const uncertainties = rawUncertainties
+    const uncertainties = filterGenericUncertainties(rawUncertainties)
       .filter(u => u && (typeof u === 'string' || typeof u.topic === 'string'))
       .map(u => {
         if (typeof u === 'string') {
