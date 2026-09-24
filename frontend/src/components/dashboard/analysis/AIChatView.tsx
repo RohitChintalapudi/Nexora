@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { 
@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { useRepositoryChat } from '../../../hooks/useRepositoryChat';
 import { TextShimmer } from '../../motion/text-shimmer';
+import { MessageScroller } from '../../motion/message-scroller';
 
 interface AIChatViewProps {
   repositoryId: number | string;
@@ -146,7 +147,7 @@ const FormattedMessageContent: React.FC<{
               {children}
             </td>
           ),
-          code: ({ className, children }: any) => {
+          code: ({ className, children }: { className?: string; children?: React.ReactNode }) => {
             const isInline = !className && !String(children).includes('\n');
             const match = /language-(\w+)/.exec(className || '');
             const codeString = String(children).replace(/\n$/, '');
@@ -266,18 +267,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
   const [inputQuestion, setInputQuestion] = useState('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   
-  // CONTAINER REF (Strictly scroll inside the chat box only, NEVER moving window scroll position)
-  const chatContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTo({
-        top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }, [messages.length, isLoading]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -366,9 +356,14 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
       </div>
 
       {/* 3. Message History Container */}
-      <div 
-        ref={chatContainerRef}
-        className="p-5 sm:p-6 min-h-[300px] max-h-[580px] overflow-y-auto space-y-6 bg-slate-50/40"
+      <MessageScroller
+        navigation="rail"
+        busy={isLoading}
+        label="AI Assistant chat transcript"
+        navigationLabel="Chat message navigation"
+        className="min-h-[300px] max-h-[580px] bg-slate-50/40"
+        viewportClassName="p-5 sm:p-6"
+        contentClassName="space-y-6"
       >
         {messages.length === 0 ? (
           /* Empty State & Prompt Starters */
@@ -412,6 +407,8 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
             return (
               <div
                 key={msg.id}
+                data-slot="message"
+                data-from={isUser ? 'user' : 'assistant'}
                 className={`flex gap-3.5 ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in duration-150`}
               >
                 {!isUser && (
@@ -421,6 +418,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                 )}
 
                 <div
+                  data-slot="message-content"
                   className={`max-w-3xl rounded-3xl p-4 sm:p-6 space-y-3.5 ${
                     isUser
                       ? 'bg-blue-600 text-white rounded-br-xs shadow-md shadow-blue-600/10'
@@ -534,7 +532,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
             <span>{error}</span>
           </div>
         )}
-      </div>
+      </MessageScroller>
 
       {/* 4. Question Input Bar */}
       <div className="p-4 sm:p-5 bg-white">

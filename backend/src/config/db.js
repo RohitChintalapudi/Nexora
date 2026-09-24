@@ -276,6 +276,18 @@ export const initDB = async () => {
       );
     `;
 
+    // Initialize user_feedback table for dashboard feedback widget
+    await db`
+      CREATE TABLE IF NOT EXISTS user_feedback (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        happiness INTEGER CHECK (happiness >= 1 AND happiness <= 4) NOT NULL,
+        feedback TEXT NOT NULL DEFAULT '',
+        page VARCHAR(100) DEFAULT 'dashboard',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
     // Create performance indexes for M5, M6, M7 & M9 queries
     try {
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_repo_id ON repository_files(repository_id);`;
