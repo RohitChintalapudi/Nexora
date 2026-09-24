@@ -10,10 +10,10 @@ export const feedbackController = {
       const { happiness, feedback, page } = req.body;
 
       const rating = parseInt(happiness, 10);
-      if (!rating || rating < 1 || rating > 4) {
+      if (!rating || rating < 1 || rating > 5) {
         return res.status(400).json({
           success: false,
-          message: 'Please select a happiness rating (1-4) before submitting.'
+          message: 'Please select a happiness rating (1-5) before submitting.'
         });
       }
 

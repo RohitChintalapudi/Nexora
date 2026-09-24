@@ -9,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../context/AuthContext";
-import { LikeButton } from "../spectrumui/like-button";
+import { StarRating } from "../spectrumui/star-rating";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
@@ -37,16 +37,16 @@ export const FeedbackWidget: React.FC = () => {
   const { token } = useAuth();
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [liked, setLiked] = useState(false);
+  const [happiness, setHappiness] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!liked && textRef.current) {
+    if (!happiness && textRef.current) {
       textRef.current.value = "";
     }
-  }, [liked]);
+  }, [happiness]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -60,14 +60,14 @@ export const FeedbackWidget: React.FC = () => {
   }, [isOpen]);
 
   const resetWidget = () => {
-    setLiked(false);
+    setHappiness(0);
     setSubmitted(false);
     setSubmitError(null);
     if (textRef.current) textRef.current.value = "";
   };
 
   const handleSubmit = async () => {
-    if (!liked) return;
+    if (!happiness) return;
     setIsSubmitting(true);
     setSubmitError(null);
 
@@ -81,7 +81,7 @@ export const FeedbackWidget: React.FC = () => {
           Accept: 'application/json'
         },
         body: JSON.stringify({
-          happiness: 4,
+          happiness,
           feedback: textRef.current?.value || "",
           page: window.location.pathname.startsWith('/repositories') ? 'repositories' : 'dashboard'
         })
@@ -123,12 +123,12 @@ export const FeedbackWidget: React.FC = () => {
               {/* Header */}
               <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b border-slate-100">
                 <div>
-                  <div className="text-sm font-extrabold text-slate-900">
-                    Love our service?
-                  </div>
-                  <div className="text-[11px] font-medium text-slate-500 mt-0.5">
-                    {liked ? 'Tap the heart to tell us how you feel' : 'Do you love it? Tap the heart and tell us'}
-                  </div>
+<div className="text-sm font-extrabold text-slate-900">
+                   Rate your experience
+                 </div>
+                 <div className="text-[11px] font-medium text-slate-500 mt-0.5">
+                   {happiness ? 'Tell us more below' : 'Click a star to get started'}
+                 </div>
                 </div>
                 <button
                   type="button"
@@ -143,23 +143,24 @@ export const FeedbackWidget: React.FC = () => {
               <div className="px-5 py-4">
                 {!submitted ? (
                   <>
-                    {/* Heart rating toggle */}
+                    {/* Star rating */}
                     <div className="flex items-center justify-center py-1">
-                      <LikeButton
-                        liked={liked}
-                        onLikedChange={(next) => setLiked(next)}
-                        label="Love it"
+                      <StarRating
+                        value={happiness}
+                        onValueChange={setHappiness}
+                        showValue
+                        label="Rate your experience"
                         size="lg"
-                        className="px-6"
+                        className="gap-2"
                       />
                     </div>
 
                     {/* Expandable textarea */}
                     <motion.div
-                      aria-hidden={liked ? false : true}
+                      aria-hidden={happiness ? false : true}
                       initial={{ height: 0, y: 12, opacity: 0 }}
                       transition={{ ease: [0.16, 1, 0.3, 1], duration: 0.28 }}
-                      animate={liked ? { height: "auto", y: 0, opacity: 1 } : {}}
+                      animate={happiness ? { height: "auto", y: 0, opacity: 1 } : {}}
                       className="px-1"
                     >
                       <textarea
@@ -185,10 +186,10 @@ export const FeedbackWidget: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleSubmit}
-                          disabled={!liked || isSubmitting}
+                          disabled={!happiness || isSubmitting}
                           className={cn(
                             "inline-flex items-center justify-center gap-1.5 rounded-lg border bg-blue-600 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:cursor-not-allowed",
-                            isSubmitting || !liked
+                            isSubmitting || !happiness
                               ? "bg-slate-300 border-slate-200 text-slate-500"
                               : "hover:bg-blue-700 active:scale-[0.98] shadow-[0_4px_14px_rgba(37,99,235,0.3)]",
                           )}
