@@ -276,6 +276,28 @@ export const initDB = async () => {
       );
     `;
 
+    // Initialize user_feedback table for dashboard feedback widget
+    await db`
+      CREATE TABLE IF NOT EXISTS user_feedback (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        happiness INTEGER CHECK (happiness >= 1 AND happiness <= 5) NOT NULL,
+        feedback TEXT NOT NULL DEFAULT '',
+        page VARCHAR(100) DEFAULT 'dashboard',
+        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+      );
+    `;
+
+    // Migrate pre-existing tables to the 5-star scale
+    try {
+      await db`ALTER TABLE user_feedback DROP CONSTRAINT IF EXISTS user_feedback_happiness_check;`;
+      await db`ALTER TABLE user_feedback
+        ADD CONSTRAINT user_feedback_happiness_check
+        CHECK (happiness >= 1 AND happiness <= 5);`;
+    } catch (migrationError) {
+      console.warn('Feedback happiness constraint migration skipped:', migrationError.message);
+    }
+
     // Create performance indexes for M5, M6, M7 & M9 queries
     try {
       await db`CREATE INDEX IF NOT EXISTS idx_repo_files_repo_id ON repository_files(repository_id);`;

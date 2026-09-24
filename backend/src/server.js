@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes.js';
 import githubRoutes from './routes/githubRoutes.js';
 import repositoryRoutes from './routes/repositoryRoutes.js';
 import analysisRoutes from './routes/analysisRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 import { initDB } from './config/db.js';
 
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/github', githubRoutes);
 app.use('/api/repositories', repositoryRoutes);
 app.use('/api/analysis', analysisRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 // Healthcheck route
 app.get('/api/health', (req, res) => {

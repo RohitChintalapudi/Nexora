@@ -1,4 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
+import {
+  CenterMorphModal,
+  CenterMorphModalClose,
+  CenterMorphModalContent,
+} from '@/components/motion/center-morph-modal';
 import { Unlink, X, AlertCircle } from 'lucide-react';
 
 interface DisconnectGithubModalProps {
@@ -16,29 +21,16 @@ export const DisconnectGithubModal: React.FC<DisconnectGithubModalProps> = ({
   onConfirm,
   isProcessing = false
 }) => {
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && !isProcessing) onClose();
-    };
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen, onClose, isProcessing]);
-
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/40 backdrop-blur-sm transition-all duration-200">
-      <div 
-        className="relative w-full max-w-md bg-white rounded-[2rem] border border-slate-200 shadow-[0_24px_64px_rgba(0,0,0,0.18)] overflow-hidden animate-in fade-in zoom-in-95 duration-200"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="disconnect-github-modal-title"
+    <CenterMorphModal
+      open={isOpen}
+      onOpenChange={(next) => !next && onClose()}
+    >
+      <CenterMorphModalContent
+        ariaLabel="Disconnect GitHub"
+        showCloseButton={false}
+        dismissible={!isProcessing}
+        className="max-w-md rounded-[2rem]"
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/70">
@@ -55,15 +47,16 @@ export const DisconnectGithubModal: React.FC<DisconnectGithubModalProps> = ({
               </p>
             </div>
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isProcessing}
-            aria-label="Close modal"
-            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-200/60 transition-colors cursor-pointer disabled:opacity-50"
-          >
-            <X className="w-4 h-4 stroke-[2.5]" />
-          </button>
+          <CenterMorphModalClose>
+            <button
+              type="button"
+              disabled={isProcessing}
+              aria-label="Close modal"
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-200/60 transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <X className="w-4 h-4 stroke-[2.5]" />
+            </button>
+          </CenterMorphModalClose>
         </div>
 
         {/* Content */}
@@ -78,14 +71,15 @@ export const DisconnectGithubModal: React.FC<DisconnectGithubModalProps> = ({
 
         {/* Actions */}
         <div className="flex items-center justify-end gap-3 px-6 py-4 bg-slate-50/80 border-t border-slate-100">
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={isProcessing}
-            className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors cursor-pointer disabled:opacity-50"
-          >
-            Cancel
-          </button>
+          <CenterMorphModalClose>
+            <button
+              type="button"
+              disabled={isProcessing}
+              className="px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors cursor-pointer disabled:opacity-50"
+            >
+              Cancel
+            </button>
+          </CenterMorphModalClose>
           <button
             type="button"
             onClick={onConfirm}
@@ -96,7 +90,7 @@ export const DisconnectGithubModal: React.FC<DisconnectGithubModalProps> = ({
             <span>{isProcessing ? 'Disconnecting...' : 'Disconnect GitHub'}</span>
           </button>
         </div>
-      </div>
-    </div>
+      </CenterMorphModalContent>
+    </CenterMorphModal>
   );
 };

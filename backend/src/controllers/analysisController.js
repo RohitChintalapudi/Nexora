@@ -4,6 +4,7 @@ import { RepositoryAnalysisModel } from '../models/repositoryAnalysisModel.js';
 import { RouteModel } from '../models/routeModel.js';
 import { analysisWorker } from '../services/analysisWorker.js';
 import { CacheService } from '../config/redis.js';
+import { filterGenericUncertainties } from '../utils/filterUncertainties.js';
 
 export const analysisController = {
   /**
@@ -367,7 +368,7 @@ export const analysisController = {
           database: ensureObject(analysisRecord.database, {}),
           apiStructure,
           developerQuickStart: ensureArray(analysisRecord.developer_quick_start),
-          uncertainties: ensureArray(analysisRecord.uncertainties)
+          uncertainties: filterGenericUncertainties(ensureArray(analysisRecord.uncertainties))
         },
         metadata: {
           jobId: analysisRecord.job_id,

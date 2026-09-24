@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { Logo } from '../Logo';
 import { LogoutConfirmModal } from './LogoutConfirmModal';
+import { FeedbackWidget } from './FeedbackWidget';
 import { 
   LogOut, 
   ChevronDown, 
@@ -261,6 +262,9 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         onClose={() => setIsLogoutModalOpen(false)}
         onConfirm={logout}
       />
+
+      {/* Floating Feedback Widget (authenticated dashboard only) */}
+      <FeedbackWidget />
     </div>
   );
 };

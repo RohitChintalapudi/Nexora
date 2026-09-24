@@ -23,6 +23,7 @@ You are an expert developer advocate and lead software architect. Provide a clea
 3. Highlight the 3-6 most important files every onboarding developer should inspect first, with concrete reasons.
 4. Identify 3-5 concrete architectural facts, technical considerations, or caveats specific to this repository (e.g. required environment variables, database connections, build prerequisites, or unverified external APIs).
 5. Avoid generic filler words. Make all insights directly accurate and relevant to this repository.
+6. Do not include generic, templated caveats about environment variables, secret keys, external API dependencies, or database setup unless they described something uniquely specific to THIS repository's code. Only report caveats that an onboarding developer cannot discover from this repository's own files alone.
 
 ### Expected JSON Output Format:
 {
@@ -49,10 +50,10 @@ You are an expert developer advocate and lead software architect. Provide a clea
   ],
   "uncertainties": [
     {
-      "topic": "Environment & Secrets",
-      "inference": "The application expects runtime environment variables (such as database credentials or API keys) that must be provided in a .env file before running.",
-      "missingEvidence": ".env file is ignored/not committed to repository",
-      "confidence": 0.95
+      "topic": "string",
+      "inference": "string",
+      "missingEvidence": "string",
+      "confidence": 0.0
     }
   ]
 }
