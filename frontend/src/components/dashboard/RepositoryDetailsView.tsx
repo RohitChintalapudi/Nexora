@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { GLOW_BLUE, GLOW_TRANSITION } from '../../lib/effects/glow';
 import { 
   FolderGit2, 
   GitBranch, 
@@ -302,11 +303,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   <button
                     type="button"
                     onClick={onViewAnalysis}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
+                    className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
                   >
-                    <Sparkles className="w-4 h-4" />
-                    <span>View Analysis</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <Sparkles className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                    <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>View Analysis</span>
+                    <ArrowRight className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
                   </button>
                 </div>
               ) : (
@@ -314,7 +315,7 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   type="button"
                   onClick={onStartAnalysis}
                   disabled={isStartingAnalysis}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
+                  className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
                 >
                   {isStartingAnalysis ? (
                     <>
@@ -323,8 +324,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                     </>
                   ) : (
                     <>
-                      <Cpu className="w-4 h-4" />
-                      <span>Analyze Repository</span>
+                      <Cpu className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                      <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>Analyze Repository</span>
                     </>
                   )}
                 </button>

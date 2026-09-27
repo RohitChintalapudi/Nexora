@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { GLOW_BLUE, GLOW_TRANSITION } from '@/lib/effects/glow';
 import { 
   ArrowLeft, 
   Sparkles, 
@@ -470,7 +471,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
             type="button"
             onClick={handleReanalyze}
             disabled={isReanalyzing}
-            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-extrabold hover:bg-black shadow-md transition-all cursor-pointer disabled:opacity-60"
+            className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white hover:text-blue-300 text-xs font-extrabold hover:bg-black shadow-md transition-all cursor-pointer disabled:opacity-60"
           >
             {isReanalyzing ? (
               <>
@@ -479,8 +480,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
               </>
             ) : (
               <>
-                <Cpu className="w-4 h-4" />
-                <span>Analyze Repository</span>
+                <Cpu className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>Analyze Repository</span>
               </>
             )}
           </button>
@@ -624,7 +625,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
               type="button"
               onClick={handleReanalyze}
               disabled={isReanalyzing}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60 shrink-0"
+              className="group inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60 shrink-0"
             >
               {isReanalyzing ? (
                 <>
@@ -633,8 +634,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                 </>
               ) : (
                 <>
-                  <RefreshCw className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span>Re-analyze Repository</span>
+                  <RefreshCw className={`w-3.5 h-3.5 stroke-[2.5] ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                  <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>Re-analyze Repository</span>
                 </>
               )}
             </button>

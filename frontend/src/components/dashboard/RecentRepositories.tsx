@@ -11,6 +11,7 @@ import {
   Trash2
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
+import { GLOW_BLUE_SOFT, GLOW_TRANSITION } from '../../lib/effects/glow';
 import { DeleteRepositoryModal } from './DeleteRepositoryModal';
 
 interface RecentRepositoriesProps {
@@ -189,10 +190,10 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                   <button
                     type="button"
                     onClick={() => onViewRepoDetails(repo)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-full transition-all cursor-pointer shadow-2xs"
+                    className="group inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-700 hover:text-blue-600 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-full transition-all cursor-pointer shadow-2xs"
                   >
-                    <span>View Details</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <span className={GLOW_TRANSITION + " " + GLOW_BLUE_SOFT}>View Details</span>
+                    <ArrowRight className={`w-3.5 h-3.5 ${GLOW_TRANSITION} ${GLOW_BLUE_SOFT}`} />
                   </button>
                 )}
 

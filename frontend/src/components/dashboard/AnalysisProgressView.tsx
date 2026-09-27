@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { GLOW_BLUE, GLOW_TRANSITION } from '../../lib/effects/glow';
 import { 
   ArrowLeft, 
   CheckCircle2, 
@@ -932,11 +933,11 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 <button
                   type="button"
                   onClick={onViewAnalysis}
-                  className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.35)] transition-all cursor-pointer"
+                  className="group inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.35)] transition-all cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4" />
-                  <span>View Analysis</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <Sparkles className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                  <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>View Analysis</span>
+                  <ArrowRight className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
                 </button>
               )}
             </div>
