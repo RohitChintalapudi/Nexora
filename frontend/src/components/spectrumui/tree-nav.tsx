@@ -183,12 +183,13 @@ export function TreeNav({
         />
       </span>
 
-      {/* One shared background: a faint black tint that slides to the hovered row
-          and springs back on leave. The active row paints its own solid black
-          underneath, so the tint never washes it out. */}
+      {/* One shared background: a solid black pill that slides to the hovered row
+          and springs back on leave, matching the active row exactly. The row's
+          own text delays its flip by the same beat as the travel, so nothing
+          ever turns white before the black is underneath it. */}
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-slate-900/10 will-change-transform dark:bg-slate-100/15"
+        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-slate-900 shadow-[0_2px_8px_rgba(15,23,42,0.28)] will-change-transform dark:bg-slate-100"
         style={{ height: ROW_H, y: pillY, opacity: visibility }}
       />
 
@@ -218,22 +219,29 @@ export function TreeNav({
                 // yet, so the active row paints its own background immediately.
                 isActive
                   ? "bg-slate-900 font-medium text-white shadow-[0_2px_8px_rgba(15,23,42,0.35)] dark:bg-slate-100 dark:text-slate-900"
-                  : "font-normal text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
+                  : "font-normal text-slate-500 hover:text-white hover:delay-150 dark:text-slate-400 dark:hover:text-slate-900 dark:hover:delay-150",
               )}
             >
               {Icon && (
                 <Icon
                   className={cn(
-                    "h-4 w-4 shrink-0",
+                    "h-4 w-4 shrink-0 transition-colors duration-150 ease-out",
                     isActive
                       ? "text-white dark:text-slate-900"
-                      : "text-slate-400 hover:enabled:text-slate-900",
+                      : "text-slate-400 hover:text-white hover:delay-150",
                   )}
                 />
               )}
               <span className="truncate">{item.label}</span>
               {item.badge && (
-                <span className="inline-flex h-[18px] shrink-0 items-center rounded-[6px] bg-slate-900/10 px-[5px] text-xs font-medium leading-none text-slate-900 dark:bg-slate-100/15 dark:text-slate-300">
+                <span
+                  className={cn(
+                    "inline-flex h-[18px] shrink-0 items-center rounded-[6px] px-[5px] text-xs font-medium leading-none transition-colors duration-150 ease-out",
+                    isActive
+                      ? "bg-white/15 text-white dark:bg-slate-900/10 dark:text-slate-900"
+                      : "bg-slate-900/10 text-slate-700 hover:bg-white/15 hover:text-white hover:delay-150 dark:bg-slate-100/15 dark:text-slate-300",
+                  )}
+                >
                   {item.badge}
                 </span>
               )}
