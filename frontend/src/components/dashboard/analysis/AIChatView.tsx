@@ -136,7 +136,7 @@ const FormattedMessageContent: React.FC<{
           ),
           thead: ({ children }) => <thead className="bg-slate-100/90 border-b border-slate-200">{children}</thead>,
           tbody: ({ children }) => <tbody className="divide-y divide-slate-100 font-sans text-slate-700">{children}</tbody>,
-          tr: ({ children }) => <tr className="hover:bg-blue-50/30 transition-colors even:bg-slate-50/40">{children}</tr>,
+          tr: ({ children }) => <tr className="hover:bg-slate-100/30 transition-colors even:bg-slate-50/40">{children}</tr>,
           th: ({ children }) => (
             <th className="px-4 py-2.5 font-extrabold text-slate-800 uppercase tracking-wider text-[11px] whitespace-nowrap">
               {children}
@@ -176,10 +176,10 @@ const FormattedMessageContent: React.FC<{
                 <button
                   type="button"
                   onClick={() => onOpenFileModal(cleanPath, start, end)}
-                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-blue-50 text-blue-700 hover:bg-blue-100 hover:text-blue-900 border border-blue-200 transition-colors mx-0.5 cursor-pointer align-baseline shadow-2xs"
+                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold px-1.5 py-0.5 rounded-md bg-slate-100 text-slate-900 hover:bg-slate-100 hover:text-slate-900 border border-slate-200 transition-colors mx-0.5 cursor-pointer align-baseline shadow-2xs"
                   title={`Inspect ${val}`}
                 >
-                  <FileCode2 className="w-3 h-3 text-blue-600 shrink-0" />
+                  <FileCode2 className="w-3 h-3 text-slate-900 shrink-0" />
                   <span>{val}</span>
                 </button>
               );
@@ -192,7 +192,7 @@ const FormattedMessageContent: React.FC<{
             );
           },
           blockquote: ({ children }) => (
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-blue-50/50 border-l-4 border-blue-500 text-slate-800 my-2.5 space-y-1 shadow-2xs">
+            <div className="p-3.5 sm:p-4 rounded-2xl bg-slate-100/50 border-l-4 border-slate-900 text-slate-800 my-2.5 space-y-1 shadow-2xs">
               <div className="font-sans leading-relaxed text-xs sm:text-sm">
                 {children}
               </div>
@@ -243,7 +243,7 @@ const FormattedMessageContent: React.FC<{
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:text-blue-800 underline font-medium inline-flex items-center gap-0.5"
+              className="text-slate-900 hover:text-slate-900 underline font-medium inline-flex items-center gap-0.5"
             >
               <span>{children}</span>
               <ExternalLink className="w-3 h-3 inline" />
@@ -300,9 +300,9 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
     <div className="bg-white rounded-[2rem] border border-slate-200/90 shadow-[0_4px_32px_rgba(0,0,0,0.04)] overflow-hidden flex flex-col divide-y divide-slate-100">
       
       {/* 1. Header Bar */}
-      <div className="p-5 sm:p-6 bg-gradient-to-r from-blue-50/80 via-indigo-50/50 to-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-100/80 via-indigo-50/50 to-slate-50/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-500/25 shrink-0 ring-4 ring-blue-100">
+          <div className="w-11 h-11 rounded-2xl bg-slate-900 text-white flex items-center justify-center shadow-lg shadow-slate-900/25 shrink-0 ring-4 ring-slate-200">
             <Sparkles className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
@@ -310,7 +310,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
               <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight">
                 AI Repository Assistant
               </h3>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-blue-100 text-blue-800 border border-blue-200 shadow-2xs">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-slate-100 text-slate-900 border border-slate-200 shadow-2xs">
                 RAG Vector Grounded
               </span>
             </div>
@@ -346,9 +346,9 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
               type="button"
               onClick={() => handlePromptClick(topic.prompt)}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 text-slate-700 hover:text-blue-700 text-xs font-bold shadow-2xs transition-all cursor-pointer shrink-0 active:scale-95 disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 hover:border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-bold shadow-2xs transition-all cursor-pointer shrink-0 active:scale-95 disabled:opacity-50"
             >
-              <Icon className="w-3.5 h-3.5 text-blue-600" />
+              <Icon className="w-3.5 h-3.5 text-slate-900" />
               <span>{topic.label}</span>
             </button>
           );
@@ -368,7 +368,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
         {messages.length === 0 ? (
           /* Empty State & Prompt Starters */
           <div className="py-10 text-center space-y-5 max-w-xl mx-auto">
-            <div className="w-16 h-16 rounded-3xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center mx-auto shadow-xs">
+            <div className="w-16 h-16 rounded-3xl bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center mx-auto shadow-xs">
               <Bot className="w-8 h-8 stroke-[2]" />
             </div>
 
@@ -391,7 +391,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                     key={idx}
                     type="button"
                     onClick={() => handlePromptClick(topic.prompt)}
-                    className="text-xs font-medium text-slate-700 hover:text-blue-700 bg-white hover:bg-blue-50 border border-slate-200 hover:border-blue-200 px-4 py-2.5 rounded-2xl shadow-2xs transition-all text-left cursor-pointer active:scale-95"
+                    className="text-xs font-medium text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-200 hover:border-slate-200 px-4 py-2.5 rounded-2xl shadow-2xs transition-all text-left cursor-pointer active:scale-95"
                   >
                     "{topic.prompt}"
                   </button>
@@ -412,7 +412,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                 className={`flex gap-3.5 ${isUser ? 'justify-end' : 'justify-start'} animate-in fade-in duration-150`}
               >
                 {!isUser && (
-                  <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
+                  <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs shrink-0 mt-0.5">
                     <Bot className="w-4 h-4" />
                   </div>
                 )}
@@ -421,7 +421,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                   data-slot="message-content"
                   className={`max-w-3xl rounded-3xl p-4 sm:p-6 space-y-3.5 ${
                     isUser
-                      ? 'bg-blue-600 text-white rounded-br-xs shadow-md shadow-blue-600/10'
+                      ? 'bg-slate-900 text-white rounded-br-xs shadow-md shadow-slate-900/10'
                       : 'bg-white border border-slate-200/80 rounded-tl-xs shadow-[0_2px_16px_rgba(0,0,0,0.03)]'
                   }`}
                 >
@@ -448,7 +448,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
                                 key={cIdx}
                                 type="button"
                                 onClick={() => onOpenFileModal && onOpenFileModal(cit.filePath, cit.startLine, cit.endLine)}
-                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-200 transition-colors cursor-pointer shadow-2xs"
+                                className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 hover:border-slate-200 transition-colors cursor-pointer shadow-2xs"
                                 title={`Inspect ${cit.filePath}`}
                               >
                                 <FileCode2 className="w-3 h-3 text-slate-400" />
@@ -508,11 +508,11 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
         {/* Thinking Loader */}
         {isLoading && (
           <div className="flex gap-3.5 justify-start animate-in fade-in duration-150">
-            <div className="w-8 h-8 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-xs shrink-0">
+            <div className="w-8 h-8 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs shrink-0">
               <Bot className="w-4 h-4" />
             </div>
             <div className="p-4 rounded-3xl rounded-tl-xs bg-white border border-slate-200/80 shadow-xs flex items-center gap-3 text-xs text-slate-600">
-              <Loader2 className="w-4 h-4 text-blue-600 animate-spin shrink-0" />
+              <Loader2 className="w-4 h-4 text-slate-900 animate-spin shrink-0" />
               <TextShimmer
                 duration={2.2}
                 baseColor="rgba(51, 65, 85, 0.45)"
@@ -546,14 +546,14 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
               onKeyDown={handleKeyDown}
               placeholder={`Ask any question about ${repositoryName}... (Press Enter to send, Shift+Enter for new line)`}
               disabled={isLoading}
-              className="w-full resize-none p-3.5 text-xs sm:text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 font-sans leading-normal"
+              className="w-full resize-none p-3.5 text-xs sm:text-sm text-slate-900 bg-slate-50 border border-slate-200 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 transition-all placeholder:text-slate-400 font-sans leading-normal"
             />
           </div>
 
           <button
             type="submit"
             disabled={!inputQuestion.trim() || isLoading}
-            className="px-5 py-3.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-extrabold shadow-md shadow-blue-500/25 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
+            className="px-5 py-3.5 rounded-2xl bg-slate-900 hover:bg-black text-white text-xs sm:text-sm font-extrabold shadow-md shadow-slate-900/25 active:scale-95 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 shrink-0"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />

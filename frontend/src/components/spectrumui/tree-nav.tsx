@@ -162,7 +162,7 @@ export function TreeNav({
           style={{ insetInlineStart: RAIL_X - 2, top: end - 2 }}
         />
         <motion.span
-          className="absolute top-0 w-px origin-top bg-blue-600 will-change-transform dark:bg-blue-400"
+          className="absolute top-0 w-px origin-top bg-slate-900 will-change-transform dark:bg-slate-100"
           style={{
             insetInlineStart: RAIL_X - 0.5,
             height: end,
@@ -171,7 +171,7 @@ export function TreeNav({
           }}
         />
         <motion.span
-          className="absolute top-0 rounded-[1px] bg-blue-600 will-change-transform dark:bg-blue-400"
+          className="absolute top-0 rounded-[1px] bg-slate-900 will-change-transform dark:bg-slate-100"
           style={{
             insetInlineStart: RAIL_X - MARKER / 2,
             width: MARKER,
@@ -183,12 +183,12 @@ export function TreeNav({
         />
       </span>
 
-      {/* One shared background: a light blue tint that slides to the hovered row
-          and springs back on leave. The active row paints its own solid blue
+      {/* One shared background: a faint black tint that slides to the hovered row
+          and springs back on leave. The active row paints its own solid black
           underneath, so the tint never washes it out. */}
       <motion.span
         aria-hidden
-        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-blue-600/10 will-change-transform dark:bg-blue-400/20"
+        className="pointer-events-none absolute end-0 start-6 top-0 rounded-lg bg-slate-900/10 will-change-transform dark:bg-slate-100/15"
         style={{ height: ROW_H, y: pillY, opacity: visibility }}
       />
 
@@ -217,7 +217,7 @@ export function TreeNav({
                 // Before the first measurement the sliding pill has no position
                 // yet, so the active row paints its own background immediately.
                 isActive
-                  ? "bg-blue-600 font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)] dark:bg-blue-500"
+                  ? "bg-slate-900 font-medium text-white shadow-[0_2px_8px_rgba(15,23,42,0.35)] dark:bg-slate-100 dark:text-slate-900"
                   : "font-normal text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100",
               )}
             >
@@ -226,14 +226,14 @@ export function TreeNav({
                   className={cn(
                     "h-4 w-4 shrink-0",
                     isActive
-                      ? "text-white"
+                      ? "text-white dark:text-slate-900"
                       : "text-slate-400 hover:enabled:text-slate-900",
                   )}
                 />
               )}
               <span className="truncate">{item.label}</span>
               {item.badge && (
-                <span className="inline-flex h-[18px] shrink-0 items-center rounded-[6px] bg-blue-600/10 px-[5px] text-xs font-medium leading-none text-blue-700 dark:bg-[#2b7fff]/[0.14] dark:text-blue-400">
+                <span className="inline-flex h-[18px] shrink-0 items-center rounded-[6px] bg-slate-900/10 px-[5px] text-xs font-medium leading-none text-slate-900 dark:bg-slate-100/15 dark:text-slate-300">
                   {item.badge}
                 </span>
               )}

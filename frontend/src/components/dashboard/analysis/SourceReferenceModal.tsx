@@ -100,7 +100,7 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between gap-4 bg-slate-50/70 shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 border border-blue-100">
+            <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0 border border-slate-200">
               <FileCode2 className="w-4 h-4 stroke-[2.2]" />
             </div>
             <div className="min-w-0">
@@ -109,7 +109,7 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
                   {filePath}
                 </span>
                 {startLine && (
-                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-blue-100/70 text-blue-800">
+                  <span className="px-2 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-100/70 text-slate-900">
                     Lines {startLine}{endLine && endLine !== startLine ? `–${endLine}` : ''}
                   </span>
                 )}
@@ -175,7 +175,7 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
         <div className="flex-1 overflow-auto p-4 sm:p-6 font-mono text-xs bg-slate-950 text-slate-200">
           {isLoading ? (
             <div className="h-64 flex flex-col items-center justify-center gap-3 text-slate-400">
-              <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
+              <Loader2 className="w-6 h-6 animate-spin text-slate-500" />
               <TextShimmer
                 duration={2}
                 baseColor="rgba(148, 163, 184, 0.45)"
@@ -196,7 +196,7 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
                   href={githubUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-sans text-white bg-blue-600 hover:bg-blue-500 transition-colors mt-2"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold font-sans text-white bg-slate-900 hover:bg-black transition-colors mt-2"
                 >
                   <span>View "{filePath}" on GitHub</span>
                   <ExternalLink className="w-3.5 h-3.5" />
@@ -216,8 +216,8 @@ export const SourceReferenceModal: React.FC<SourceReferenceModalProps> = ({
                     key={lineNum}
                     className={`table-row transition-colors ${
                       isHighlighted 
-                        ? 'bg-blue-950/70 text-blue-200 border-l-2 border-blue-400' 
-                        : 'hover:bg-slate-900/60'
+                        ? 'bg-slate-950/70 text-slate-200 border-l-2 border-slate-900' 
+                        : 'hover:bg-black/60'
                     }`}
                   >
                     <span className="table-cell pr-4 pl-2 py-0.5 text-right select-none text-slate-600 text-[11px] w-12 border-r border-slate-800">
