@@ -164,6 +164,7 @@ export const Navbar: React.FC = () => {
 
                       <InteractiveHoverButton
                         text="Get started"
+                        variant="fill"
                         onClick={handleGetStarted}
                         className="w-36 sm:w-42 h-[42px] sm:h-[46px] py-2 px-4 text-sm sm:text-[15px] font-semibold border-white/20 bg-white/10 text-white hover:bg-blue-600 hover:border-blue-600 shadow-sm"
                       />
@@ -310,6 +311,7 @@ export const Navbar: React.FC = () => {
                 <div className="pt-2 flex justify-center">
                   <InteractiveHoverButton
                     text="Get started"
+                    variant="fill"
                     className="w-full py-2.5 text-sm font-medium border-white/20 bg-white/10 text-white hover:bg-blue-600 hover:border-blue-600"
                     onClick={() => {
                       setMobileMenuOpen(false);
