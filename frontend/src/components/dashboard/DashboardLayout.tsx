@@ -67,7 +67,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   ];
 
   return (
-    <div className="dashboard-workspace min-h-screen bg-[#F1F5F9] text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
+    <div className="dashboard-workspace min-h-screen bg-[#F1F5F9] text-slate-900 font-sans flex flex-col antialiased selection:bg-slate-900 selection:text-white">
       
       {/* ========================================================================= */}
       {/* TOP NAVBAR */}
@@ -80,7 +80,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <Logo theme="light" size={26} />
           </div>
 
-          {/* Center: White & Royal Blue Segmented Navigation Pill */}
+          {/* Center: White & Black Segmented Navigation Pill */}
           <nav className="hidden md:flex items-center p-1 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] backdrop-blur-md">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
@@ -91,8 +91,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   onClick={() => onTabChange(item.id)}
                   className={`relative px-6 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.35)]'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-[0_2px_10px_rgba(15,23,42,0.35)]'
+                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -239,8 +239,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   }}
                   className={`w-full py-2 px-3 rounded-xl text-xs font-bold text-left transition-all ${
                     isActive
-                      ? 'bg-blue-600 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      ? 'bg-slate-900 text-white shadow-sm'
+                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
                   }`}
                 >
                   {item.label}

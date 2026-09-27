@@ -43,7 +43,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               <button
                 type="button"
                 onClick={onChooseRepoClick}
-                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.35)] transition-all cursor-pointer"
               >
                 <span>Choose Repository</span>
               </button>
@@ -55,7 +55,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             type="button"
             onClick={onConnectClick}
             disabled={isConnecting}
-            className="inline-flex items-center gap-2.5 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.35)] transition-all cursor-pointer focus:outline-none shrink-0 disabled:opacity-60"
+            className="inline-flex items-center gap-2.5 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer focus:outline-none shrink-0 disabled:opacity-60"
           >
             {/* GitHub Octocat SVG */}
             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">

@@ -10,7 +10,7 @@ interface RepositoryCardProps {
 
 // Color map for popular programming languages
 const LANGUAGE_COLORS: Record<string, string> = {
-  TypeScript: 'bg-blue-500',
+  TypeScript: 'bg-slate-900',
   JavaScript: 'bg-amber-400',
   Python: 'bg-emerald-500',
   Rust: 'bg-orange-600',
@@ -21,7 +21,7 @@ const LANGUAGE_COLORS: Record<string, string> = {
   Ruby: 'bg-red-600',
   PHP: 'bg-indigo-400',
   HTML: 'bg-orange-500',
-  CSS: 'bg-blue-400',
+  CSS: 'bg-slate-900',
   Vue: 'bg-emerald-400',
   Swift: 'bg-orange-500',
   Kotlin: 'bg-purple-500',
@@ -57,7 +57,7 @@ export const RepositoryCard: React.FC<RepositoryCardProps> = ({
       onClick={() => onSelect(repo)}
       className={`group relative text-left p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
         isSelected
-          ? 'bg-blue-50/30 border-blue-600 shadow-[0_4px_20px_rgba(37,99,235,0.08)] ring-1 ring-blue-600'
+          ? 'bg-slate-100/30 border-slate-900 shadow-[0_4px_20px_rgba(15,23,42,0.08)] ring-1 ring-slate-900'
           : 'bg-white border-slate-200/80 hover:border-slate-300 hover:shadow-xs'
       }`}
     >
@@ -66,7 +66,7 @@ export const RepositoryCard: React.FC<RepositoryCardProps> = ({
         <div className="flex items-start justify-between gap-3 mb-1.5">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h3 className="text-base font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
+              <h3 className="text-base font-bold text-slate-900 group-hover:text-black transition-colors truncate">
                 {repo.name}
               </h3>
 
@@ -144,7 +144,7 @@ export const RepositoryCard: React.FC<RepositoryCardProps> = ({
         <div
           className={`shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold transition-all ${
             isSelected
-              ? 'bg-blue-600 text-white shadow-2xs'
+              ? 'bg-slate-900 text-white shadow-2xs'
               : 'bg-slate-100 text-slate-700 group-hover:bg-slate-200/80'
           }`}
         >
