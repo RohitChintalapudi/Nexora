@@ -670,7 +670,9 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   type="button"
                   onClick={() => scrollToSection(section.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-left transition-colors ${
-                    isActive ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'
+                    isActive
+                      ? 'bg-slate-900 text-white'
+                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />

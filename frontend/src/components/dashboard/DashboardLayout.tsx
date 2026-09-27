@@ -92,7 +92,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   className={`relative px-6 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isActive
                       ? 'bg-slate-900 text-white shadow-[0_2px_10px_rgba(15,23,42,0.35)]'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -240,7 +240,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   className={`w-full py-2 px-3 rounded-xl text-xs font-bold text-left transition-all ${
                     isActive
                       ? 'bg-slate-900 text-white shadow-sm'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
                   }`}
                 >
                   {item.label}
