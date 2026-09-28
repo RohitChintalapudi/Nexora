@@ -20,7 +20,22 @@ export const protect = async (req, res, next) => {
         return res.status(401).json({ success: false, message: 'User not found' });
       }
 
+      // Determine auth provider from token or user record
+      let authProvider = decoded.authProvider;
+      if (!authProvider) {
+        if (!user.password || user.password.length === 0) {
+          if (user.google_id) authProvider = 'google';
+          else if (user.github_id) authProvider = 'github';
+          else authProvider = 'oauth';
+        } else {
+          authProvider = 'email';
+        }
+      }
+
       req.user = user;
+      req.authProvider = authProvider;
+      req.user.authProvider = authProvider;
+      req.user.loginMethod = authProvider;
       return next();
     } catch (error) {
       console.error('Auth middleware error:', error.message);

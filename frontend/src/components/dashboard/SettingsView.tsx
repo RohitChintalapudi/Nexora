@@ -95,12 +95,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
-  // Check if user is eligible for password change (email & password auth, not pure OAuth)
-  const isPasswordEligible = Boolean(
-    user?.hasPassword === true || 
-    (user?.authProvider === 'email' && user?.hasPassword !== false) ||
-    (!user?.authProvider && user?.hasPassword !== false)
-  );
+  // Check if user is eligible for password change (strictly email and password auth, not Google or GitHub)
+  const isPasswordEligible = Boolean(user?.authProvider === 'email' && user?.hasPassword === true);
 
   const handleOpenDisconnect = () => {
     if (onDisconnectGitHub) {
@@ -335,12 +331,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start sm:items-center gap-3.5">
               <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5" />
+                <ShieldCheck className="w-5 h-5 text-slate-700" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
                   <h3 className="text-xs font-bold text-slate-900">
-                    Federated OAuth Authentication Active
+                    {user?.authProvider === 'google'
+                      ? 'Google Account Authentication'
+                      : user?.authProvider === 'github'
+                        ? 'GitHub Account Authentication'
+                        : 'Federated OAuth Identity'}
                   </h3>
                   <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-900 border border-slate-200">
                     {user?.authProvider === 'google'
@@ -351,7 +351,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                  You signed in using {user?.authProvider === 'google' ? 'Google' : user?.authProvider === 'github' ? 'GitHub' : 'OAuth'} authentication. Your account does not require a local password; security and credential updates are managed directly through your OAuth provider.
+                  You signed in using your {user?.authProvider === 'google' ? 'Google' : user?.authProvider === 'github' ? 'GitHub' : 'OAuth'} account ({user?.email}). Password changes are only applicable to accounts registered and logged in with email and password. Your password and account security are managed directly by {user?.authProvider === 'google' ? 'Google' : user?.authProvider === 'github' ? 'GitHub' : 'your identity provider'}.
                 </p>
               </div>
             </div>

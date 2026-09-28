@@ -11,9 +11,9 @@ const googleClient = new OAuth2Client(
   process.env.GOOGLE_CLIENT_SECRET
 );
 
-const generateToken = (id) => {
+const generateToken = (id, authProvider = 'email') => {
   return jwt.sign(
-    { id },
+    { id, authProvider },
     process.env.JWT_SECRET || 'nexora_default_jwt_secret_key',
     { expiresIn: '30d' }
   );
@@ -24,7 +24,7 @@ const generateToken = (id) => {
  * A preloaded GitHub account can be passed in to avoid a second DB round-trip
  * during fast-path auth flows (login / register).
  */
-const getUserProfile = async (user, preloadedGithubAccount) => {
+const getUserProfile = async (user, preloadedGithubAccount, currentAuthProvider) => {
   let githubConnected = false;
   let githubUsername = null;
 
@@ -41,13 +41,18 @@ const getUserProfile = async (user, preloadedGithubAccount) => {
   }
 
   const hasPassword = Boolean(user.password && user.password.length > 0);
-  let authProvider = 'email';
-  if (!hasPassword) {
-    if (user.google_id) authProvider = 'google';
-    else if (user.github_id) authProvider = 'github';
-    else authProvider = 'oauth';
+  let authProvider = currentAuthProvider || user.authProvider;
+  if (!authProvider) {
+    if (!hasPassword) {
+      if (user.google_id) authProvider = 'google';
+      else if (user.github_id) authProvider = 'github';
+      else authProvider = 'oauth';
+    } else {
+      authProvider = 'email';
+    }
   }
 
+  const isEmailAuth = authProvider === 'email' && hasPassword;
   const finalGithubUsername = githubUsername || user.github_username || null;
   const xUsername = user.x_username || null;
 
@@ -60,7 +65,7 @@ const getUserProfile = async (user, preloadedGithubAccount) => {
     githubConnected,
     githubUsername: finalGithubUsername,
     xUsername,
-    hasPassword,
+    hasPassword: isEmailAuth,
     authProvider
   };
 };
@@ -103,9 +108,9 @@ export const register = async (req, res) => {
       password: hashedPassword
     });
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, 'email');
     // New user has no github_accounts row yet — skip that DB round-trip
-    const userProfile = await getUserProfile({ ...user, password: hashedPassword }, null);
+    const userProfile = await getUserProfile({ ...user, password: hashedPassword }, null, 'email');
 
     return res.status(201).json({
       success: true,
@@ -153,8 +158,8 @@ export const login = async (req, res) => {
       });
     }
 
-    const token = generateToken(user.id);
-    const userProfile = await getUserProfile(user, githubAccount);
+    const token = generateToken(user.id, 'email');
+    const userProfile = await getUserProfile(user, githubAccount, 'email');
 
     return res.status(200).json({
       success: true,
@@ -216,8 +221,8 @@ export const googleAuth = async (req, res) => {
       avatarUrl
     });
 
-    const token = generateToken(user.id);
-    const userProfile = await getUserProfile(user);
+    const token = generateToken(user.id, 'google');
+    const userProfile = await getUserProfile(user, undefined, 'google');
 
     return res.status(200).json({
       success: true,
@@ -333,8 +338,8 @@ export const githubAuth = async (req, res) => {
       console.warn('Could not auto-link github_accounts on GitHub login:', ghAccErr.message);
     }
 
-    const token = generateToken(user.id);
-    const userProfile = await getUserProfile(user);
+    const token = generateToken(user.id, 'github');
+    const userProfile = await getUserProfile(user, undefined, 'github');
 
     return res.status(200).json({
       success: true,
@@ -450,7 +455,7 @@ export const githubCallback = async (req, res) => {
       console.warn('Could not auto-link github_accounts on GitHub callback:', ghAccErr.message);
     }
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, 'github');
 
     return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}&github_connected=true&github_username=${encodeURIComponent(ghUser.login)}`);
   } catch (error) {
@@ -501,7 +506,7 @@ export const googleCallback = async (req, res) => {
       avatarUrl
     });
 
-    const token = generateToken(user.id);
+    const token = generateToken(user.id, 'google');
 
     return res.redirect(`${clientUrl}/dashboard?token=${encodeURIComponent(token)}`);
   } catch (error) {
@@ -512,7 +517,7 @@ export const googleCallback = async (req, res) => {
 
 export const getMe = async (req, res) => {
   try {
-    const userProfile = await getUserProfile(req.user);
+    const userProfile = await getUserProfile(req.user, undefined, req.authProvider);
     return res.status(200).json({
       success: true,
       user: userProfile
@@ -530,6 +535,7 @@ export const changePassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
     const userId = req.user.id;
+    const authProvider = req.authProvider || req.user?.authProvider;
 
     const user = await UserModel.findById(userId);
     if (!user) {
@@ -539,10 +545,12 @@ export const changePassword = async (req, res) => {
       });
     }
 
-    if (!user.password) {
-      return res.status(400).json({
+    // Only users who logged in through email and password are permitted to change password
+    if (authProvider === 'google' || authProvider === 'github' || authProvider === 'oauth' || !user.password) {
+      const providerName = authProvider === 'google' ? 'Google' : authProvider === 'github' ? 'GitHub' : 'OAuth';
+      return res.status(403).json({
         success: false,
-        message: 'This account was authenticated using OAuth (Google/GitHub) and does not have an active password.'
+        message: `Password change capability is only available for accounts logged in with email and password. Accounts authenticated with ${providerName} manage credentials through ${providerName}.`
       });
     }
 
@@ -639,7 +647,7 @@ export const updateProfile = async (req, res) => {
       });
     }
 
-    const profile = await getUserProfile(updatedUser);
+    const profile = await getUserProfile(updatedUser, undefined, req.authProvider);
 
     return res.status(200).json({
       success: true,
