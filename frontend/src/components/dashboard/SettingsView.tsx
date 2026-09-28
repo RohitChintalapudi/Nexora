@@ -46,6 +46,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
 
+  // Determine if any profile field has changed
+  const isProfileChanged =
+    name.trim() !== (user?.name || '').trim() ||
+    githubInput.trim() !== (user?.githubUsername || '').trim() ||
+    xInput.trim() !== (user?.xUsername || '').trim();
+
   useEffect(() => {
     if (user) {
       setName(user.name || '');
@@ -292,18 +298,22 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex justify-end pt-2">
             <button
               type="submit"
-              disabled={isUpdatingProfile}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60"
+              disabled={!isProfileChanged || isUpdatingProfile}
+              className={`inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-full transition-all ${
+                isProfileChanged && !isUpdatingProfile
+                  ? 'text-white bg-slate-900 hover:bg-black active:scale-[0.98] shadow-[0_4px_14px_rgba(15,23,42,0.3)] cursor-pointer'
+                  : 'text-slate-400 bg-slate-100 border border-slate-200/80 cursor-not-allowed opacity-70 shadow-none'
+              }`}
             >
               {isUpdatingProfile ? (
                 <>
                   <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                  <span>Saving Profile...</span>
+                  <span>Saving Changes...</span>
                 </>
               ) : (
                 <>
                   <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                  <span>Save Profile</span>
+                  <span>Save Changes</span>
                 </>
               )}
             </button>
