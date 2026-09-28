@@ -178,6 +178,7 @@ export const DashboardPage: React.FC = () => {
             isGitHubConnected={isGitHubConnected}
             githubUsername={githubUsername}
             isConnecting={isConnecting}
+            repositories={savedRepositories}
           />
           <RecentRepositories
             onConnectClick={handleOpenConnect}
