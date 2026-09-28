@@ -932,11 +932,11 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 <button
                   type="button"
                   onClick={onViewAnalysis}
-                  className="group relative inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] hover:shadow-[0_0_32px_rgba(59,130,246,0.8),0_6px_22px_rgba(37,99,235,0.5)] transition-all duration-300 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform duration-300" />
+                  <Sparkles className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
                   <span className="tracking-wide">View Analysis</span>
-                  <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform duration-300" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </button>
               )}
             </div>
