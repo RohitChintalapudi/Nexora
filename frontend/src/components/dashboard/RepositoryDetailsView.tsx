@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GLOW_BLUE, GLOW_TRANSITION } from '../../lib/effects/glow';
 import { 
   FolderGit2, 
   GitBranch, 
@@ -282,11 +281,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                 <button
                   type="button"
                   onClick={onViewAnalysisProgress}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] hover:shadow-[0_0_32px_rgba(59,130,246,0.8),0_6px_22px_rgba(37,99,235,0.5)] transition-all duration-300 cursor-pointer text-center"
                 >
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
                   <span>Track Progress</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </button>
               ) : isJobCompleted ? (
                 <div className="flex items-center gap-2.5">
@@ -303,11 +302,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   <button
                     type="button"
                     onClick={onViewAnalysis}
-                    className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
+                    className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] hover:shadow-[0_0_32px_rgba(59,130,246,0.8),0_6px_22px_rgba(37,99,235,0.5)] transition-all duration-300 cursor-pointer text-center"
                   >
-                    <Sparkles className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
-                    <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>View Analysis</span>
-                    <ArrowRight className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                    <Sparkles className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform duration-300" />
+                    <span className="tracking-wide">View Analysis</span>
+                    <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform duration-300" />
                   </button>
                 </div>
               ) : (
@@ -315,17 +314,18 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   type="button"
                   onClick={onStartAnalysis}
                   disabled={isStartingAnalysis}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
+                  className="group relative inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-500 active:scale-[0.98] rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] hover:shadow-[0_0_32px_rgba(59,130,246,0.8),0_6px_22px_rgba(37,99,235,0.5)] transition-all duration-300 cursor-pointer text-center disabled:opacity-60"
                 >
                   {isStartingAnalysis ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
                       <span>Initiating...</span>
                     </>
                   ) : (
                     <>
-                      <Cpu className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
-                      <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>Analyze Repository</span>
+                      <Cpu className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)] group-hover:scale-110 transition-transform duration-300" />
+                      <span className="tracking-wide">Analyze Repository</span>
+                      <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-0.5 transition-transform duration-300" />
                     </>
                   )}
                 </button>
