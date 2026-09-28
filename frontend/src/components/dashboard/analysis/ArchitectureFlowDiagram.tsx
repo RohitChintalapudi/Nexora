@@ -265,7 +265,7 @@ const CustomArchitectureNode = ({ data }: { data: any }) => {
     <div 
       className={`relative group w-[250px] rounded-2xl bg-white border transition-all duration-200 text-xs overflow-hidden ${
         isHighlighted
-          ? `${cfg.activeBorder} shadow-lg shadow-slate-900/15 scale-[1.02]`
+          ? `${cfg.activeBorder} shadow-lg shadow-blue-500/15 scale-[1.02]`
           : isDimmed
             ? 'opacity-40 border-slate-200 shadow-2xs'
             : 'border-slate-200/90 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-md hover:border-slate-300'
@@ -275,7 +275,7 @@ const CustomArchitectureNode = ({ data }: { data: any }) => {
       <Handle
         type="target"
         position={direction === 'LR' ? Position.Left : Position.Top}
-        className="!w-3 !h-3 !bg-slate-900 !border-2 !border-white shadow-xs"
+        className="!w-3 !h-3 !bg-blue-600 !border-2 !border-white shadow-xs"
       />
 
       {/* Header bar */}
@@ -294,7 +294,7 @@ const CustomArchitectureNode = ({ data }: { data: any }) => {
               e.stopPropagation();
               data.onInspect(data.label);
             }}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-900 hover:bg-white transition-colors cursor-pointer shrink-0 ml-1"
+            className="p-1 rounded-md text-slate-400 hover:text-blue-600 hover:bg-white transition-colors cursor-pointer shrink-0 ml-1"
             title="Inspect source file"
           >
             <Maximize2 className="w-3 h-3" />
@@ -324,7 +324,7 @@ const CustomArchitectureNode = ({ data }: { data: any }) => {
       <Handle
         type="source"
         position={direction === 'LR' ? Position.Right : Position.Bottom}
-        className="!w-3 !h-3 !bg-slate-900 !border-2 !border-white shadow-xs"
+        className="!w-3 !h-3 !bg-blue-600 !border-2 !border-white shadow-xs"
       />
     </div>
   );
@@ -704,7 +704,7 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
         animated: connectedEdges.has(e.id),
         style: {
           ...e.style,
-          stroke: connectedEdges.has(e.id) ? '#0f172a' : '#cbd5e1',
+          stroke: connectedEdges.has(e.id) ? '#2563eb' : '#cbd5e1',
           strokeWidth: connectedEdges.has(e.id) ? 3 : 1.5,
           opacity: connectedEdges.has(e.id) ? 1 : 0.25
         }
@@ -758,15 +758,15 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
         {/* Left: Title & Node / Edge Metrics */}
         <div className="flex items-center gap-2.5 flex-wrap">
           <div className="flex items-center gap-1.5 text-xs font-extrabold text-slate-900">
-            <Workflow className="w-4 h-4 text-slate-900" />
+            <Workflow className="w-4 h-4 text-blue-600" />
             <span>Interactive Architecture Flow Diagram</span>
           </div>
           <span className="text-[10px] font-bold text-slate-600 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
             {layoutedNodes.length} Nodes • {layoutedEdges.length} Connections
           </span>
           {selectedNodeId && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-900 bg-slate-100 px-2.5 py-0.5 rounded-full border border-slate-200">
-              <Sparkles className="w-3 h-3 text-slate-900" />
+            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 px-2.5 py-0.5 rounded-full border border-blue-200">
+              <Sparkles className="w-3 h-3 text-blue-600" />
               <span>Flow Highlighted</span>
             </span>
           )}
@@ -815,7 +815,7 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
               onClick={() => handleDirectionChange('LR')}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                 layoutDirection === 'LR'
-                  ? 'bg-white text-slate-900 shadow-2xs'
+                  ? 'bg-white text-blue-600 shadow-2xs'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
               title="Horizontal Matrix Flow (Left to Right)"
@@ -828,7 +828,7 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
               onClick={() => handleDirectionChange('TB')}
               className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
                 layoutDirection === 'TB'
-                  ? 'bg-white text-slate-900 shadow-2xs'
+                  ? 'bg-white text-blue-600 shadow-2xs'
                   : 'text-slate-500 hover:text-slate-800'
               }`}
               title="Vertical Tree Flow (Top to Bottom)"
@@ -842,7 +842,7 @@ export const ArchitectureFlowDiagram: React.FC<ArchitectureFlowDiagramProps> = (
           <button
             type="button"
             onClick={() => setIsFullscreen(!isFullscreen)}
-            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300 transition-all cursor-pointer shadow-2xs"
+            className="p-1.5 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-blue-600 hover:border-blue-300 transition-all cursor-pointer shadow-2xs"
             title={isFullscreen ? 'Exit Fullscreen' : 'Expand Fullscreen'}
           >
             {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}

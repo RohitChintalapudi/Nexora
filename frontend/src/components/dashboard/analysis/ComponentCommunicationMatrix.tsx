@@ -81,7 +81,7 @@ const parseComponentInfo = (rawPath: string) => {
   } else if (lower.endsWith('.tsx') || lower.endsWith('.jsx') || lower.includes('component')) {
     category = 'UI Component';
     icon = Layers;
-    color = 'text-slate-900 bg-slate-100 border-slate-200';
+    color = 'text-blue-700 bg-blue-50 border-blue-200';
   }
 
   return { name: basename, fullPath: p, dir, category, icon, color };
@@ -91,7 +91,7 @@ const getRelBadge = (type: string) => {
   const norm = safeStr(type, 'DEPENDS_ON').toUpperCase();
   switch (norm) {
     case 'IMPORTS':
-      return { label: 'imports', badge: 'bg-slate-100 text-slate-900 border-slate-200' };
+      return { label: 'imports', badge: 'bg-blue-50 text-blue-700 border-blue-200' };
     case 'CALLS':
       return { label: 'calls', badge: 'bg-purple-50 text-purple-700 border-purple-200' };
     case 'ROUTES_TO':
@@ -216,7 +216,7 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search connections..."
-            className="w-full pl-8 pr-7 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+            className="w-full pl-8 pr-7 py-1 text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-blue-500 font-mono"
           />
           {searchQuery && (
             <button
@@ -240,12 +240,12 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
                 onClick={() => setSelectedType(type)}
                 className={`px-2.5 py-0.5 rounded-md text-[11px] font-semibold transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-slate-900 text-white shadow-2xs'
+                    ? 'bg-blue-600 text-white shadow-2xs'
                     : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
                 }`}
               >
                 {type === 'ALL' ? 'All' : type.toLowerCase()}
-                <span className={`ml-1 text-[10px] font-normal ${isSelected ? 'text-slate-100' : 'text-slate-400'}`}>
+                <span className={`ml-1 text-[10px] font-normal ${isSelected ? 'text-blue-100' : 'text-slate-400'}`}>
                   {count}
                 </span>
               </button>
@@ -277,7 +277,7 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
                       onClick={() => handleInspect(rel.from)}
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border text-left font-mono font-medium truncate max-w-[200px] sm:max-w-[240px] transition-all cursor-pointer ${
                         isFilePath(rel.from)
-                          ? 'bg-white hover:border-slate-300 hover:text-slate-900 text-slate-700 border-slate-200'
+                          ? 'bg-white hover:border-blue-300 hover:text-blue-600 text-slate-900 border-slate-200'
                           : 'bg-slate-50 text-slate-700 border-slate-200'
                       }`}
                       title={rel.from}
@@ -301,7 +301,7 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
                       onClick={() => handleInspect(rel.to)}
                       className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border text-left font-mono font-medium truncate max-w-[200px] sm:max-w-[240px] transition-all cursor-pointer ${
                         isFilePath(rel.to)
-                          ? 'bg-white hover:border-slate-300 hover:text-slate-900 text-slate-700 border-slate-200'
+                          ? 'bg-white hover:border-blue-300 hover:text-blue-600 text-slate-900 border-slate-200'
                           : 'bg-slate-50 text-slate-700 border-slate-200'
                       }`}
                       title={rel.to}
@@ -316,7 +316,7 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
                     <button
                       type="button"
                       onClick={() => setExpandedId(isExpanded ? null : rel.id)}
-                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-500 hover:text-slate-900 hover:bg-slate-100/60 transition-colors cursor-pointer shrink-0 self-start sm:self-center"
+                      className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-500 hover:text-blue-600 hover:bg-blue-50/60 transition-colors cursor-pointer shrink-0 self-start sm:self-center"
                     >
                       <Code2 className="w-3 h-3" />
                       <span>{isExpanded ? 'Hide' : 'Evidence'}</span>
@@ -365,7 +365,7 @@ export const ComponentCommunicationMatrix: React.FC<ComponentCommunicationMatrix
           <button
             type="button"
             onClick={() => setShowAll(!showAll)}
-            className="text-xs font-semibold text-slate-700 hover:text-slate-900 hover:underline cursor-pointer"
+            className="text-xs font-semibold text-blue-600 hover:text-blue-700 hover:underline cursor-pointer"
           >
             {showAll ? 'Show less' : `Show all ${filtered.length} connections`}
           </button>

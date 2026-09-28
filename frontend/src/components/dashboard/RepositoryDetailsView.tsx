@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { GLOW_BLUE, GLOW_TRANSITION } from '../../lib/effects/glow';
 import { 
   FolderGit2, 
   GitBranch, 
@@ -106,8 +105,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               </div>
 
               {isJobCompleted && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-slate-900 stroke-[2.5]" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600 stroke-[2.5]" />
                   <span>Analysis Ready</span>
                 </div>
               )}
@@ -133,8 +132,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               </span>
 
               {repository.language && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-slate-900" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
                   <span>{repository.language}</span>
                 </span>
               )}
@@ -209,12 +208,12 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
       </div>
 
       {/* Analysis Initiation Card */}
-      <div className="bg-gradient-to-br from-slate-100/50 via-white to-slate-50/80 rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
+      <div className="bg-gradient-to-br from-blue-50/50 via-white to-slate-50/80 rounded-[2rem] border border-blue-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
         {isCheckingStatus ? (
           <>
             <div className="space-y-1.5 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/80 text-slate-900 text-[11px] font-bold">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-900" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
                 <span>Checking Analysis Status...</span>
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
@@ -249,8 +248,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
         ) : (
           <>
             <div className="space-y-1.5 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/80 text-slate-900 text-[11px] font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-slate-900" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                 <span>Codebase Intelligence</span>
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
@@ -282,11 +281,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                 <button
                   type="button"
                   onClick={onViewAnalysisProgress}
-                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] cursor-pointer text-center"
                 >
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin text-white" />
                   <span>Track Progress</span>
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </button>
               ) : isJobCompleted ? (
                 <div className="flex items-center gap-2.5">
@@ -303,11 +302,11 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   <button
                     type="button"
                     onClick={onViewAnalysis}
-                    className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center"
+                    className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] cursor-pointer text-center"
                   >
-                    <Sparkles className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
-                    <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>View Analysis</span>
-                    <ArrowRight className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
+                    <Sparkles className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                    <span className="tracking-wide">View Analysis</span>
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </button>
                 </div>
               ) : (
@@ -315,17 +314,18 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
                   type="button"
                   onClick={onStartAnalysis}
                   disabled={isStartingAnalysis}
-                  className="group inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.35)] transition-all cursor-pointer text-center disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 rounded-full border border-blue-400/50 shadow-[0_0_24px_rgba(37,99,235,0.55),0_4px_16px_rgba(37,99,235,0.35)] cursor-pointer text-center disabled:opacity-60"
                 >
                   {isStartingAnalysis ? (
                     <>
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <Loader2 className="w-4 h-4 animate-spin text-white" />
                       <span>Initiating...</span>
                     </>
                   ) : (
                     <>
-                      <Cpu className={`w-4 h-4 ${GLOW_TRANSITION} ${GLOW_BLUE}`} />
-                      <span className={GLOW_TRANSITION + " " + GLOW_BLUE}>Analyze Repository</span>
+                      <Cpu className="w-4 h-4 text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.8)]" />
+                      <span className="tracking-wide">Analyze Repository</span>
+                      <ArrowRight className="w-4 h-4 text-white" />
                     </>
                   )}
                 </button>

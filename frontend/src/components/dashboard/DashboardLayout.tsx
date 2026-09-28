@@ -67,7 +67,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   ];
 
   return (
-    <div className="dashboard-workspace min-h-screen bg-[#F1F5F9] text-slate-900 font-sans flex flex-col antialiased selection:bg-slate-900 selection:text-white">
+    <div className="dashboard-workspace min-h-screen bg-[#F1F5F9] text-slate-900 font-sans flex flex-col antialiased selection:bg-blue-600 selection:text-white">
       
       {/* ========================================================================= */}
       {/* TOP NAVBAR */}
@@ -75,12 +75,17 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <header className="sticky top-0 z-40 bg-[#F1F5F9]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5 border-b border-slate-200/60 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Left: Original NEXORA Logo (Static display, non-clickable) */}
-          <div className="flex items-center select-none cursor-default">
+          {/* Left: NEXORA Logo (navigates to dashboard, no animation) */}
+          <button
+            type="button"
+            onClick={() => onTabChange('dashboard')}
+            className="flex items-center select-none cursor-pointer focus:outline-none bg-transparent border-0 p-0 text-left transition-none active:scale-100 hover:opacity-90"
+            title="Go to Dashboard"
+          >
             <Logo theme="light" size={26} />
-          </div>
+          </button>
 
-          {/* Center: White & Black Segmented Navigation Pill */}
+          {/* Center: White & Royal Blue Segmented Navigation Pill */}
           <nav className="hidden md:flex items-center p-1 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] backdrop-blur-md">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
@@ -91,8 +96,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   onClick={() => onTabChange(item.id)}
                   className={`relative px-6 py-1.5 rounded-full text-xs font-bold transition-all duration-200 cursor-pointer ${
                     isActive
-                      ? 'bg-slate-900 text-white shadow-[0_2px_10px_rgba(15,23,42,0.35)]'
-                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-[0_2px_10px_rgba(37,99,235,0.35)]'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   <span>{item.label}</span>
@@ -135,7 +140,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 type="button"
                 onClick={onConnectClick}
                 disabled={isConnecting}
-                className="inline-flex items-center gap-2 p-1 pl-1.5 pr-4 rounded-full bg-slate-900 hover:bg-black active:scale-[0.98] text-white border border-slate-800 shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-md transition-all cursor-pointer disabled:opacity-60 shrink-0 h-[38px]"
+                className="inline-flex items-center gap-2 p-1 pl-1.5 pr-4 rounded-full bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white shadow-[0_2px_8px_rgba(37,99,235,0.25)] hover:shadow-md transition-all cursor-pointer disabled:opacity-60 shrink-0 h-[38px]"
               >
                 <div className="w-7 h-7 rounded-full bg-white/12 flex items-center justify-center shrink-0">
                   <svg className="w-3.5 h-3.5 fill-white" viewBox="0 0 24 24">
@@ -239,8 +244,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   }}
                   className={`w-full py-2 px-3 rounded-xl text-xs font-bold text-left transition-all ${
                     isActive
-                      ? 'bg-slate-900 text-white shadow-sm'
-                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   {item.label}

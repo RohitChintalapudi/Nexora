@@ -56,7 +56,7 @@ export class AnalysisErrorBoundary extends Component<Props, State> {
             <button
               type="button"
               onClick={this.handleReload}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-extrabold hover:bg-black shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-blue-600 text-white text-xs font-extrabold hover:bg-blue-700 shadow-md transition-all cursor-pointer"
             >
               <RefreshCw className="w-4 h-4" />
               <span>Reload Analysis</span>

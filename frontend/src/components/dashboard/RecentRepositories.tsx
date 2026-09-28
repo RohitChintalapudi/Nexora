@@ -56,7 +56,7 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
             <button
               type="button"
               onClick={onChooseRepoClick}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-900 bg-slate-100/80 hover:bg-slate-200/80 border border-slate-200/60 rounded-full transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-blue-600 hover:text-blue-700 bg-blue-50/80 hover:bg-blue-100/80 border border-blue-200/60 rounded-full transition-all cursor-pointer shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Choose Repository</span>
@@ -72,7 +72,7 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
       {/* Repositories State */}
       {!hasRepositories ? (
         <div className="bg-white rounded-[2rem] border border-slate-200/80 p-8 sm:p-10 text-center shadow-xs">
-          <div className="w-14 h-14 rounded-3xl bg-slate-100 border border-slate-200 flex items-center justify-center mx-auto mb-4 text-slate-900 shadow-2xs">
+          <div className="w-14 h-14 rounded-3xl bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto mb-4 text-blue-600 shadow-2xs">
             <FolderGit2 className="w-7 h-7 stroke-[2]" />
           </div>
           
@@ -90,7 +90,7 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
             <button
               type="button"
               onClick={onChooseRepoClick}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.3)] transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.3)] transition-all cursor-pointer"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>Choose Repository</span>
@@ -100,7 +100,7 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
               type="button"
               onClick={onConnectClick}
               disabled={isConnecting}
-              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_16px_rgba(37,99,235,0.3)] transition-all cursor-pointer disabled:opacity-60"
             >
               <Plus className="w-4 h-4 stroke-[3]" />
               <span>{isConnecting ? 'Connecting...' : 'Connect GitHub'}</span>
@@ -141,8 +141,8 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                   </span>
 
                   {repo.language && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-900">
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700">
+                      <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                       <span>{repo.language}</span>
                     </span>
                   )}
@@ -155,8 +155,8 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                   )}
 
                   {repo.latestJobStatus === 'PROCESSING' && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 border border-slate-200 text-slate-900">
-                      <Loader2 className="w-3 h-3 animate-spin text-slate-900" />
+                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-blue-50 border border-blue-200 text-blue-800">
+                      <Loader2 className="w-3 h-3 animate-spin text-blue-600" />
                       <span>Analyzing</span>
                     </span>
                   )}

@@ -102,9 +102,14 @@ export const Navbar: React.FC = () => {
                 className="flex w-full items-center justify-between gap-4 sm:gap-8"
               >
                 {/* Left: Brand Logo */}
-                <a href="#" className="flex items-center group pl-1 pr-1 sm:pr-2">
+                <button
+                  type="button"
+                  onClick={() => navigateTo(isAuthenticated ? 'dashboard' : 'home')}
+                  className="flex items-center group pl-1 pr-1 sm:pr-2 cursor-pointer focus:outline-none bg-transparent border-0 transition-none active:scale-100"
+                  title="NEXORA"
+                >
                   <Logo theme="dark" size={30} />
-                </a>
+                </button>
 
                 {/* Center: Navigation Links with Solid Blue Capsule on Hover */}
                 <nav
