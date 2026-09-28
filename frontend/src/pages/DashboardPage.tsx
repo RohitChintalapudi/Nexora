@@ -98,7 +98,7 @@ export const DashboardPage: React.FC = () => {
   };
 
   const handleTabChange = (tab: DashboardTab) => {
-    if (tab === 'repositories' && activeTab !== 'repositories') {
+    if (tab === 'dashboard' || (tab === 'repositories' && activeTab !== 'repositories')) {
       setInitialRepo(null);
       setInitialSubView('list');
       setActiveSavedRepo(null);

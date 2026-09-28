@@ -75,10 +75,15 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <header className="sticky top-0 z-40 bg-[#F1F5F9]/90 backdrop-blur-xl px-4 sm:px-6 lg:px-8 py-3.5 border-b border-slate-200/60 transition-all">
         <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
           
-          {/* Left: Original NEXORA Logo (Static display, non-clickable) */}
-          <div className="flex items-center select-none cursor-default">
+          {/* Left: NEXORA Logo (navigates to dashboard, no animation) */}
+          <button
+            type="button"
+            onClick={() => onTabChange('dashboard')}
+            className="flex items-center select-none cursor-pointer focus:outline-none bg-transparent border-0 p-0 text-left transition-none active:scale-100 hover:opacity-90"
+            title="Go to Dashboard"
+          >
             <Logo theme="light" size={26} />
-          </div>
+          </button>
 
           {/* Center: White & Black Segmented Navigation Pill */}
           <nav className="hidden md:flex items-center p-1 rounded-full bg-white border border-slate-200/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] backdrop-blur-md">
