@@ -33,14 +33,57 @@ const itemVariants = {
   show: { y: 0, opacity: 1 }
 };
 
+const THREE_MONTHS_MS = 90 * 24 * 60 * 60 * 1000; // 90 days (3 months)
+
 export const FeedbackWidget: React.FC = () => {
-  const { token } = useAuth();
+  const { token, isAuthenticated } = useAuth();
   const textRef = useRef<HTMLTextAreaElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [happiness, setHappiness] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isEligible, setIsEligible] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('nexora_feedback_last_submitted');
+      if (cached) {
+        const time = new Date(cached).getTime();
+        if (!isNaN(time) && Date.now() < time + THREE_MONTHS_MS) {
+          return false;
+        }
+      }
+    } catch {
+      // ignore
+    }
+    return true;
+  });
+
+  // Verify 3-month feedback eligibility with backend
+  useEffect(() => {
+    const currentToken = token || localStorage.getItem('nexora_token');
+    if (!currentToken || !isAuthenticated) return;
+
+    fetch(`${API_BASE_URL}/api/feedback/status`, {
+      headers: {
+        Authorization: `Bearer ${currentToken}`,
+        Accept: 'application/json'
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data?.success) {
+          setIsEligible(Boolean(data.isEligible));
+          if (data.lastSubmittedAt) {
+            localStorage.setItem('nexora_feedback_last_submitted', data.lastSubmittedAt);
+          } else if (data.isEligible) {
+            localStorage.removeItem('nexora_feedback_last_submitted');
+          }
+        }
+      })
+      .catch((err) => {
+        console.warn('Could not verify feedback eligibility:', err);
+      });
+  }, [token, isAuthenticated]);
 
   useEffect(() => {
     if (!happiness && textRef.current) {
@@ -92,11 +135,15 @@ export const FeedbackWidget: React.FC = () => {
         throw new Error(data?.message || `Request failed (HTTP ${res.status})`);
       }
 
+      // Record submission timestamp for 3-month cooldown
+      localStorage.setItem('nexora_feedback_last_submitted', new Date().toISOString());
       setSubmitted(true);
+
       window.setTimeout(() => {
         resetWidget();
         setIsOpen(false);
-      }, 2400);
+        setIsEligible(false); // Hide widget until 3 months have passed
+      }, 2600);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to submit feedback.';
       setSubmitError(message);
@@ -104,6 +151,11 @@ export const FeedbackWidget: React.FC = () => {
       setIsSubmitting(false);
     }
   };
+
+  // If user has submitted feedback in the last 3 months and is not currently viewing confirmation, keep widget hidden
+  if (!isEligible && !submitted) {
+    return null;
+  }
 
   return (
     <div className="fixed bottom-5 right-5 z-40 flex flex-col items-end gap-3">
@@ -219,11 +271,11 @@ export const FeedbackWidget: React.FC = () => {
                     >
                       <Check strokeWidth={2.5} size={18} className="stroke-white" />
                     </motion.div>
-                    <motion.div variants={itemVariants} className="font-bold text-slate-900">
+                    <motion.div variants={itemVariants} className="font-bold text-slate-900 text-center">
                       Your feedback has been received!
                     </motion.div>
-                    <motion.div variants={itemVariants} className="text-xs text-slate-500">
-                      Thank you for helping improve NEXORA.
+                    <motion.div variants={itemVariants} className="text-xs text-slate-500 text-center max-w-xs leading-relaxed">
+                      Thank you for helping improve NEXORA. We will check in for your feedback again in 3 months.
                     </motion.div>
                   </motion.div>
                 )}

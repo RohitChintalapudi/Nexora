@@ -24,5 +24,19 @@ export const FeedbackModel = {
       ORDER BY created_at DESC;
     `;
     return rows;
+  },
+
+  async getLatestByUser(userId) {
+    const sql = getSQL();
+    if (!sql) throw new Error('Database not connected. Please set DATABASE_URL.');
+
+    const rows = await sql`
+      SELECT id, user_id, happiness, feedback, page, created_at
+      FROM user_feedback
+      WHERE user_id = ${userId}
+      ORDER BY created_at DESC
+      LIMIT 1;
+    `;
+    return rows[0] || null;
   }
 };
