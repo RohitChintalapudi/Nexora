@@ -160,7 +160,7 @@ export function TreeNav({
           style={{ insetInlineStart: RAIL_X - 2, top: end - 2 }}
         />
         <motion.span
-          className="absolute top-0 w-px origin-top bg-slate-900 will-change-transform dark:bg-slate-100"
+          className="absolute top-0 w-px origin-top bg-blue-600 will-change-transform dark:bg-blue-400"
           style={{
             insetInlineStart: RAIL_X - 0.5,
             height: end,
@@ -169,7 +169,7 @@ export function TreeNav({
           }}
         />
         <motion.span
-          className="absolute top-0 rounded-[1px] bg-slate-900 will-change-transform dark:bg-slate-100"
+          className="absolute top-0 rounded-[1px] bg-blue-600 will-change-transform dark:bg-blue-400"
           style={{
             insetInlineStart: RAIL_X - MARKER / 2,
             width: MARKER,
@@ -203,11 +203,9 @@ export function TreeNav({
               onBlur={leave}
               className={cn(
                 "flex h-8 items-center gap-2 rounded-lg px-3 text-[13px] leading-5 antialiased transition-colors duration-150 ease-out",
-                // Hover paints the same solid black as the selected row, in pure
-                // CSS, so it can never fall out of step with the rail above.
                 isActive
-                  ? "bg-slate-900 font-medium text-white shadow-[0_2px_8px_rgba(15,23,42,0.28)] dark:bg-slate-100 dark:text-slate-900"
-                  : "font-normal text-slate-500 hover:bg-slate-900 hover:text-white hover:shadow-[0_2px_8px_rgba(15,23,42,0.28)] dark:text-slate-400 dark:hover:bg-slate-100 dark:hover:text-slate-900",
+                  ? "bg-blue-600 font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)] dark:bg-blue-500"
+                  : "font-normal text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100",
               )}
             >
               {Icon && (
@@ -215,21 +213,14 @@ export function TreeNav({
                   className={cn(
                     "h-4 w-4 shrink-0 transition-colors duration-150 ease-out",
                     isActive
-                      ? "text-white dark:text-slate-900"
-                      : "text-slate-400 hover:text-white dark:hover:text-slate-900",
+                      ? "text-white"
+                      : "text-slate-400 hover:enabled:text-slate-900",
                   )}
                 />
               )}
               <span className="truncate">{item.label}</span>
               {item.badge && (
-                <span
-                  className={cn(
-                    "inline-flex h-[18px] shrink-0 items-center rounded-[6px] px-[5px] text-xs font-medium leading-none transition-colors duration-150 ease-out",
-                    isActive
-                      ? "bg-white/15 text-white dark:bg-slate-900/10 dark:text-slate-900"
-                      : "bg-slate-900/10 text-slate-700 hover:bg-white/15 hover:text-white dark:bg-slate-100/15 dark:text-slate-300 dark:hover:bg-slate-900/10 dark:hover:text-slate-900",
-                  )}
-                >
+                <span className="inline-flex h-[18px] shrink-0 items-center rounded-[6px] bg-blue-600/10 px-[5px] text-xs font-medium leading-none text-blue-700 dark:bg-[#2b7fff]/[0.14] dark:text-blue-400">
                   {item.badge}
                 </span>
               )}

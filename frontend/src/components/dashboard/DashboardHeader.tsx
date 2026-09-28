@@ -33,8 +33,8 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       
       {/* Left: Welcome Headline & Subtitle */}
       <div className="space-y-2.5 max-w-xl">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold shadow-2xs">
-          <ShieldCheck className="w-3.5 h-3.5 text-slate-900 stroke-[2.5]" />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-2xs">
+          <ShieldCheck className="w-3.5 h-3.5 text-blue-600 stroke-[2.5]" />
           <span>Workspace Overview</span>
         </div>
 
@@ -54,7 +54,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               type="button"
               onClick={onConnectClick}
               disabled={isConnecting}
-              className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.35)] transition-all cursor-pointer disabled:opacity-60"
             >
               <Plus className="w-3.5 h-3.5 stroke-[3]" />
               <span>{isConnecting ? 'Connecting...' : 'Connect GitHub'}</span>
@@ -67,7 +67,7 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
             <button
               type="button"
               onClick={onChooseRepoClick}
-              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-slate-700 hover:text-slate-950 bg-slate-100 hover:bg-slate-200/80 border border-slate-200/80 rounded-full transition-all cursor-pointer shadow-2xs"
+              className="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-blue-700 hover:text-blue-900 bg-blue-50 hover:bg-blue-100/80 border border-blue-200 rounded-full transition-all cursor-pointer shadow-2xs"
             >
               <Plus className="w-3.5 h-3.5 stroke-[2.5]" />
               <span>Choose Repository</span>

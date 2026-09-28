@@ -350,7 +350,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <button
             type="button"
             onClick={() => refetch()}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-black transition-colors shadow-sm cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 transition-colors shadow-sm cursor-pointer"
           >
             <RefreshCw className="w-3.5 h-3.5" />
             <span>Try Again</span>
@@ -373,8 +373,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <span>Back to Repositories</span>
         </button>
 
-        <div className="bg-white rounded-[2rem] border border-slate-200 p-8 sm:p-12 text-center shadow-xs space-y-4">
-          <div className="w-16 h-16 rounded-3xl bg-slate-100 text-slate-900 flex items-center justify-center mx-auto border border-slate-200 animate-pulse">
+        <div className="bg-white rounded-[2rem] border border-blue-200 p-8 sm:p-12 text-center shadow-xs space-y-4">
+          <div className="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100 animate-pulse">
             <Loader2 className="w-8 h-8 animate-spin" />
           </div>
           <div className="space-y-1">
@@ -387,7 +387,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
             <button
               type="button"
               onClick={onViewProgress}
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white text-xs font-extrabold hover:bg-black shadow-md transition-all cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-blue-600 text-white text-xs font-extrabold hover:bg-blue-700 shadow-md transition-all cursor-pointer"
             >
               <span>View Progress Checklist</span>
               <ArrowRight className="w-4 h-4" />
@@ -458,7 +458,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
         </button>
 
         <div className="bg-white rounded-[2rem] border border-slate-200/80 p-8 sm:p-12 text-center shadow-xs space-y-4">
-          <div className="w-16 h-16 rounded-3xl bg-slate-100 text-slate-900 flex items-center justify-center mx-auto border border-slate-200">
+          <div className="w-16 h-16 rounded-3xl bg-blue-50 text-blue-600 flex items-center justify-center mx-auto border border-blue-100">
             <Sparkles className="w-8 h-8 stroke-[2]" />
           </div>
           <div className="space-y-1">
@@ -471,7 +471,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
             type="button"
             onClick={handleReanalyze}
             disabled={isReanalyzing}
-            className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-slate-900 text-white hover:text-blue-300 text-xs font-extrabold hover:bg-black shadow-md transition-all cursor-pointer disabled:opacity-60"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-blue-600 text-white text-xs font-extrabold hover:bg-blue-700 shadow-md transition-all cursor-pointer disabled:opacity-60"
           >
             {isReanalyzing ? (
               <>
@@ -514,7 +514,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
             <span>/</span>
             <span className="font-bold text-slate-800">{safeStr(repo.name, 'Repository')}</span>
             <span>/</span>
-            <span className="text-slate-900 font-semibold">Analysis</span>
+            <span className="text-blue-600 font-semibold">Analysis</span>
           </div>
         </div>
 
@@ -549,8 +549,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
               </span>
 
               {repo.language && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-slate-900" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
                   <span>{safeStr(repo.language)}</span>
                 </span>
               )}
@@ -625,7 +625,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
               type="button"
               onClick={handleReanalyze}
               disabled={isReanalyzing}
-              className="group inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black hover:text-blue-300 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(15,23,42,0.3)] transition-all cursor-pointer disabled:opacity-60 shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-[0_4px_14px_rgba(37,99,235,0.3)] transition-all cursor-pointer disabled:opacity-60 shrink-0"
             >
               {isReanalyzing ? (
                 <>
@@ -670,9 +670,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   type="button"
                   onClick={() => scrollToSection(section.id)}
                   className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-left transition-colors ${
-                    isActive
-                      ? 'bg-slate-900 text-white'
-                      : 'text-slate-600 hover:bg-slate-900 hover:text-white'
+                    isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'
                   }`}
                 >
                   <Icon className="w-4 h-4 shrink-0" />
@@ -731,7 +729,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <section id="overview" className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-5">
             <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center border border-slate-200 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                   <FileText className="w-4 h-4" />
                 </div>
                 <div>
@@ -817,7 +815,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                                     key={evIdx}
                                     onClick={() => isFilePath(ev) ? handleOpenFileModal(ev) : null}
                                     className={`text-[10px] font-mono px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-600 ${
-                                      isFilePath(ev) ? 'hover:text-slate-900 hover:border-slate-300 cursor-pointer' : ''
+                                      isFilePath(ev) ? 'hover:text-blue-600 hover:border-blue-300 cursor-pointer' : ''
                                     }`}
                                     title={ev}
                                   >
@@ -842,7 +840,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <section id="architecture" className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center border border-slate-200 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                   <Layers className="w-4 h-4" />
                 </div>
                 <div>
@@ -857,7 +855,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
 
               <div className="flex items-center gap-2 flex-wrap">
                 {analysis.architecture?.architecturalStyle && (
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-extrabold shadow-2xs">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-extrabold shadow-2xs">
                     {safeStr(analysis.architecture.architecturalStyle, 'Layered')}
                   </span>
                 )}
@@ -869,7 +867,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     onClick={() => setArchTab('diagram')}
                     className={`px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       archTab === 'diagram'
-                        ? 'bg-white text-slate-900 shadow-2xs font-extrabold'
+                        ? 'bg-white text-blue-600 shadow-2xs font-extrabold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -880,7 +878,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     onClick={() => setArchTab('matrix')}
                     className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                       archTab === 'matrix'
-                        ? 'bg-white text-slate-900 shadow-2xs font-extrabold'
+                        ? 'bg-white text-blue-600 shadow-2xs font-extrabold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -888,7 +886,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     {Array.isArray(analysis.architecture?.relationships) && analysis.architecture.relationships.length > 0 && (
                       <span
                         className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-                          archTab === 'matrix' ? 'bg-slate-100 text-slate-900' : 'bg-slate-200 text-slate-700'
+                          archTab === 'matrix' ? 'bg-blue-100 text-blue-800' : 'bg-slate-200 text-slate-700'
                         }`}
                       >
                         {analysis.architecture.relationships.length}
@@ -1040,7 +1038,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                                   key={fIdx}
                                   type="button"
                                   onClick={() => handleOpenFileModal(file)}
-                                  className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 hover:border-slate-200 transition-colors text-left truncate max-w-full cursor-pointer"
+                                  className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-50 hover:bg-blue-50 text-slate-700 hover:text-blue-700 border border-slate-200 hover:border-blue-200 transition-colors text-left truncate max-w-full cursor-pointer"
                                   title={file}
                                 >
                                   {file}
@@ -1111,7 +1109,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                       key={idx}
                       className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200/70 flex items-start gap-4 hover:border-slate-300 transition-colors"
                     >
-                      <div className="w-7 h-7 rounded-full bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                      <div className="w-7 h-7 rounded-full bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                         {stepNum}
                       </div>
 
@@ -1138,7 +1136,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                                 type="button"
                                 onClick={() => isFilePath(file) ? handleOpenFileModal(file) : null}
                                 className={`text-[10px] font-mono px-2 py-0.5 rounded-md bg-white border border-slate-200 text-slate-700 ${
-                                  isFilePath(file) ? 'hover:text-slate-900 hover:border-slate-300 cursor-pointer' : ''
+                                  isFilePath(file) ? 'hover:text-blue-600 hover:border-blue-300 cursor-pointer' : ''
                                 }`}
                               >
                                 {file}
@@ -1186,17 +1184,17 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     <div
                       key={idx}
                       onClick={() => handleOpenFileModal(epPath)}
-                      className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200/80 hover:border-slate-300 hover:shadow-xs transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                      className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200/80 hover:border-blue-300 hover:shadow-xs transition-all cursor-pointer flex items-center justify-between gap-3 group"
                     >
                       <div className="min-w-0">
-                        <p className="text-xs font-mono font-bold text-slate-900 group-hover:text-black transition-colors truncate">
+                        <p className="text-xs font-mono font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                           {epPath}
                         </p>
                         <p className="text-[11px] text-slate-500 mt-0.5">
                           {epType}
                         </p>
                       </div>
-                      <span className="text-[11px] font-bold text-slate-900 bg-slate-100 group-hover:bg-black group-hover:text-white px-2.5 py-1 rounded-full transition-colors shrink-0">
+                      <span className="text-[11px] font-bold text-blue-600 bg-blue-50 group-hover:bg-blue-600 group-hover:text-white px-2.5 py-1 rounded-full transition-colors shrink-0">
                         Inspect
                       </span>
                     </div>
@@ -1212,7 +1210,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <section id="files" className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6">
             <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center border border-slate-200 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                   <FileCode2 className="w-4 h-4" />
                 </div>
                 <div>
@@ -1240,15 +1238,15 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     <div
                       key={idx}
                       onClick={() => handleOpenFileModal(filePath, sLine, eLine)}
-                      className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200/80 hover:border-slate-300 hover:shadow-xs transition-all cursor-pointer space-y-2 group flex flex-col justify-between"
+                      className="p-4 rounded-2xl bg-slate-50/60 border border-slate-200/80 hover:border-blue-300 hover:shadow-xs transition-all cursor-pointer space-y-2 group flex flex-col justify-between"
                     >
                       <div className="space-y-1">
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-xs font-mono font-bold text-slate-900 group-hover:text-black transition-colors truncate">
+                          <span className="text-xs font-mono font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                             {filePath}
                           </span>
                           {sLine && (
-                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-slate-100/70 text-slate-900 shrink-0">
+                            <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-md bg-blue-100/70 text-blue-800 shrink-0">
                               L{sLine}{eLine && eLine !== sLine ? `–${eLine}` : ''}
                             </span>
                           )}
@@ -1258,7 +1256,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         </p>
                       </div>
 
-                      <div className="pt-2 border-t border-slate-200/50 flex items-center justify-between text-[11px] text-slate-900 font-bold">
+                      <div className="pt-2 border-t border-slate-200/50 flex items-center justify-between text-[11px] text-blue-600 font-bold">
                         <span>Click to view source reference</span>
                         <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
                       </div>
@@ -1385,7 +1383,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         key={idx}
                         onClick={() => isFilePath(ev) ? handleOpenFileModal(ev) : null}
                         className={`text-[11px] font-mono px-2 py-0.5 rounded-md bg-slate-50 border border-slate-200 text-slate-600 ${
-                          isFilePath(ev) ? 'hover:text-slate-900 hover:border-slate-300 cursor-pointer' : ''
+                          isFilePath(ev) ? 'hover:text-blue-600 hover:border-blue-300 cursor-pointer' : ''
                         }`}
                       >
                         {ev}
@@ -1457,8 +1455,8 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                           inactive: 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border-emerald-200'
                         },
                         POST: {
-                          active: 'bg-slate-900 text-white shadow-xs',
-                          inactive: 'bg-slate-100 text-slate-900 hover:bg-slate-100 border-slate-200'
+                          active: 'bg-blue-600 text-white shadow-xs',
+                          inactive: 'bg-blue-50 text-blue-800 hover:bg-blue-100 border-blue-200'
                         },
                         PUT: {
                           active: 'bg-amber-600 text-white shadow-xs',
@@ -1506,7 +1504,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                       value={apiSearchQuery}
                       onChange={(e) => setApiSearchQuery(e.target.value)}
                       placeholder="Filter path, handler, file..."
-                      className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-slate-900/20 focus:border-slate-900 transition-all font-mono"
+                      className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all font-mono"
                     />
                     {apiSearchQuery && (
                       <button
@@ -1532,7 +1530,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                         setApiMethodFilter('ALL');
                         setApiSearchQuery('');
                       }}
-                      className="text-xs text-slate-900 hover:underline font-bold cursor-pointer"
+                      className="text-xs text-blue-600 hover:underline font-bold cursor-pointer"
                     >
                       Clear search filters
                     </button>
@@ -1542,7 +1540,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                     {filteredRoutes.map((route: any, idx: number) => {
                       const methodColors: Record<string, string> = {
                         GET: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-                        POST: 'bg-slate-100 text-slate-900 border-slate-200',
+                        POST: 'bg-blue-50 text-blue-800 border-blue-200',
                         PUT: 'bg-amber-50 text-amber-800 border-amber-200',
                         DELETE: 'bg-red-50 text-red-800 border-red-200',
                         PATCH: 'bg-purple-50 text-purple-800 border-purple-200'
@@ -1583,12 +1581,12 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                               <button
                                 type="button"
                                 onClick={() => handleOpenFileModal(rFilePath, sLine, eLine)}
-                                className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 rounded-lg bg-slate-100 text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+                                className="inline-flex items-center gap-1.5 font-mono px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 transition-colors cursor-pointer"
                                 title={`Inspect ${rFilePath}`}
                               >
                                 <span className="truncate max-w-[180px]">{rFilePath}</span>
                                 {sLine && (
-                                  <span className="text-[10px] text-slate-900 font-bold bg-white/80 px-1 py-0.2 rounded-md">
+                                  <span className="text-[10px] text-blue-800 font-bold bg-white/80 px-1 py-0.2 rounded-md">
                                     L{sLine}{eLine && eLine !== sLine ? `–${eLine}` : ''}
                                   </span>
                                 )}
@@ -1610,7 +1608,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
           <section id="quickstart" className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-6">
             <div className="flex items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center border border-slate-200 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                   <BookOpen className="w-4 h-4" />
                 </div>
                 <div>
@@ -1637,9 +1635,9 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   return (
                     <div
                       key={idx}
-                      className="p-4 rounded-2xl bg-slate-100/30 border border-slate-200 flex items-start gap-4"
+                      className="p-4 rounded-2xl bg-blue-50/30 border border-blue-100 flex items-start gap-4"
                     >
-                      <div className="w-7 h-7 rounded-full bg-slate-900 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
+                      <div className="w-7 h-7 rounded-full bg-blue-600 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-2xs mt-0.5">
                         {stepNum}
                       </div>
                       <div className="min-w-0 flex-1 space-y-1.5">
@@ -1674,7 +1672,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
             {/* Section Header */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center border border-slate-200 shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 shrink-0">
                   <CheckCheck className="w-4 h-4" />
                 </div>
                 <div>
@@ -1845,7 +1843,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                   <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/70 space-y-1">
                     <div className="flex items-center gap-2 text-slate-500">
-                      <Code2 className="w-3.5 h-3.5 text-slate-900" />
+                      <Code2 className="w-3.5 h-3.5 text-blue-600" />
                       <span className="text-[11px] font-bold uppercase tracking-wider">Primary Language</span>
                     </div>
                     <p className="text-sm font-bold text-slate-900">
@@ -1920,7 +1918,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                                     key={evIdx}
                                     onClick={() => isFilePath(ev) ? handleOpenFileModal(ev) : null}
                                     className={`text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-50 border border-slate-200 text-slate-600 ${
-                                      isFilePath(ev) ? 'hover:text-slate-900 hover:border-slate-300 cursor-pointer' : ''
+                                      isFilePath(ev) ? 'hover:text-blue-600 hover:border-blue-300 cursor-pointer' : ''
                                     }`}
                                   >
                                     {ev}
@@ -1950,18 +1948,18 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                           <div
                             key={idx}
                             onClick={() => handleOpenFileModal(epPath)}
-                            className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-slate-300 hover:bg-slate-100/30 transition-all cursor-pointer flex items-center justify-between gap-3 group"
+                            className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-blue-300 hover:bg-blue-50/30 transition-all cursor-pointer flex items-center justify-between gap-3 group"
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
-                              <Compass className="w-4 h-4 text-slate-900 shrink-0" />
+                              <Compass className="w-4 h-4 text-blue-600 shrink-0" />
                               <div className="min-w-0">
-                                <p className="text-xs font-mono font-bold text-slate-900 group-hover:text-black transition-colors truncate">
+                                <p className="text-xs font-mono font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate">
                                   {epPath}
                                 </p>
                                 <p className="text-[10px] text-slate-500 truncate">{epType}</p>
                               </div>
                             </div>
-                            <span className="text-[10px] font-bold text-slate-900 shrink-0">View Code</span>
+                            <span className="text-[10px] font-bold text-blue-600 shrink-0">View Code</span>
                           </div>
                         );
                       })}
@@ -2050,7 +2048,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                                     key={evIdx}
                                     onClick={() => isFilePath(ev) ? handleOpenFileModal(ev) : null}
                                     className={`text-[9px] font-mono px-1.5 py-0.5 rounded bg-slate-50 border border-slate-200 text-slate-600 ${
-                                      isFilePath(ev) ? 'hover:text-slate-900 hover:border-slate-300 cursor-pointer' : ''
+                                      isFilePath(ev) ? 'hover:text-blue-600 hover:border-blue-300 cursor-pointer' : ''
                                     }`}
                                   >
                                     {ev}

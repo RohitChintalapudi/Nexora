@@ -367,14 +367,14 @@ const TwistingHourglass: React.FC<{ size?: number; className?: string }> = ({ si
           strokeWidth="2"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-slate-900"
+          className="text-blue-600"
         />
 
         {/* Top Sand Reservoir (Draining) */}
         <path
           d="M7.8 6.5h8.4c-.6 1.8-2.2 2.8-4.2 3.2-2-.4-3.6-1.4-4.2-3.2z"
           fill="currentColor"
-          className="text-slate-500 animate-top-sand-drain"
+          className="text-blue-500 animate-top-sand-drain"
         />
 
         {/* Trickling Sand Droplets in Center Neck */}
@@ -386,14 +386,14 @@ const TwistingHourglass: React.FC<{ size?: number; className?: string }> = ({ si
           stroke="currentColor"
           strokeWidth="1.8"
           strokeLinecap="round"
-          className="text-slate-400 animate-sand-drip"
+          className="text-blue-400 animate-sand-drip"
         />
 
         {/* Bottom Sand Reservoir (Filling) */}
         <path
           d="M7.8 20.5h8.4c-.6-1.8-2.2-2.8-4.2-3.2-2 .4-3.6 1.4-4.2 3.2z"
           fill="currentColor"
-          className="text-slate-500 animate-bottom-sand-fill"
+          className="text-blue-500 animate-bottom-sand-fill"
         />
       </svg>
     </div>
@@ -556,8 +556,8 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
               </span>
 
               {repository.language && (
-                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-900">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-900" />
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-50 text-blue-700">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                   <span>{repository.language}</span>
                 </span>
               )}
@@ -584,9 +584,9 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                 <span>Analysis Failed</span>
               </span>
             ) : (
-              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold shadow-2xs">
-                <Loader2 className="w-4 h-4 text-slate-900 animate-spin stroke-[2.5]" />
-                <TextShimmer duration={2} baseColor="rgba(15,23,42, 0.45)" highlightColor="#0f172a">
+              <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold shadow-2xs">
+                <Loader2 className="w-4 h-4 text-blue-600 animate-spin stroke-[2.5]" />
+                <TextShimmer duration={2} baseColor="rgba(30, 64, 175, 0.45)" highlightColor="#1e40af">
                   Analyzing Codebase...
                 </TextShimmer>
               </span>
@@ -602,7 +602,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
             
             {/* Left: Current Step & Percentage */}
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-slate-900 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-slate-900/20">
+              <div className="w-10 h-10 rounded-xl bg-blue-600 text-white font-extrabold text-sm flex items-center justify-center shadow-md shadow-blue-500/20">
                 {isCompleted ? (
                   <Check className="w-5 h-5 stroke-[3]" />
                 ) : (
@@ -664,13 +664,13 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                   </div>
                 </div>
               ) : isRunning ? (
-                <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200 text-slate-900 shadow-2xs">
+                <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-blue-50/90 border border-blue-200 text-blue-900 shadow-2xs">
                   <TwistingHourglass size={20} />
                   <div className="flex flex-col">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-900 leading-none">
+                    <span className="text-[9px] font-bold uppercase tracking-wider text-blue-600 leading-none">
                       Est. Time
                     </span>
-                    <span className="text-xs font-mono font-extrabold text-slate-950">
+                    <span className="text-xs font-mono font-extrabold text-blue-950">
                       {formatRemainingTime(estimatedRemainingSeconds)}
                     </span>
                   </div>
@@ -689,7 +689,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                     ? 'bg-emerald-500'
                     : isFailed
                       ? 'bg-red-500'
-                      : 'bg-slate-900'
+                      : 'bg-blue-600'
                 }`}
                 style={{ width: `${progressPercentage}%` }}
               >
@@ -726,7 +726,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
         {job && (job.filesScanned || 0) > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 p-4 rounded-2xl bg-slate-50/80 border border-slate-200/60 animate-in fade-in duration-300">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
                 <FileCode2 className="w-4 h-4" />
               </div>
               <div className="min-w-0">
@@ -813,7 +813,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                     isStepDone
                       ? 'bg-emerald-50/40 border-emerald-200/80 shadow-2xs'
                       : isStepActive
-                        ? 'bg-slate-100/40 border-slate-300 shadow-[0_4px_16px_rgba(15,23,42,0.06)] ring-1 ring-slate-900'
+                        ? 'bg-blue-50/40 border-blue-300 shadow-[0_4px_16px_rgba(37,99,235,0.06)] ring-1 ring-blue-400'
                         : isFailed && currentStageIndex === stepIndex - 1
                           ? 'bg-red-50/40 border-red-200'
                           : 'bg-slate-50/50 border-slate-200/60 opacity-60'
@@ -826,7 +826,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                         <Check className="w-4 h-4 stroke-[3]" />
                       </div>
                     ) : isStepActive ? (
-                      <div className="w-7 h-7 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-2xs animate-pulse">
+                      <div className="w-7 h-7 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-2xs animate-pulse">
                         <Loader2 className="w-4 h-4 animate-spin stroke-[2.5]" />
                       </div>
                     ) : isFailed && currentStageIndex === stepIndex - 1 ? (
@@ -847,14 +847,14 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                         isStepDone 
                           ? 'text-emerald-700' 
                           : isStepActive 
-                            ? 'text-slate-900' 
+                            ? 'text-blue-700' 
                             : 'text-slate-400'
                       }`} />
                       <h3 className={`text-xs sm:text-sm font-bold ${
                         isStepDone 
                           ? 'text-emerald-950' 
                           : isStepActive 
-                            ? 'text-slate-950 font-extrabold' 
+                            ? 'text-blue-950 font-extrabold' 
                             : 'text-slate-600'
                       }`}>
                         {step.title}
@@ -864,7 +864,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
                       isStepDone 
                         ? 'text-emerald-800/80' 
                         : isStepActive 
-                          ? 'text-slate-900' 
+                          ? 'text-blue-800' 
                           : 'text-slate-400'
                     }`}>
                       {step.description}
@@ -905,7 +905,7 @@ export const AnalysisProgressView: React.FC<AnalysisProgressViewProps> = ({
 
         {/* Completion Milestone Card */}
         {isCompleted && (
-          <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-slate-100/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 shadow-xs">
+          <div className="p-6 rounded-2xl bg-gradient-to-br from-emerald-50/60 via-white to-blue-50/40 border border-emerald-200/80 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 shadow-xs">
             <div className="space-y-1">
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-900 text-[11px] font-bold">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />

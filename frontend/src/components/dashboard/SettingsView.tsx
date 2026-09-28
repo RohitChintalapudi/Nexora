@@ -178,7 +178,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     <div className="space-y-6 max-w-4xl mx-auto animate-in fade-in duration-150">
       {/* Header Card */}
       <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-bold mb-2">
           <Sliders className="w-3.5 h-3.5" />
           <span>System Preferences</span>
         </div>
@@ -229,7 +229,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name"
                 required
-                className="w-full px-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 shadow-2xs transition-all"
+                className="w-full px-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all"
               />
             </div>
 
@@ -267,7 +267,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   value={githubInput}
                   onChange={(e) => setGithubInput(e.target.value)}
                   placeholder="github-username"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 shadow-2xs transition-all font-mono"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
                 />
               </div>
             </div>
@@ -288,7 +288,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   value={xInput}
                   onChange={(e) => setXInput(e.target.value)}
                   placeholder="x-username"
-                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-1 focus:ring-slate-900 shadow-2xs transition-all font-mono"
+                  className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
                 />
               </div>
             </div>
@@ -301,7 +301,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               disabled={!isProfileChanged || isUpdatingProfile}
               className={`inline-flex items-center gap-2 px-5 py-2.5 text-xs font-extrabold rounded-full transition-all ${
                 isProfileChanged && !isUpdatingProfile
-                  ? 'text-white bg-slate-900 hover:bg-black active:scale-[0.98] shadow-[0_4px_14px_rgba(15,23,42,0.3)] cursor-pointer'
+                  ? 'text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] shadow-[0_4px_14px_rgba(37,99,235,0.3)] cursor-pointer'
                   : 'text-slate-400 bg-slate-100 border border-slate-200/80 cursor-not-allowed opacity-70 shadow-none'
               }`}
             >
@@ -324,7 +324,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {/* Security & Password Management Section */}
       <section className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-          <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
             <KeyRound className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
@@ -340,8 +340,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
         {!isPasswordEligible ? (
           <div className="p-5 rounded-2xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div className="flex items-start sm:items-center gap-3.5">
-              <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-900 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-5 h-5 text-slate-700" />
+              <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center shrink-0">
+                <ShieldCheck className="w-5 h-5" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -352,7 +352,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                         ? 'GitHub Account Authentication'
                         : 'Federated OAuth Identity'}
                   </h3>
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-900 border border-slate-200">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-200">
                     {user?.authProvider === 'google'
                       ? 'Google OAuth'
                       : user?.authProvider === 'github'
@@ -396,7 +396,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="••••••••"
                     required
-                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all font-mono"
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -422,7 +422,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     placeholder="Min. 6 characters"
                     required
                     minLength={6}
-                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all font-mono"
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -448,7 +448,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     placeholder="Re-enter password"
                     required
                     minLength={6}
-                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-900 focus:ring-2 focus:ring-slate-900/10 transition-all font-mono"
+                    className="w-full pl-4 pr-10 py-2.5 text-xs font-medium bg-slate-50 border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-mono"
                   />
                   <button
                     type="button"
@@ -470,7 +470,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <button
                 type="submit"
                 disabled={isUpdatingPassword}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-md shadow-slate-900/25 transition-all cursor-pointer disabled:opacity-60 shrink-0"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-md shadow-blue-500/25 transition-all cursor-pointer disabled:opacity-60 shrink-0"
               >
                 {isUpdatingPassword ? (
                   <>
@@ -545,7 +545,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 type="button"
                 onClick={onConnectGitHub}
                 disabled={isConnecting}
-                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-slate-900 hover:bg-black active:scale-[0.98] rounded-full shadow-md shadow-slate-900/25 transition-all cursor-pointer disabled:opacity-60"
+                className="inline-flex items-center gap-2 px-5 py-2 text-xs font-extrabold text-white bg-blue-600 hover:bg-blue-700 active:scale-[0.98] rounded-full shadow-md shadow-blue-500/25 transition-all cursor-pointer disabled:opacity-60"
               >
                 <Plus className="w-3.5 h-3.5 stroke-[3]" />
                 <span>Connect GitHub</span>
@@ -558,7 +558,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       {/* Workspace Environment Section */}
       <section className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 space-y-6">
         <div className="flex items-center gap-3 pb-4 border-b border-slate-100">
-          <div className="w-10 h-10 rounded-2xl bg-slate-100 border border-slate-200 text-slate-900 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-2xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center">
             <Shield className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div>
@@ -584,7 +584,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <p className="text-xs font-extrabold text-slate-900">Platform Version</p>
               <p className="text-[11px] font-medium text-slate-400">Version 1 (V1) — Codebase Intelligence & AI Architecture Platform</p>
             </div>
-            <span className="text-xs font-mono font-bold text-slate-900 bg-slate-100 border border-slate-200 px-3 py-1 rounded-full shadow-2xs">
+            <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full shadow-2xs">
               Version 1 (V1)
             </span>
           </div>

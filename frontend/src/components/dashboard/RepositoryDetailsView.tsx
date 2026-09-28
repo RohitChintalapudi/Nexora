@@ -105,8 +105,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               </div>
 
               {isJobCompleted && (
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold">
-                  <Sparkles className="w-3.5 h-3.5 text-slate-900 stroke-[2.5]" />
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <Sparkles className="w-3.5 h-3.5 text-blue-600 stroke-[2.5]" />
                   <span>Analysis Ready</span>
                 </div>
               )}
@@ -132,8 +132,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
               </span>
 
               {repository.language && (
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-900 text-xs font-bold">
-                  <span className="w-2 h-2 rounded-full bg-slate-900" />
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-800 text-xs font-bold">
+                  <span className="w-2 h-2 rounded-full bg-blue-500" />
                   <span>{repository.language}</span>
                 </span>
               )}
@@ -208,12 +208,12 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
       </div>
 
       {/* Analysis Initiation Card */}
-      <div className="bg-gradient-to-br from-slate-100/50 via-white to-slate-50/80 rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
+      <div className="bg-gradient-to-br from-blue-50/50 via-white to-slate-50/80 rounded-[2rem] border border-blue-200/80 p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 shadow-xs">
         {isCheckingStatus ? (
           <>
             <div className="space-y-1.5 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/80 text-slate-900 text-[11px] font-bold">
-                <Loader2 className="w-3.5 h-3.5 animate-spin text-slate-900" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-600" />
                 <span>Checking Analysis Status...</span>
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">
@@ -248,8 +248,8 @@ export const RepositoryDetailsView: React.FC<RepositoryDetailsViewProps> = ({
         ) : (
           <>
             <div className="space-y-1.5 max-w-xl">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-100/80 text-slate-900 text-[11px] font-bold">
-                <Sparkles className="w-3.5 h-3.5 text-slate-900" />
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-100/80 text-blue-800 text-[11px] font-bold">
+                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
                 <span>Codebase Intelligence</span>
               </div>
               <h2 className="text-xl font-extrabold text-slate-900 tracking-tight">

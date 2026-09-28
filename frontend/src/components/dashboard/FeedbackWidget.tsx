@@ -218,7 +218,7 @@ export const FeedbackWidget: React.FC = () => {
                       <textarea
                         ref={textRef}
                         placeholder="Tell us what we can improve..."
-                        className="mt-3 min-h-28 w-full resize-none rounded-xl border border-slate-200 bg-slate-50/60 p-3 text-sm placeholder-slate-400 focus:border-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all"
+                        className="mt-3 min-h-28 w-full resize-none rounded-xl border border-slate-200 bg-slate-50/60 p-3 text-sm placeholder-slate-400 focus:border-blue-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-100 transition-all"
                       />
 
                       {submitError && (
@@ -240,10 +240,10 @@ export const FeedbackWidget: React.FC = () => {
                           onClick={handleSubmit}
                           disabled={!happiness || isSubmitting}
                           className={cn(
-                            "inline-flex items-center justify-center gap-1.5 rounded-lg border bg-slate-900 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:cursor-not-allowed",
+                            "inline-flex items-center justify-center gap-1.5 rounded-lg border bg-blue-600 px-4 py-2 text-xs font-bold text-white transition-all cursor-pointer disabled:cursor-not-allowed",
                             isSubmitting || !happiness
                               ? "bg-slate-300 border-slate-200 text-slate-500"
-                              : "hover:bg-black active:scale-[0.98] shadow-[0_4px_14px_rgba(15,23,42,0.3)]",
+                              : "hover:bg-blue-700 active:scale-[0.98] shadow-[0_4px_14px_rgba(37,99,235,0.3)]",
                           )}
                         >
                           {isSubmitting ? (
@@ -267,7 +267,7 @@ export const FeedbackWidget: React.FC = () => {
                   >
                     <motion.div
                       variants={itemVariants}
-                      className="flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full bg-slate-900"
+                      className="flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full bg-blue-600"
                     >
                       <Check strokeWidth={2.5} size={18} className="stroke-white" />
                     </motion.div>
@@ -291,10 +291,10 @@ export const FeedbackWidget: React.FC = () => {
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? "Close feedback" : "Submit feedback"}
         className={cn(
-          "group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_8px_24px_rgba(15,23,42,0.4)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95",
+          "group relative flex h-14 w-14 items-center justify-center rounded-full text-white shadow-[0_8px_24px_rgba(37,99,235,0.4)] transition-all duration-200 cursor-pointer hover:scale-105 active:scale-95",
           isOpen
             ? "bg-slate-900 hover:bg-slate-800 shadow-[0_8px_24px_rgba(15,23,42,0.35)]"
-            : "bg-gradient-to-tr from-slate-900 via-slate-900 to-indigo-600 hover:from-slate-900 hover:to-indigo-700",
+            : "bg-gradient-to-tr from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700",
         )}
       >
         <AnimatePresence mode="wait" initial={false}>
