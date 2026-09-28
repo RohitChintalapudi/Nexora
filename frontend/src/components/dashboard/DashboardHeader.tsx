@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
-import { FolderGit2, Sparkles, ShieldCheck, Plus } from 'lucide-react';
+import { ShieldCheck, Plus } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 
 interface DashboardHeaderProps {
@@ -79,41 +79,31 @@ export const DashboardHeader: React.FC<DashboardHeaderProps> = ({
       {/* Right: Analyzed & Registered Repository Statistics */}
       <div className="flex flex-row flex-wrap sm:flex-nowrap items-center gap-3.5 shrink-0">
         {/* Registered Repositories Card */}
-        <div className="flex-1 sm:flex-initial flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 min-w-[160px] sm:min-w-[185px] shadow-2xs">
-          <div className="w-11 h-11 rounded-2xl bg-white border border-slate-200/90 text-slate-900 flex items-center justify-center shadow-xs shrink-0">
-            <FolderGit2 className="w-5 h-5 stroke-[2.2]" />
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-none">
-              {registeredCount}
-            </p>
-            <p className="text-xs font-bold text-slate-700 mt-1">
-              Registered Repos
-            </p>
-            <p className="text-[10px] font-medium text-slate-400 mt-0.5">
-              Workspace connected
-            </p>
-          </div>
+        <div className="flex-1 sm:flex-initial p-4 sm:px-5 sm:py-4 rounded-2xl bg-slate-50 border border-slate-200/80 min-w-[145px] sm:min-w-[165px] shadow-2xs">
+          <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-none">
+            {registeredCount}
+          </p>
+          <p className="text-xs font-bold text-slate-700 mt-1.5">
+            Registered Repos
+          </p>
+          <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+            Workspace connected
+          </p>
         </div>
 
         {/* Analyzed Repositories Card */}
-        <div className="flex-1 sm:flex-initial flex items-center gap-3.5 p-4 rounded-2xl bg-slate-50 border border-slate-200/80 min-w-[160px] sm:min-w-[185px] shadow-2xs">
-          <div className="w-11 h-11 rounded-2xl bg-blue-50 border border-blue-200/90 text-blue-600 flex items-center justify-center shadow-xs shrink-0">
-            <Sparkles className="w-5 h-5 stroke-[2.2]" />
-          </div>
-          <div>
-            <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-none">
-              {analyzedCount}
-            </p>
-            <p className="text-xs font-bold text-slate-700 mt-1">
-              Analyzed Repos
-            </p>
-            <p className="text-[10px] font-medium text-slate-400 mt-0.5">
-              {registeredCount > 0
-                ? `${analyzedCount} of ${registeredCount} indexed`
-                : 'Architecture indexed'}
-            </p>
-          </div>
+        <div className="flex-1 sm:flex-initial p-4 sm:px-5 sm:py-4 rounded-2xl bg-slate-50 border border-slate-200/80 min-w-[145px] sm:min-w-[165px] shadow-2xs">
+          <p className="text-2xl sm:text-3xl font-extrabold tracking-tight text-slate-900 leading-none">
+            {analyzedCount}
+          </p>
+          <p className="text-xs font-bold text-slate-700 mt-1.5">
+            Analyzed Repos
+          </p>
+          <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+            {registeredCount > 0
+              ? `${analyzedCount} of ${registeredCount} indexed`
+              : 'Architecture indexed'}
+          </p>
         </div>
       </div>
     </div>
