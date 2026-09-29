@@ -660,7 +660,7 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
         </button>
 
         {mobileNavOpen && (
-          <div className="mt-2 p-1 bg-white border border-slate-200 rounded-xl shadow-md max-h-60 overflow-y-auto space-y-1">
+          <div className="mt-2 p-1.5 bg-white border border-slate-200 rounded-xl shadow-lg max-h-60 overflow-y-auto space-y-1">
             {NAV_SECTIONS.map((section) => {
               const Icon = section.icon;
               const isActive = activeSection === section.id;
@@ -669,11 +669,13 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
                   key={section.id}
                   type="button"
                   onClick={() => scrollToSection(section.id)}
-                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-bold text-left transition-colors ${
-                    isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-600 hover:bg-slate-50'
+                  className={`w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-semibold text-left transition-colors cursor-pointer ${
+                    isActive
+                      ? 'bg-blue-600 text-white shadow-sm'
+                      : 'text-slate-600 hover:text-slate-950 hover:bg-slate-100'
                   }`}
                 >
-                  <Icon className="w-4 h-4 shrink-0" />
+                  <Icon className={`w-4 h-4 shrink-0 transition-colors ${isActive ? 'text-white' : 'text-slate-400'}`} />
                   <span>{section.label}</span>
                 </button>
               );
