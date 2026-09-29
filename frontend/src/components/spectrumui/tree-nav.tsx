@@ -152,15 +152,15 @@ export function TreeNav({
           row, and the diamond marker. All motion is transform + opacity. */}
       <span aria-hidden className="pointer-events-none absolute inset-y-0 start-0 w-5">
         <span
-          className="absolute top-0 w-px bg-slate-200 dark:bg-slate-800"
+          className="absolute top-0 w-px bg-slate-200"
           style={{ insetInlineStart: RAIL_X - 0.5, height: end }}
         />
         <span
-          className="absolute size-1 rounded-full bg-slate-200 dark:bg-slate-800"
+          className="absolute size-1 rounded-full bg-slate-200"
           style={{ insetInlineStart: RAIL_X - 2, top: end - 2 }}
         />
         <motion.span
-          className="absolute top-0 w-px origin-top bg-blue-600 will-change-transform dark:bg-blue-400"
+          className="absolute top-0 w-px origin-top bg-blue-600 will-change-transform"
           style={{
             insetInlineStart: RAIL_X - 0.5,
             height: end,
@@ -169,7 +169,7 @@ export function TreeNav({
           }}
         />
         <motion.span
-          className="absolute top-0 rounded-[1px] bg-blue-600 will-change-transform dark:bg-blue-400"
+          className="absolute top-0 rounded-[1px] bg-blue-600 will-change-transform"
           style={{
             insetInlineStart: RAIL_X - MARKER / 2,
             width: MARKER,
@@ -202,10 +202,10 @@ export function TreeNav({
               onFocus={() => enter(index)}
               onBlur={leave}
               className={cn(
-                "flex h-8 items-center gap-2 rounded-lg px-3 text-[13px] leading-5 antialiased transition-colors duration-150 ease-out",
+                "group flex h-8 items-center gap-2.5 rounded-lg px-3 text-[13px] leading-5 antialiased transition-all duration-150 ease-out select-none cursor-pointer",
                 isActive
-                  ? "bg-blue-600 font-medium text-white shadow-[0_2px_8px_rgba(37,99,235,0.35)] dark:bg-blue-500"
-                  : "font-normal text-slate-500 hover:text-slate-900 hover:bg-slate-100 dark:text-slate-400 dark:hover:text-slate-100",
+                  ? "bg-blue-600 font-semibold text-white shadow-[0_2px_8px_rgba(37,99,235,0.3)]"
+                  : "font-medium text-slate-600 hover:text-slate-950 hover:bg-slate-100 active:bg-slate-200",
               )}
             >
               {Icon && (
@@ -214,13 +214,20 @@ export function TreeNav({
                     "h-4 w-4 shrink-0 transition-colors duration-150 ease-out",
                     isActive
                       ? "text-white"
-                      : "text-slate-400 hover:enabled:text-slate-900",
+                      : "text-slate-400 group-hover:text-blue-600",
                   )}
                 />
               )}
               <span className="truncate">{item.label}</span>
               {item.badge && (
-                <span className="inline-flex h-[18px] shrink-0 items-center rounded-[6px] bg-blue-600/10 px-[5px] text-xs font-medium leading-none text-blue-700 dark:bg-[#2b7fff]/[0.14] dark:text-blue-400">
+                <span
+                  className={cn(
+                    "inline-flex h-[18px] shrink-0 items-center rounded-[6px] px-[5px] text-xs font-semibold leading-none ml-auto transition-colors",
+                    isActive
+                      ? "bg-white/20 text-white"
+                      : "bg-blue-50 text-blue-700 border border-blue-200/50 group-hover:bg-blue-100 group-hover:text-blue-800",
+                  )}
+                >
                   {item.badge}
                 </span>
               )}
