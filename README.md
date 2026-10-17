@@ -18,6 +18,8 @@ NEXORA indexes entire software repositories, parses AST syntax structures, extra
 
 </div>
 
+<img width="1917" height="892" alt="image" src="https://github.com/user-attachments/assets/6976fe50-c6b2-4d3d-9099-d231c4cabf72" />
+
 ---
 
 ## Table of Contents
