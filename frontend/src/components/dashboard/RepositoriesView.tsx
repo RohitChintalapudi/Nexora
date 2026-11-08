@@ -5,8 +5,6 @@ import {
   FolderGit2, 
   CheckCircle2, 
   Unlink, 
-  ChevronLeft, 
-  ChevronRight, 
   Loader2, 
   AlertCircle, 
   RefreshCw, 
@@ -14,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useRepositories, type SavedRepository } from '../../hooks/useRepositories';
 import { useAnalysisJob } from '../../hooks/useAnalysisJob';
+import { Pagination } from '../ui/pagination';
 import { RepositoryCard } from './RepositoryCard';
 import { RepositoryDetailsView } from './RepositoryDetailsView';
 import { AnalysisProgressView } from './AnalysisProgressView';
@@ -49,8 +48,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     activeSavedRepo,
     searchQuery,
     page,
-    hasMore,
     totalCount,
+    totalPages,
     isLoadingGitHub,
     isSaving,
     error,
@@ -58,8 +57,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     setSelectedRepo,
     setActiveSavedRepo,
     handleSearchChange,
-    handleNextPage,
-    handlePrevPage,
+    handlePageChange,
     saveSelectedRepository,
     deleteRepository,
     refetchGitHub
@@ -418,31 +416,18 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
           )}
 
           {/* Pagination Controls */}
-          {!isLoadingGitHub && gitHubRepos.length > 0 && (
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200/80">
-              <button
-                type="button"
-                onClick={handlePrevPage}
-                disabled={page <= 1 || isLoadingGitHub}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
-              >
-                <ChevronLeft className="w-3.5 h-3.5" />
-                <span>Previous</span>
-              </button>
-
+          {!isLoadingGitHub && gitHubRepos.length > 0 && totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-slate-200/80">
               <span className="text-xs font-semibold text-slate-500">
-                Page {page}
+                Page {page} of {totalPages}
               </span>
 
-              <button
-                type="button"
-                onClick={handleNextPage}
-                disabled={!hasMore || isLoadingGitHub}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 rounded-full transition-all disabled:opacity-40 disabled:cursor-not-allowed shadow-2xs"
-              >
-                <span>Next</span>
-                <ChevronRight className="w-3.5 h-3.5" />
-              </button>
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                disabled={isLoadingGitHub}
+              />
             </div>
           )}
 

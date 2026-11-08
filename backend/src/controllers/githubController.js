@@ -215,6 +215,7 @@ export const githubController = {
           connected: false,
           repositories: [],
           totalCount: 0,
+          totalPages: 0,
           page: 1,
           perPage: 20,
           hasMore: false,
@@ -269,6 +270,7 @@ export const githubController = {
             needs_reauth: true,
             repositories: [],
             totalCount: 0,
+            totalPages: 0,
             page,
             perPage,
             hasMore: false,
@@ -284,6 +286,7 @@ export const githubController = {
               rate_limited: true,
               repositories: [],
               totalCount: 0,
+              totalPages: 0,
               page,
               perPage,
               hasMore: false,
@@ -293,6 +296,13 @@ export const githubController = {
         }
 
         throw new Error(`GitHub API error (${response.status})`);
+      }
+
+      const linkHeader = response.headers.get('link');
+      let lastPageFromLink = null;
+      if (linkHeader) {
+        const lastPageMatch = linkHeader.match(/<[^>]*[?&]page=(\d+)[^>]*>;\s*rel="last"/i);
+        if (lastPageMatch) lastPageFromLink = parseInt(lastPageMatch[1], 10);
       }
 
       const data = await response.json();
@@ -321,15 +331,18 @@ export const githubController = {
         updatedAt: repo.updated_at
       }));
 
-      const hasMore = search 
-        ? (page * perPage) < totalCount 
-        : rawRepos.length === perPage;
+      const totalPages = search
+        ? Math.max(1, Math.ceil(totalCount / perPage))
+        : (lastPageFromLink || (rawRepos.length === perPage ? page + 1 : page));
+
+      const hasMore = page < totalPages;
 
       return res.status(200).json({
         success: true,
         connected: true,
         repositories,
         totalCount: search ? totalCount : undefined,
+        totalPages,
         page,
         perPage,
         hasMore
