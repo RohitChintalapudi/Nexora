@@ -33,7 +33,7 @@ import {
   Trash2
 } from 'lucide-react';
 import { useRepositoryAnalysis } from '../../../hooks/useRepositoryAnalysis';
-import { NexoraLoader } from '../../common/NexoraLoader';
+import { Skeleton } from '../../ui/skeleton';
 import { SourceReferenceModal } from './SourceReferenceModal';
 import { AIChatView } from './AIChatView';
 import { TreeNav } from '../../spectrumui/tree-nav';
@@ -309,21 +309,117 @@ export const AnalysisPageView: React.FC<AnalysisPageViewProps> = ({
   // 1. LOADING SKELETON STATE
   if (isLoading && !data) {
     return (
-      <div className="space-y-6 max-w-6xl mx-auto">
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-full transition-all cursor-pointer shadow-2xs"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          <span>Back to Repositories</span>
-        </button>
-        <NexoraLoader 
-          variant="card" 
-          size="lg"
-          message="Loading Repository Intelligence..." 
-          subMessage="Parsing AST symbols, dependency graphs, and architecture topology" 
-        />
+      <div
+        className="space-y-8 max-w-6xl mx-auto pb-20"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <span className="sr-only">Loading repository intelligence…</span>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={onBack}
+              className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-slate-950 bg-white hover:bg-slate-50 border border-slate-200/80 px-4 py-2 rounded-full transition-all cursor-pointer shadow-2xs"
+            >
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Repositories</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-3 w-16 rounded-md" />
+              <Skeleton className="h-3 w-2 rounded-md" />
+              <Skeleton className="h-3 w-24 rounded-md" />
+              <Skeleton className="h-3 w-2 rounded-md" />
+              <Skeleton className="h-3 w-14 rounded-md" />
+            </div>
+          </div>
+
+          {/* Repository header summary skeleton */}
+          <div className="bg-white rounded-[2rem] border border-slate-200/80 shadow-[0_4px_24px_rgba(0,0,0,0.03)] p-6 sm:p-8 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Skeleton className="h-6 w-32 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+              <Skeleton className="h-8 w-64 max-w-full rounded-lg" />
+              <Skeleton className="h-3 w-48 rounded-md" />
+              <div className="flex items-center gap-3 pt-1">
+                <Skeleton className="h-5 w-28 rounded-md" />
+                <Skeleton className="h-3 w-24 rounded-md" />
+                <Skeleton className="h-3 w-32 rounded-md" />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+              <Skeleton className="h-9 w-24 rounded-full" />
+              <Skeleton className="h-9 w-28 rounded-full" />
+              <Skeleton className="h-9 w-40 rounded-full" />
+            </div>
+          </div>
+        </div>
+
+        {/* Sidebar + main content skeleton */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+          <div className="hidden md:block md:col-span-3">
+            <div className="bg-white rounded-3xl border border-slate-200/80 p-3 shadow-[0_2px_16px_rgba(0,0,0,0.02)] space-y-2">
+              <Skeleton className="h-3 w-24 rounded-md mx-3.5 mt-2 mb-1" />
+              {Array.from({ length: 8 }).map((_, index) => (
+                <Skeleton key={index} className="h-8 w-full rounded-xl" />
+              ))}
+            </div>
+          </div>
+
+          <div className="md:col-span-9 space-y-10">
+            {/* AI chat card skeleton */}
+            <div className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-5">
+              <div className="flex items-center gap-2.5">
+                <Skeleton className="h-8 w-8 rounded-xl" />
+                <div className="space-y-1.5">
+                  <Skeleton className="h-5 w-48 rounded-md" />
+                  <Skeleton className="h-3 w-64 max-w-full rounded-md" />
+                </div>
+              </div>
+              <Skeleton className="h-24 w-full rounded-2xl" />
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-40 rounded-md" />
+                <Skeleton className="h-9 w-24 rounded-full" />
+              </div>
+            </div>
+
+            {/* Analysis section skeletons */}
+            {[0, 1, 2].map((section) => (
+              <div
+                key={section}
+                className="bg-white rounded-[2rem] border border-slate-200/80 p-6 sm:p-8 shadow-[0_4px_24px_rgba(0,0,0,0.02)] space-y-5"
+              >
+                <div className="flex items-center gap-2.5 pb-4 border-b border-slate-100">
+                  <Skeleton className="h-8 w-8 rounded-xl" />
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-5 w-40 rounded-md" />
+                    <Skeleton className="h-3 w-56 max-w-full rounded-md" />
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  <Skeleton className="h-3 w-full rounded-md" />
+                  <Skeleton className="h-3 w-11/12 rounded-md" />
+                  <Skeleton className="h-3 w-4/5 rounded-md" />
+                </div>
+
+                {section > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Skeleton className="h-20 w-full rounded-2xl" />
+                    <Skeleton className="h-20 w-full rounded-2xl" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     );
   }

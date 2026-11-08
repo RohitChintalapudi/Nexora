@@ -155,6 +155,8 @@ export interface CenterMorphModalContentProps {
   /** Render the close control inside the panel's top-right corner. Default true. */
   showCloseButton?: boolean;
   closeButtonLabel?: string;
+  /** Panel entrance style. "morph" unfolds from the center; "fade" only fades in. Default "morph". */
+  animation?: "morph" | "fade";
   className?: string;
   backdropClassName?: string;
 }
@@ -195,11 +197,13 @@ export function CenterMorphModalContent({
   dismissible = true,
   showCloseButton = true,
   closeButtonLabel = "Close modal",
+  animation = "morph",
   className,
   backdropClassName,
 }: CenterMorphModalContentProps) {
   const context = useCenterMorphModalContext("CenterMorphModalContent");
   const reduce = useReducedMotion() ?? false;
+  const fadeOnly = animation === "fade";
   const [mounted] = useState(() => typeof document !== "undefined");
   const panelRef = useRef<HTMLDivElement>(null);
 
@@ -294,33 +298,46 @@ export function CenterMorphModalContent({
                     aria-describedby={ariaDescribedBy}
                     tabIndex={-1}
                     initial={
-                      reduce
-                        ? { opacity: 0, clipPath: CENTER_OPEN_CLIP }
-                        : { opacity: 1, clipPath: CENTER_FOLDED_CLIP }
+                      fadeOnly
+                        ? { opacity: 0 }
+                        : reduce
+                          ? { opacity: 0, clipPath: CENTER_OPEN_CLIP }
+                          : { opacity: 1, clipPath: CENTER_FOLDED_CLIP }
                     }
-                    animate={{
-                      opacity: 1,
-                      clipPath: CENTER_OPEN_CLIP,
-                    }}
-                    exit={
-                      reduce
-                        ? {
-                            opacity: 0,
-                            clipPath: CENTER_OPEN_CLIP,
-                          }
+                    animate={
+                      fadeOnly
+                        ? { opacity: 1 }
                         : {
                             opacity: 1,
-                            clipPath: CENTER_FOLDED_CLIP,
+                            clipPath: CENTER_OPEN_CLIP,
                           }
+                    }
+                    exit={
+                      fadeOnly
+                        ? { opacity: 0 }
+                        : reduce
+                          ? {
+                              opacity: 0,
+                              clipPath: CENTER_OPEN_CLIP,
+                            }
+                          : {
+                              opacity: 1,
+                              clipPath: CENTER_FOLDED_CLIP,
+                            }
                     }
                     {...gate}
                     transition={
-                      reduce
-                        ? { duration: 0.14, ease: EASE_OUT }
-                        : CENTER_UNFOLD_TRANSITION
+                      fadeOnly
+                        ? { duration: reduce ? 0 : 0.2, ease: EASE_OUT }
+                        : reduce
+                          ? { duration: 0.14, ease: EASE_OUT }
+                          : CENTER_UNFOLD_TRANSITION
                     }
                     className={cn(
-                      "pointer-events-auto relative w-full max-w-[26rem] origin-center overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-900 will-change-[clip-path]",
+                      "pointer-events-auto relative w-full max-w-[26rem] origin-center overflow-hidden rounded-[30px] border border-slate-200 bg-white text-slate-900",
+                      fadeOnly
+                        ? "will-change-[opacity]"
+                        : "will-change-[clip-path]",
                       className,
                     )}
                   >

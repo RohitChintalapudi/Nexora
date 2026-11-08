@@ -56,6 +56,7 @@ export function useRepositories(isGitHubConnected = false) {
   const [perPage] = useState(20);
   const [hasMore, setHasMore] = useState(false);
   const [totalCount, setTotalCount] = useState<number | undefined>(undefined);
+  const [totalPages, setTotalPages] = useState(1);
   
   // Saved Repositories (in PostgreSQL) - instant load from cache
   const [savedRepositories, setSavedRepositories] = useState<SavedRepository[]>(() => cachedSavedRepos || []);
@@ -160,6 +161,13 @@ export function useRepositories(isGitHubConnected = false) {
         setGitHubRepos(data.repositories || []);
         setHasMore(Boolean(data.hasMore));
         setTotalCount(data.totalCount);
+        const resolvedTotalPages =
+          typeof data.totalPages === 'number' && data.totalPages > 0
+            ? data.totalPages
+            : typeof data.totalCount === 'number'
+              ? Math.max(1, Math.ceil(data.totalCount / perPage))
+              : Math.max(pageNum, data.hasMore ? pageNum + 1 : pageNum);
+        setTotalPages(resolvedTotalPages);
         setPage(data.page || pageNum);
       } else {
         setError(data.message || 'Could not load repositories from GitHub');
@@ -199,6 +207,16 @@ export function useRepositories(isGitHubConnected = false) {
     const prevPage = page - 1;
     setPage(prevPage);
     fetchGitHubRepos(searchQuery, prevPage);
+  };
+
+  // Jump directly to a page (used by the numbered pagination control)
+  const handlePageChange = (targetPage: number) => {
+    if (isLoadingGitHub) return;
+    const maxPage = Math.max(1, totalPages);
+    const nextPage = Math.min(Math.max(1, targetPage), maxPage);
+    if (nextPage === page) return;
+    setPage(nextPage);
+    fetchGitHubRepos(searchQuery, nextPage);
   };
 
   // Save selected repository to NEXORA
@@ -305,6 +323,7 @@ export function useRepositories(isGitHubConnected = false) {
     perPage,
     hasMore,
     totalCount,
+    totalPages,
     isLoadingGitHub,
     isLoadingSaved,
     isSaving,
@@ -315,6 +334,7 @@ export function useRepositories(isGitHubConnected = false) {
     handleSearchChange,
     handleNextPage,
     handlePrevPage,
+    handlePageChange,
     saveSelectedRepository,
     deleteRepository,
     refetchGitHub: () => fetchGitHubRepos(searchQuery, page),

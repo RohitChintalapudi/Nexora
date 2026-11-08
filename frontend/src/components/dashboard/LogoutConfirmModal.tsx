@@ -22,6 +22,7 @@ export const LogoutConfirmModal: React.FC<LogoutConfirmModalProps> = ({
       <CenterMorphModalContent
         ariaLabel="Confirm Logout"
         showCloseButton={false}
+        animation="fade"
         className="max-w-md"
       >
         {/* Header */}

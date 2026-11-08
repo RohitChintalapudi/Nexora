@@ -26,6 +26,7 @@ export const DashboardPage: React.FC = () => {
 
   const {
     savedRepositories,
+    isLoadingSaved,
     setActiveSavedRepo,
     deleteRepository
   } = useRepositories(isGitHubConnected);
@@ -197,6 +198,7 @@ export const DashboardPage: React.FC = () => {
             githubUsername={githubUsername}
             isConnecting={isConnecting}
             repositories={savedRepositories}
+            isLoading={isLoadingSaved}
           />
         </div>
       )}
