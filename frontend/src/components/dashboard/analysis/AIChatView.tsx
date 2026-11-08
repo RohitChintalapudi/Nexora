@@ -361,7 +361,7 @@ export const AIChatView: React.FC<AIChatViewProps> = ({
         busy={isLoading}
         label="AI Assistant chat transcript"
         navigationLabel="Chat message navigation"
-        className="min-h-[300px] max-h-[580px] bg-slate-50/40"
+        className="h-[clamp(300px,60vh,580px)] bg-slate-50/40"
         viewportClassName="p-5 sm:p-6"
         contentClassName="space-y-6"
       >
