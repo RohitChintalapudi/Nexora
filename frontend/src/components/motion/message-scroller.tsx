@@ -395,6 +395,7 @@ export function MessageScroller({
     <section
       ref={setViewportRef}
       aria-label={label}
+      data-lenis-prevent=""
       {...restViewportProps}
       onScroll={(event) => {
         handleScroll();
@@ -415,10 +416,8 @@ export function MessageScroller({
         onViewportKeyDown?.(event);
       }}
       className={cn(
-        "h-full overflow-y-auto overscroll-contain outline-none [overflow-anchor:none] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500",
-        navigation === "rail"
-          ? "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          : "[scrollbar-gutter:stable]",
+        "h-full overflow-y-auto overflow-x-hidden overscroll-contain outline-none [overflow-anchor:none] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-blue-500",
+        "[-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [&::-webkit-scrollbar]:w-0 [&::-webkit-scrollbar]:h-0",
         viewportClassName,
         navigation === "rail" && railOverflowing && "pr-10",
       )}
