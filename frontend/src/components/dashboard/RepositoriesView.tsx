@@ -13,12 +13,12 @@ import {
 import { useRepositories, type SavedRepository } from '../../hooks/useRepositories';
 import { useAnalysisJob } from '../../hooks/useAnalysisJob';
 import { Pagination } from '../ui/pagination';
+import { Skeleton } from '../ui/skeleton';
 import { RepositoryCard } from './RepositoryCard';
 import { RepositoryDetailsView } from './RepositoryDetailsView';
 import { AnalysisProgressView } from './AnalysisProgressView';
 import { AnalysisPageView } from './analysis/AnalysisPageView';
 import { AnalysisErrorBoundary } from './analysis/AnalysisErrorBoundary';
-import { NexoraLoader } from '../common/NexoraLoader';
 
 interface RepositoriesViewProps {
   onConnectClick: () => void;
@@ -51,6 +51,7 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
     totalCount,
     totalPages,
     isLoadingGitHub,
+    isLoadingSaved,
     isSaving,
     error,
     needsReauth,
@@ -296,15 +297,34 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
         <div className="space-y-6">
           
           {/* Previously Saved / Selected Repositories in NEXORA */}
-          {savedRepositories.length > 0 && (
+          {(isLoadingSaved || savedRepositories.length > 0) && (
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                  Registered with NEXORA ({savedRepositories.length})
+                  Registered with NEXORA ({isLoadingSaved ? '…' : savedRepositories.length})
                 </h2>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {savedRepositories.map((saved) => (
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+                aria-busy={isLoadingSaved}
+              >
+                {isLoadingSaved
+                  ? Array.from({ length: 3 }).map((_, index) => (
+                      <div
+                        key={index}
+                        className="p-4 rounded-2xl border border-slate-200/80 bg-white flex items-center justify-between gap-3"
+                      >
+                        <div className="min-w-0 flex-1 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+                            <Skeleton className="h-3.5 w-28 rounded-md" />
+                          </div>
+                          <Skeleton className="h-3 w-36 rounded-md ml-5.5" />
+                        </div>
+                        <Skeleton className="h-6 w-14 rounded-full shrink-0" />
+                      </div>
+                    ))
+                  : savedRepositories.map((saved) => (
                   <div
                     key={saved.id}
                     onClick={() => handleOpenDetails(saved)}
@@ -374,14 +394,48 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
             </div>
           )}
 
-          {/* Loading Nexora State */}
+          {/* Loading Skeletons */}
           {isLoadingGitHub && (
-            <NexoraLoader
-              variant="card"
-              size="md"
-              message="Fetching GitHub Repositories..."
-              subMessage="Querying GitHub API and synchronizing repository list"
-            />
+            <div
+              className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+              aria-busy="true"
+              aria-live="polite"
+            >
+              <span className="sr-only">Loading GitHub repositories…</span>
+              {Array.from({ length: 6 }).map((_, index) => (
+                <div
+                  key={index}
+                  className="p-5 rounded-2xl border border-slate-200/80 bg-white flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-start justify-between gap-3 mb-1.5">
+                      <div className="flex-1 min-w-0 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Skeleton className="h-4 w-32 rounded-md" />
+                          <Skeleton className="h-4 w-14 rounded-full" />
+                        </div>
+                        <Skeleton className="h-3 w-40 rounded-md" />
+                      </div>
+                      <Skeleton className="h-7 w-7 rounded-lg" />
+                    </div>
+
+                    <div className="my-2.5 space-y-1.5 min-h-[32px]">
+                      <Skeleton className="h-3 w-full rounded-md" />
+                      <Skeleton className="h-3 w-4/5 rounded-md" />
+                    </div>
+                  </div>
+
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 mt-auto">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-3 w-16 rounded-full" />
+                      <Skeleton className="h-3 w-14 rounded-full" />
+                      <Skeleton className="h-3 w-20 rounded-full" />
+                    </div>
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
           {/* Empty Search / No Repositories */}

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import type { SavedRepository } from '../../hooks/useRepositories';
 import { GLOW_BLUE_SOFT, GLOW_TRANSITION } from '../../lib/effects/glow';
+import { Skeleton } from '../ui/skeleton';
 import { DeleteRepositoryModal } from './DeleteRepositoryModal';
 
 interface RecentRepositoriesProps {
@@ -23,6 +24,7 @@ interface RecentRepositoriesProps {
   githubUsername?: string | null;
   isConnecting?: boolean;
   repositories?: SavedRepository[];
+  isLoading?: boolean;
 }
 
 export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
@@ -33,7 +35,8 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
   isGitHubConnected = false,
   githubUsername = null,
   isConnecting = false,
-  repositories = []
+  repositories = [],
+  isLoading = false
 }) => {
   const [repoToDelete, setRepoToDelete] = useState<SavedRepository | null>(null);
   const hasRepositories = repositories.length > 0;
@@ -64,13 +67,45 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
           )}
 
           <span className="inline-flex items-center px-3.5 py-1.5 rounded-full text-xs font-bold bg-white text-slate-700 border border-slate-200/80 shadow-2xs">
-            {repositories.length} {repositories.length === 1 ? 'Repository' : 'Repositories'}
+            {isLoading
+              ? 'Loading…'
+              : `${repositories.length} ${repositories.length === 1 ? 'Repository' : 'Repositories'}`}
           </span>
         </div>
       </div>
 
       {/* Repositories State */}
-      {!hasRepositories ? (
+      {isLoading ? (
+        <div
+          className="bg-white rounded-[2rem] border border-slate-200/80 divide-y divide-slate-100 shadow-xs overflow-hidden"
+          aria-busy="true"
+          aria-live="polite"
+        >
+          <span className="sr-only">Loading registered repositories…</span>
+          {Array.from({ length: 3 }).map((_, index) => (
+            <div
+              key={index}
+              className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="space-y-2 min-w-0 flex-1">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <Skeleton className="h-5 w-40 rounded-md" />
+                  <Skeleton className="h-4 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-20 rounded-full" />
+                </div>
+                <Skeleton className="h-3 w-52 rounded-md" />
+                <Skeleton className="h-3 w-72 max-w-full rounded-md" />
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <Skeleton className="h-8 w-8 rounded-full" />
+                <Skeleton className="h-8 w-28 rounded-full" />
+                <Skeleton className="h-8 w-8 rounded-full" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : !hasRepositories ? (
         <div className="bg-white rounded-[2rem] border border-slate-200/80 p-8 sm:p-10 text-center shadow-xs">
           <div className="w-14 h-14 rounded-3xl bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto mb-4 text-blue-600 shadow-2xs">
             <FolderGit2 className="w-7 h-7 stroke-[2]" />
