@@ -582,10 +582,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex items-center justify-between p-4 rounded-2xl bg-slate-50 border border-slate-200/60">
             <div>
               <p className="text-xs font-extrabold text-slate-900">Platform Version</p>
-              <p className="text-[11px] font-medium text-slate-400">Version 1 (V1) — Codebase Intelligence & AI Architecture Platform</p>
+              <p className="text-[11px] font-medium text-slate-400">Version 3 (V3) — Codebase Intelligence & AI Architecture Platform</p>
             </div>
             <span className="text-xs font-mono font-bold text-blue-600 bg-blue-50 border border-blue-200 px-3 py-1 rounded-full shadow-2xs">
-              Version 1 (V1)
+              Version 3 (V3)
             </span>
           </div>
         </div>

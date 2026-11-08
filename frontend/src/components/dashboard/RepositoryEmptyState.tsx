@@ -40,7 +40,7 @@ export const RepositoryEmptyState: React.FC<RepositoryEmptyStateProps> = ({
             GitHub Connected as @{githubUsername}
           </h3>
           <p className="text-sm font-medium text-slate-500 max-w-lg leading-relaxed mb-8">
-            Your repository authorization is stored securely on the server. NEXORA V1 will use this connection to index your repositories, extract AST symbols, and map service topologies.
+            Your repository authorization is stored securely on the server. NEXORA V3 will use this connection to index your repositories, extract AST symbols, and map service topologies.
           </p>
 
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-2xs">

@@ -161,7 +161,7 @@ function MainContent() {
 
           <div className="max-w-7xl mx-auto px-6 border-t border-white/[0.08] pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-neutral-400 text-xs sm:text-sm font-mono">
             <span>© 2026 NEXORA. All rights reserved.</span>
-            <span>v1.0.0-beta</span>
+            <span>v3.0.0-beta</span>
           </div>
         </footer>
       </ScrollReveal>

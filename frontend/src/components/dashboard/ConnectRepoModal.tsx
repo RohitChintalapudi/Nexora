@@ -49,7 +49,7 @@ export const ConnectRepoModal: React.FC<ConnectRepoModalProps> = ({
                 Connect GitHub
               </h3>
               <p className="text-xs font-semibold text-blue-600">
-                NEXORA V1 · Repository Authorization
+                NEXORA V3 · Repository Authorization
               </p>
             </div>
           </div>
