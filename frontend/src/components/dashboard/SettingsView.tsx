@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { LogoutConfirmModal } from './LogoutConfirmModal';
 import { DisconnectGithubModal } from './DisconnectGithubModal';
+import { API_BASE_URL } from '../../lib/api';
 
 interface SettingsViewProps {
   isGitHubConnected?: boolean;
@@ -117,7 +118,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     try {
       const token = localStorage.getItem('nexora_token');
       if (token) {
-        await fetch('http://localhost:5000/api/github/disconnect', {
+        await fetch(`${API_BASE_URL}/api/github/disconnect`, {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` }
         });
