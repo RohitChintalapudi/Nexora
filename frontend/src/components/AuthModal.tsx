@@ -234,6 +234,7 @@ export const AuthModal: React.FC = () => {
                     <input
                       type="text"
                       value={name}
+                      autoComplete="name"
                       disabled={isLoading}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Mercer"
@@ -263,6 +264,7 @@ export const AuthModal: React.FC = () => {
                   <input
                     type="email"
                     value={email}
+                    autoComplete="email"
                     disabled={isLoading}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
@@ -283,6 +285,7 @@ export const AuthModal: React.FC = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
+                    autoComplete={authModalTab === 'register' ? 'new-password' : 'current-password'}
                     disabled={isLoading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={authModalTab === 'register' ? 'Create a strong password' : '••••••••'}

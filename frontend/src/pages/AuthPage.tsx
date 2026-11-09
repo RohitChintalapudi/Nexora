@@ -342,6 +342,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                         <input
                           type="text"
                           value={name}
+                          autoComplete="name"
                           disabled={isLoading}
                           onChange={(e) => setName(e.target.value)}
                           placeholder="Rohit"
@@ -372,6 +373,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <input
                       type="email"
                       value={email}
+                      autoComplete="email"
                       disabled={isLoading}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="rohit@nexora.io"
@@ -403,6 +405,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                     <input
                       type={showPassword ? 'text' : 'password'}
                       value={password}
+                      autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
                       disabled={isLoading}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder={mode === 'signup' ? 'Create a strong password' : '••••••••'}

@@ -227,6 +227,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               <input
                 type="text"
                 value={name}
+                autoComplete="name"
                 onChange={(e) => setName(e.target.value)}
                 placeholder="Your full name"
                 required
@@ -266,6 +267,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <input
                   type="text"
                   value={githubInput}
+                  autoComplete="username"
                   onChange={(e) => setGithubInput(e.target.value)}
                   placeholder="github-username"
                   className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
@@ -287,6 +289,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <input
                   type="text"
                   value={xInput}
+                  autoComplete="off"
                   onChange={(e) => setXInput(e.target.value)}
                   placeholder="x-username"
                   className="w-full pl-10 pr-4 py-2.5 text-sm font-semibold bg-white border border-slate-200/80 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 shadow-2xs transition-all font-mono"
@@ -394,6 +397,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <input
                     type={showCurrentPassword ? 'text' : 'password'}
                     value={currentPassword}
+                    autoComplete="current-password"
                     onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="••••••••"
                     required
@@ -419,6 +423,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <input
                     type={showNewPassword ? 'text' : 'password'}
                     value={newPassword}
+                    autoComplete="new-password"
                     onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Min. 6 characters"
                     required
@@ -445,6 +450,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     value={confirmPassword}
+                    autoComplete="new-password"
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Re-enter password"
                     required
