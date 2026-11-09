@@ -371,6 +371,8 @@ export const RepositoriesView: React.FC<RepositoriesViewProps> = ({
                 value={searchQuery}
                 onChange={(e) => handleSearchChange(e.target.value)}
                 placeholder="Search repositories..."
+                aria-label="Search repositories"
+                autoComplete="off"
                 className="w-full pl-10 pr-4 py-2 text-xs bg-white border border-slate-200/80 rounded-full text-slate-900 placeholder-slate-400 shadow-2xs focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/10 transition-all font-medium"
               />
             </div>

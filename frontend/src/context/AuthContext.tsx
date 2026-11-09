@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '../lib/api';
 
 export interface User {
   id: number | string;
@@ -46,8 +47,6 @@ export const GOOGLE_CLIENT_ID =
 export const GITHUB_CLIENT_ID =
   import.meta.env.VITE_GITHUB_CLIENT_ID ||
   'Ov23liM5dNvXngFXio8t';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -398,7 +397,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     // Fallback: Redirect to server-side Google OAuth endpoint
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent('http://localhost:5000/api/auth/google/callback')}&response_type=code&scope=openid%20email%20profile`;
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${GOOGLE_CLIENT_ID}&redirect_uri=${encodeURIComponent(`${API_BASE_URL}/api/auth/google/callback`)}&response_type=code&scope=openid%20email%20profile`;
   };
 
   const loginWithGithub = async (payload: { code?: string; accessToken?: string }) => {
@@ -440,7 +439,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     setAuthAction('github');
     setAuthStatusMessage('Authenticating in progress...');
-    const redirectUri = 'http://localhost:5000/api/auth/github/callback';
+    const redirectUri = `${API_BASE_URL}/api/auth/github/callback`;
     const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${GITHUB_CLIENT_ID}&scope=repo,read:user,user:email&redirect_uri=${encodeURIComponent(redirectUri)}`;
     window.location.href = githubAuthUrl;
   };

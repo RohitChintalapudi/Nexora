@@ -216,6 +216,7 @@ export const RecentRepositories: React.FC<RecentRepositoriesProps> = ({
                     rel="noreferrer"
                     className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition-colors"
                     title="Open on GitHub"
+                    aria-label={`Open ${repo.fullName} on GitHub`}
                   >
                     <ExternalLink className="w-4 h-4" />
                   </a>

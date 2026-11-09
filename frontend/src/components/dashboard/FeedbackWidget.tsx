@@ -10,8 +10,7 @@ import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { useAuth } from "../../context/AuthContext";
 import { StarRating } from "../spectrumui/star-rating";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+import { API_BASE_URL } from "@/lib/api";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0, y: 24, scale: 0.96 },

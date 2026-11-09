@@ -234,6 +234,7 @@ export const AuthModal: React.FC = () => {
                     <input
                       type="text"
                       value={name}
+                      autoComplete="name"
                       disabled={isLoading}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Mercer"
@@ -263,6 +264,7 @@ export const AuthModal: React.FC = () => {
                   <input
                     type="email"
                     value={email}
+                    autoComplete="email"
                     disabled={isLoading}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="name@company.com"
@@ -283,6 +285,7 @@ export const AuthModal: React.FC = () => {
                   <input
                     type={showPassword ? 'text' : 'password'}
                     value={password}
+                    autoComplete={authModalTab === 'register' ? 'new-password' : 'current-password'}
                     disabled={isLoading}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={authModalTab === 'register' ? 'Create a strong password' : '••••••••'}
@@ -293,6 +296,7 @@ export const AuthModal: React.FC = () => {
                     type="button"
                     disabled={isLoading}
                     onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
                     className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

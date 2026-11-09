@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { API_BASE_URL } from '../lib/api';
 import type { AnalysisResponse, SourceFilePreview } from '../types/analysis';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 // In-memory cache for instant state updates when switching pages
 const analysisCache = new Map<string | number, AnalysisResponse>();

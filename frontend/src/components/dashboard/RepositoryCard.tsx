@@ -105,6 +105,7 @@ export const RepositoryCard: React.FC<RepositoryCardProps> = ({
             rel="noreferrer"
             onClick={(e) => e.stopPropagation()}
             title="Open in GitHub"
+            aria-label={`Open ${repo.fullName} on GitHub`}
             className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors shrink-0"
           >
             <ExternalLink className="w-4 h-4" />
