@@ -416,6 +416,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({
                       type="button"
                       disabled={isLoading}
                       onClick={() => setShowPassword(!showPassword)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
                       className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-neutral-400 hover:text-black transition-colors cursor-pointer disabled:opacity-50"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
