@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { API_BASE_URL } from '../lib/api';
 
 export interface User {
   id: number | string;
@@ -46,8 +47,6 @@ export const GOOGLE_CLIENT_ID =
 export const GITHUB_CLIENT_ID =
   import.meta.env.VITE_GITHUB_CLIENT_ID ||
   'Ov23liM5dNvXngFXio8t';
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
