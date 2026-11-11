@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⬡ NEXORA
+# NEXORA
 
 ### AI-Powered Codebase Intelligence Platform
 
